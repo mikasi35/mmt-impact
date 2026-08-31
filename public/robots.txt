@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Applicant and enquiry handling paths are never public.
+Disallow: /api/
+Disallow: /print/
+
+Sitemap: https://www.mmtimpact.org/sitemap-index.xml

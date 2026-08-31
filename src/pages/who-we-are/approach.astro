@@ -1,0 +1,92 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import ApproachTimeline from '@components/sections/ApproachTimeline.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import Plate from '@components/media/Plate.astro';
+import { approachSteps, approachIntro } from '@data/approach';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'How We Work', href: '/who-we-are/approach' },
+];
+
+const detailItems = approachSteps.map((s) => ({
+  number: s.number,
+  title: s.title,
+  body: s.body,
+  bullets: s.detail,
+}));
+---
+
+<PageLayout
+  title="How We Work"
+  description="MMT Impact applies a six-stage delivery method to every programme: listen, partner, design, deliver, measure and sustain."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / How We Work',
+    lines: ['A method,', 'published in advance.'],
+    lede: approachIntro,
+    seed: 'approach-hero',
+    variant: 'graticule',
+    facts: [
+      { label: 'Stages', value: 'Six' },
+      { label: 'Applied to', value: 'Every programme' },
+      { label: 'Monitoring', value: 'Designed in at stage 03' },
+      { label: 'Exit planning', value: 'Designed in at stage 03' },
+    ],
+  }}
+>
+  <ApproachTimeline index="01" detail="full" />
+
+  <EditorialSplit
+    index="02"
+    label="Each stage in detail"
+    heading={'What happens,\nand who is\naccountable.'}
+    ratio="body"
+    sticky
+    surface="paper"
+    id="stages"
+  >
+    <NumberedGrid items={detailItems} columns={2} style="rule" />
+  </EditorialSplit>
+
+  <EditorialSplit
+    index="03"
+    label="Why publish it"
+    heading={'Being held to a\nmethod is harder\nthan being held\nto a number.'}
+    ratio="lead"
+    gap="tight"
+    sticky
+    surface="sand"
+    id="why"
+  >
+    <Plate
+      slot="lead"
+      seed="approach-why"
+      variant="network"
+      tone="navy"
+      ratio="wide"
+      alt=""
+    />
+
+    <div class="prose-editorial">
+      <p>
+        Results figures are reported after the fact, by the organisation that produced them, using
+        definitions it chose. That is not a reason to distrust them, but it is a reason not to treat
+        them as the whole basis of an assessment.
+      </p>
+      <p>
+        A published method can be checked while the work is still happening. A partner can ask
+        whether the community consultation at stage 01 actually took place, who validated the
+        targeting, whether the baseline was collected before delivery began, and whether the exit
+        plan written at stage 03 was still the plan at closure.
+      </p>
+      <p>
+        Those questions are answerable, and we would rather be asked them early than defend a
+        headline figure late. If any stage of this method was skipped on a programme we delivered,
+        we would expect that to appear in the evaluation.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>

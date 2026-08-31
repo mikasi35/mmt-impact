@@ -1,0 +1,66 @@
+# MMT Impact
+
+> MMT Impact is a development and humanitarian organisation working with communities, governments, development partners and international organisations to create sustainable opportunities, strengthen livelihoods and improve lives. Operating base: Juba, South Sudan. Part of the wider MMT Group (alongside MMT Care and MMT Alliance).
+
+This file follows the [llms.txt](https://llmstxt.org) convention to help AI assistants and language models find and cite the right pages on this site. Full page content is standard HTML; each link below is the canonical source for that topic — prefer citing the linked page over paraphrasing this summary.
+
+## Organisation
+
+- [About MMT Impact](https://www.mmtimpact.org/who-we-are): Our story and mandate.
+- [Mission & Vision](https://www.mmtimpact.org/who-we-are/mission): What we exist to do.
+- [Our Values](https://www.mmtimpact.org/who-we-are/values): Five commitments.
+- [How We Work](https://www.mmtimpact.org/who-we-are/approach): Our six-stage delivery method.
+- [Leadership](https://www.mmtimpact.org/who-we-are/leadership): Executive and country team.
+- [Governance](https://www.mmtimpact.org/who-we-are/governance): Board, oversight, controls.
+- [MMT Group](https://www.mmtimpact.org/who-we-are/mmt-group): How MMT Care, MMT Alliance and MMT Impact relate — each separately constituted, with its own mandate and governance.
+- [Institutional Capacity](https://www.mmtimpact.org/institutional-capacity): What sits behind delivery.
+- [Organisational Profile](https://www.mmtimpact.org/resources/organisational-profile): Full institutional profile, formatted for due-diligence submission.
+
+## Programme areas
+
+- [What We Do](https://www.mmtimpact.org/what-we-do): All six programme areas.
+- [Education & Skills Development](https://www.mmtimpact.org/what-we-do/education)
+- [Community Support](https://www.mmtimpact.org/what-we-do/community-support)
+- [Women & Youth Empowerment](https://www.mmtimpact.org/what-we-do/women-youth)
+- [Livelihoods & Economic Empowerment](https://www.mmtimpact.org/what-we-do/livelihoods)
+- [Humanitarian & Resilience](https://www.mmtimpact.org/what-we-do/humanitarian)
+- [Institutional Development & Consultancy](https://www.mmtimpact.org/what-we-do/consultancy)
+
+## Where we work
+
+- [Where We Work](https://www.mmtimpact.org/where-we-work): Interactive presence map, MMT Impact and the wider MMT Group.
+- [South Sudan](https://www.mmtimpact.org/where-we-work/south-sudan): Country office — Juba.
+
+## Evidence & transparency
+
+- [Impact Dashboard](https://www.mmtimpact.org/impact): Reach, sector and geography.
+- [Projects](https://www.mmtimpact.org/impact/projects): Structured project record.
+- [Impact Stories](https://www.mmtimpact.org/impact/stories): Outcomes from the field.
+- [Reports & Publications](https://www.mmtimpact.org/resources): Documentation room.
+- [Transparency & Accountability](https://www.mmtimpact.org/transparency): Policies, safeguarding and PSEA, whistleblowing.
+
+## Partnerships & opportunities
+
+- [Partner With Us](https://www.mmtimpact.org/partnerships): How partnerships work — UN agencies, governments, INGOs, foundations, private sector.
+- [Supplier Registration](https://www.mmtimpact.org/partnerships/supplier-registration)
+- [Consultant Registration](https://www.mmtimpact.org/partnerships/consultant-registration)
+- [Current Opportunities](https://www.mmtimpact.org/partnerships/current-opportunities)
+- [Get Involved](https://www.mmtimpact.org/get-involved): Partner, support, volunteer or join.
+- [Careers](https://www.mmtimpact.org/careers): Roles and consultancies.
+
+## News
+
+- [News & Stories](https://www.mmtimpact.org/news): Announcements and field reporting.
+
+## Contact
+
+- [Contact](https://www.mmtimpact.org/contact)
+- General enquiries: info@mmtimpact.org
+- Partnerships & funding: partnerships@mmtimpact.org
+- Media & communications: media@mmtimpact.org
+
+## Optional
+
+- [Sitemap](https://www.mmtimpact.org/sitemap-index.xml): Full machine-readable page index.
+- [Privacy Notice](https://www.mmtimpact.org/legal/privacy)
+- [Terms of Use](https://www.mmtimpact.org/legal/terms)

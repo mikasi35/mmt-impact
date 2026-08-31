@@ -1,0 +1,272 @@
+---
+import Plate from '@components/media/Plate.astro';
+import { headquarters } from '@data/site';
+---
+
+<section class="hero surface-dark" data-hero data-parallax-scope aria-labelledby="hero-heading">
+  <div class="hero__media" data-hero-media>
+    <Plate
+      seed="home-hero"
+      src="/images/index/hero.jpg"
+      variant="terrain"
+      tone="navy"
+      ratio="fill"
+      priority
+      parallax={8}
+      class="hero__plate"
+      alt=""
+    />
+    <div class="hero__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class="wrap-wide hero__inner">
+    <div class="hero__body">
+      <p class="t-meta hero__eyebrow" data-hero-eyebrow>
+        <span class="hero__eyebrow-rule" aria-hidden="true"></span>
+        MMT Impact
+      </p>
+      <p class="t-meta hero__context" data-hero-eyebrow>
+        South Sudan / Development / Humanitarian Action
+      </p>
+
+      <!--
+        No `.reveal-lines` here on purpose: that class opts an element into
+        the generic IntersectionObserver-driven line reveal (reveal.ts), and
+        this heading is ALSO individually animated by the dedicated hero
+        timeline (lib/animations/hero.ts) via [data-hero-line]. Both systems
+        targeting the same spans was the cause of the on-load glitch — text
+        would reveal via the CSS system, then get yanked back down and
+        re-revealed a beat later by GSAP. One system per element.
+      -->
+      <h1 class="t-mega hero__heading" id="hero-heading">
+        <span data-hero-line><span>Building</span></span>
+        <span data-hero-line><span>Stronger</span></span>
+        <span data-hero-line class="is-accent"><span>Communities.</span></span>
+      </h1>
+
+      <p class="t-lead hero__lede" data-hero-tail>
+        MMT Impact works with communities, governments, development partners and international
+        organisations to create sustainable opportunities, strengthen livelihoods and improve lives.
+      </p>
+
+      <div class="hero__actions" data-hero-tail>
+        <a class="btn btn--accent" href="/what-we-do">
+          Our Work
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost" href="/get-involved/partner">
+          Partner With Us
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Field-record footer: the device that runs through the whole site. -->
+    <div class="hero__foot" data-hero-tail>
+      <dl class="hero__stats">
+        <div>
+          <dt class="t-meta">Country office</dt>
+          <dd>{headquarters.city}, {headquarters.country}</dd>
+        </div>
+        <div>
+          <dt class="t-meta">Position</dt>
+          <dd class="hero__mono">{headquarters.coordinateLabel}</dd>
+        </div>
+        <div>
+          <dt class="t-meta">Programme areas</dt>
+          <dd>Six</dd>
+        </div>
+        <div>
+          <dt class="t-meta">Group</dt>
+          <dd>Member of the MMT Group</dd>
+        </div>
+      </dl>
+
+      <a class="scroll-cue" href="#who-we-are" aria-label="Scroll to introduction">
+        <span class="t-meta">Scroll</span>
+        <span class="scroll-cue__line" aria-hidden="true"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: min(94svh, 60rem);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero__media :global(.plate),
+  .hero__media :global(.frame) {
+    height: 100%;
+  }
+
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgb(7 24 39 / 0.94) 0%, rgb(7 24 39 / 0.72) 46%, rgb(7 24 39 / 0.3) 100%),
+      linear-gradient(to top, rgb(7 24 39 / 0.92) 0%, rgb(7 24 39 / 0) 45%);
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    padding-block: clamp(4rem, 10vw, 7rem) clamp(1.5rem, 3vw, 2.5rem);
+    width: 100%;
+  }
+
+  .hero__body {
+    max-width: 62rem;
+  }
+
+  .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ochre-400);
+    margin-bottom: 0.55rem;
+  }
+
+  .hero__eyebrow-rule {
+    width: clamp(1.5rem, 4vw, 3rem);
+    height: 1px;
+    background: currentColor;
+  }
+
+  .hero__context {
+    color: #93a8b6;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    padding-left: calc(clamp(1.5rem, 4vw, 3rem) + 0.85rem);
+  }
+
+  .hero__heading {
+    color: #fff;
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  /* Masking box for the GSAP line-slide entrance in lib/animations/hero.ts —
+     kept local to the hero rather than the shared `.reveal-lines` utility
+     (see the comment above the markup for why). */
+  .hero__heading > span {
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero__heading > span > span {
+    display: block;
+  }
+
+  .hero__heading :global(.is-accent) > span {
+    color: var(--color-ochre-400);
+  }
+
+  .hero__lede {
+    max-width: 52ch;
+    color: #c3d2da;
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  /* ---- field-record footer ---- */
+  .hero__foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  }
+
+  .hero__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1.25rem clamp(1.5rem, 4vw, 3.5rem);
+    margin: 0;
+    flex: 1;
+  }
+
+  .hero__stats > div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .hero__stats dt {
+    color: #7a8f9d;
+  }
+
+  .hero__stats dd {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #dde5ea;
+    line-height: 1.35;
+  }
+
+  .hero__mono {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem !important;
+    letter-spacing: 0.04em;
+  }
+
+  .scroll-cue {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: #7a8f9d;
+    text-decoration: none;
+    flex: none;
+  }
+
+  @media (min-width: 64rem) {
+    .scroll-cue {
+      display: flex;
+    }
+  }
+
+  .scroll-cue__line {
+    width: 1px;
+    height: 3.5rem;
+    background: linear-gradient(to bottom, var(--color-ochre-400), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-cue__line::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 1px;
+    height: 45%;
+    background: var(--color-ochre-400);
+    animation: cue 2.6s var(--ease-institutional) infinite;
+  }
+
+  @keyframes cue {
+    0% { transform: translateY(-100%); }
+    60%, 100% { transform: translateY(240%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue__line::after {
+      animation: none;
+    }
+  }
+</style>

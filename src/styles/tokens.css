@@ -1,0 +1,181 @@
+/* ==========================================================================
+   MMT IMPACT — DESIGN TOKENS
+   Deep navy · warm ochre accent · earthy green · sand / off-white
+   Gold is an ACCENT ONLY. Never a surface, never a large field.
+   ========================================================================== */
+
+@theme {
+  /* --- Brand: navy (primary) ------------------------------------------- */
+  --color-navy-950: #071827;
+  --color-navy-900: #0b2235;
+  --color-850: #0e2b3f;
+  --color-navy-850: #0e2b3f;
+  --color-navy-800: #12344a;
+  --color-navy-700: #1c465f;
+  --color-navy-600: #2b5b78;
+
+  /* --- Brand: ochre / gold (accent only) -------------------------------- */
+  --color-ochre-700: #9a7128;
+  --color-ochre-600: #b88932;
+  --color-ochre-500: #c99a45;
+  --color-ochre-400: #d7af64;
+  --color-ochre-300: #e5c78f;
+
+  /* --- Brand: earthy green (sustainability / livelihoods) --------------- */
+  --color-green-800: #24402f;
+  --color-green-700: #365b46;
+  --color-green-600: #4b7057;
+  --color-green-400: #7c9a78;
+
+  /* --- Neutrals --------------------------------------------------------- */
+  --color-white: #ffffff;
+  --color-off-white: #f5f4f0;
+  --color-sand: #e9e4d8;
+  --color-sand-deep: #ddd5c3;
+  --color-grey-100: #f1f2f1;
+  --color-grey-200: #e4e6e5;
+  --color-grey-300: #d6d9d7;
+  --color-grey-500: #8b9295;
+  --color-grey-700: #4a5255;
+  --color-grey-900: #262b2d;
+
+  /* --- Typography families ---------------------------------------------
+     One family site-wide: Plus Jakarta Sans for both display and text.
+     Display sizes lean on weight (600/700) rather than a serif's natural
+     stroke contrast to still read as a considered, not just a bigger, size. */
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "Cascadia Mono",
+    Consolas, monospace;
+
+  /* --- Fluid type scale -------------------------------------------------
+     Tuned by eye, not generated. Ceilings pulled in from the original pass —
+     the display sizes read as oversized on a real desktop viewport. */
+  --text-mega: clamp(3rem, 8.5vw, 8rem);
+  --text-display: clamp(2.5rem, 6vw, 6rem);
+  --text-h1: clamp(2rem, 4.4vw, 3.75rem);
+  --text-h2: clamp(1.75rem, 3.2vw, 2.75rem);
+  --text-h3: clamp(1.3125rem, 2vw, 1.75rem);
+  --text-h4: clamp(1.125rem, 1.4vw, 1.375rem);
+  --text-lead: clamp(1.0625rem, 1.35vw, 1.375rem);
+  --text-body: clamp(1rem, 1.05vw, 1.0625rem);
+  --text-small: 0.875rem;
+  --text-meta: 0.6875rem;
+
+  /* --- Fluid spacing ---------------------------------------------------- */
+  --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --spacing-section: clamp(3rem, 7vw, 7rem);
+  --spacing-section-sm: clamp(2.25rem, 4.5vw, 4.5rem);
+  --spacing-stack: clamp(1.5rem, 2.5vw, 2.5rem);
+
+  /* --- Layout ------------------------------------------------------------ */
+  --container-max: 1440px;
+  --container-text: 68ch;
+
+  /* --- Radius: restrained. Editorial frames are square. ------------------ */
+  --radius-none: 0px;
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-institutional: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-base: 420ms;
+  --duration-slow: 900ms;
+}
+
+/* ==========================================================================
+   SEMANTIC SURFACE SYSTEM
+   Sections opt into a surface; every component reads semantic vars only.
+   This is what lets light and dark sections alternate without prop drilling.
+   ========================================================================== */
+
+:root,
+.surface-light {
+  --ink: var(--color-navy-950);
+  --ink-strong: var(--color-navy-950);
+  --ink-muted: var(--color-grey-700);
+  --ink-faint: var(--color-grey-500);
+  --surface: var(--color-off-white);
+  --surface-raised: var(--color-white);
+  --surface-sunken: var(--color-sand);
+  --rule: color-mix(in srgb, var(--color-navy-950) 14%, transparent);
+  --rule-strong: color-mix(in srgb, var(--color-navy-950) 30%, transparent);
+  --accent: var(--color-ochre-600);
+  --accent-ink: var(--color-ochre-700);
+  --focus-ring: var(--color-navy-800);
+}
+
+.surface-paper {
+  --ink: var(--color-navy-950);
+  --ink-strong: var(--color-navy-950);
+  --ink-muted: var(--color-grey-700);
+  --ink-faint: var(--color-grey-500);
+  --surface: var(--color-white);
+  --surface-raised: var(--color-off-white);
+  --surface-sunken: var(--color-grey-100);
+  --rule: color-mix(in srgb, var(--color-navy-950) 12%, transparent);
+  --rule-strong: color-mix(in srgb, var(--color-navy-950) 28%, transparent);
+  --accent: var(--color-ochre-600);
+  --accent-ink: var(--color-ochre-700);
+  --focus-ring: var(--color-navy-800);
+}
+
+.surface-sand {
+  --ink: var(--color-navy-950);
+  --ink-strong: var(--color-navy-950);
+  --ink-muted: #5c5849;
+  --ink-faint: #8a8574;
+  --surface: var(--color-sand);
+  --surface-raised: var(--color-off-white);
+  --surface-sunken: var(--color-sand-deep);
+  --rule: color-mix(in srgb, var(--color-navy-950) 16%, transparent);
+  --rule-strong: color-mix(in srgb, var(--color-navy-950) 34%, transparent);
+  --accent: var(--color-ochre-700);
+  --accent-ink: var(--color-ochre-700);
+  --focus-ring: var(--color-navy-800);
+}
+
+.surface-dark {
+  --ink: #eef1f3;
+  --ink-strong: var(--color-white);
+  --ink-muted: #9fb0bc;
+  --ink-faint: #6b8090;
+  --surface: var(--color-navy-950);
+  --surface-raised: var(--color-navy-900);
+  --surface-sunken: #04101b;
+  --rule: color-mix(in srgb, #ffffff 15%, transparent);
+  --rule-strong: color-mix(in srgb, #ffffff 34%, transparent);
+  --accent: var(--color-ochre-400);
+  --accent-ink: var(--color-ochre-300);
+  --focus-ring: var(--color-ochre-400);
+}
+
+.surface-forest {
+  --ink: #e8efe9;
+  --ink-strong: var(--color-white);
+  --ink-muted: #a9bfae;
+  --ink-faint: #7e9784;
+  --surface: var(--color-green-800);
+  --surface-raised: var(--color-green-700);
+  --surface-sunken: #1a3023;
+  --rule: color-mix(in srgb, #ffffff 16%, transparent);
+  --rule-strong: color-mix(in srgb, #ffffff 34%, transparent);
+  --accent: var(--color-ochre-400);
+  --accent-ink: var(--color-ochre-300);
+  --focus-ring: var(--color-ochre-400);
+}
+
+.surface-light,
+.surface-paper,
+.surface-sand,
+.surface-dark,
+.surface-forest {
+  background-color: var(--surface);
+  color: var(--ink);
+}

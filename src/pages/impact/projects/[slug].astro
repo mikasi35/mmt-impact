@@ -1,0 +1,465 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import { formatDate } from '@lib/utils';
+import { contact } from '@data/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  const programmes = await getCollection('programmes');
+
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: {
+      project,
+      programme: programmes.find((p) => p.data.sector === project.data.sector),
+      related: projects
+        .filter((p) => p.id !== project.id && p.data.sector === project.data.sector)
+        .slice(0, 3),
+    },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  programme?: CollectionEntry<'programmes'>;
+  related: CollectionEntry<'projects'>[];
+}
+
+const { project, programme, related } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+
+const STATUS_LABEL: Record<string, string> = {
+  active: 'Active',
+  'in-design': 'In design',
+  planned: 'Planned',
+  completed: 'Completed',
+};
+
+const meta = [
+  { label: 'Country', value: d.country },
+  { label: 'Location', value: d.location },
+  { label: 'Sector', value: programme?.data.shortTitle ?? d.sector },
+  { label: 'Status', value: STATUS_LABEL[d.status] ?? d.status },
+  { label: 'Start date', value: d.startDate ? formatDate(d.startDate) : 'To be confirmed' },
+  { label: 'End date', value: d.endDate ? formatDate(d.endDate) : 'To be confirmed' },
+  {
+    label: 'Beneficiaries',
+    value: d.beneficiaries === null ? 'In reporting' : d.beneficiaries.toLocaleString('en-GB'),
+  },
+  { label: 'Budget', value: d.budget ?? 'Not published' },
+  { label: 'Partners', value: d.partners.length ? d.partners.join(', ') : 'None currently named' },
+  { label: 'Donors', value: d.donors.length ? d.donors.join(', ') : 'None currently named' },
+];
+
+const crumbs = [
+  { label: 'Our Impact', href: '/impact' },
+  { label: 'Projects', href: '/impact/projects' },
+  { label: d.title, href: `/impact/projects/${project.id}` },
+];
+
+const period = [d.startDate?.getFullYear(), d.endDate?.getFullYear()].filter(Boolean).join('–');
+---
+
+<PageLayout
+  title={d.title}
+  description={d.seoDescription}
+  crumbs={crumbs}
+  hero={{
+    eyebrow: `Project / ${d.location}`,
+    lines: [d.title],
+    lede: d.summary,
+    seed: `project-hero-${project.id}`,
+    variant: d.media?.variant,
+    tone: d.media?.tone,
+    facts: [
+      { label: 'Sector', value: programme?.data.shortTitle ?? d.sector },
+      { label: 'Status', value: STATUS_LABEL[d.status] ?? d.status },
+      {
+        label: 'Beneficiaries',
+        value: d.beneficiaries === null ? 'In reporting' : d.beneficiaries.toLocaleString('en-GB'),
+      },
+      { label: 'Period', value: period || 'To be confirmed' },
+    ],
+  }}
+  ctaProps={{
+    eyebrow: 'This project',
+    lines: ['Support or partner', 'on this project.'],
+    body: 'If your organisation is interested in funding, joining or learning from this project, the programmes team can share the full design documentation.',
+    primary: { label: 'Discuss this project', href: '/get-involved/partner' },
+    secondary: { label: 'All projects', href: '/impact/projects' },
+    seed: `cta-project-${project.id}`,
+  }}
+>
+  <!-- Project record -->
+  <section class="prec surface-paper section" aria-labelledby="prec-h">
+    <div class="wrap prec__wrap">
+      <div class="prec__meta">
+        <SectionLabel index="01" label="Project record" />
+        <dl class="data-list prec__list">
+          {
+            meta.map((m) => (
+              <div>
+                <dt>{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        {
+          d.documents.length > 0 && (
+            <div class="prec__docs">
+              <h2 class="t-meta prec__docs-heading">Documents</h2>
+              <ul>
+                {d.documents.map((doc) => (
+                  <li>
+                    <a href={doc.file} download>
+                      {doc.label}
+                      <span aria-hidden="true"> ↓</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="prec__body">
+        <h2 class="t-h2 prec__heading" id="prec-h" data-reveal>Overview</h2>
+        <div class="prose-editorial" data-reveal>
+          <Content />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Media band -->
+  <section class="pmedia surface-sand section-sm" data-parallax-scope>
+    <div class="wrap-wide">
+      <Plate
+        seed={`project-band-${project.id}`}
+        variant={d.media?.variant}
+        tone={d.media?.tone ?? 'navy'}
+        ratio="band"
+        parallax={8}
+        caption={d.media?.caption ?? d.location}
+      />
+    </div>
+  </section>
+
+  <!-- Objectives / activities / outcomes -->
+  <section class="pdetail surface-dark section" aria-label="Project detail">
+    <div class="wrap">
+      <SectionLabel index="02" label="Objectives, activities and outcomes" />
+      <div class="pdetail__grid">
+        {
+          d.objectives.length > 0 && (
+            <div class="pdetail__col" data-reveal>
+              <h2 class="t-meta pdetail__heading">Objectives</h2>
+              <ol class="pdetail__list pdetail__list--num">
+                {d.objectives.map((o) => (
+                  <li>{o}</li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+
+        {
+          d.activities.length > 0 && (
+            <div class="pdetail__col" data-reveal>
+              <h2 class="t-meta pdetail__heading">Activities</h2>
+              <ul class="pdetail__list">
+                {d.activities.map((a) => (
+                  <li>{a}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          d.outcomes.length > 0 && (
+            <div class="pdetail__col" data-reveal>
+              <h2 class="t-meta pdetail__heading">Expected outcomes</h2>
+              <ul class="pdetail__list">
+                {d.outcomes.map((o) => (
+                  <li>{o}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  {
+    d.gallery.length > 0 && (
+      <section class="pgal surface-paper section" aria-labelledby="pgal-h">
+        <div class="wrap">
+          <SectionLabel index="03" label="Gallery" />
+          <h2 class="sr-only" id="pgal-h">
+            Project gallery
+          </h2>
+          <div class="pgal__grid">
+            {d.gallery.map((g, i) => (
+              <Plate
+                seed={`gallery-${project.id}-${i}`}
+                src={g.src}
+                alt={g.alt}
+                caption={g.caption}
+                credit={g.credit}
+                variant={g.variant}
+                tone={g.tone ?? 'navy'}
+                ratio="wide"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Related -->
+  {
+    related.length > 0 && (
+      <section class="prel surface-light section" aria-labelledby="prel-h">
+        <div class="wrap">
+          <SectionLabel index="04" label="Related projects" />
+          <h2 class="t-h2 prel__heading" id="prel-h" data-reveal>
+            More in {programme?.data.shortTitle ?? 'this programme area'}.
+          </h2>
+          <div class="prel__grid">
+            {related.map((p) => (
+              <ProjectCard project={p} size="compact" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Programme link -->
+  {
+    programme && (
+      <section class="pprog surface-sand section-sm">
+        <div class="wrap pprog__inner">
+          <div>
+            <p class="t-meta pprog__label">Programme area</p>
+            <p class="t-h3 pprog__text">{programme.data.title}</p>
+          </div>
+          <div class="pprog__actions">
+            <a class="btn btn--ghost" href={`/what-we-do/${programme.id}`}>
+              View programme
+              <span class="btn-arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+            <a class="link-rule" href={`mailto:${contact.programmes}`}>
+              {contact.programmes}
+              <span class="btn-arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</PageLayout>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- record ---- */
+  .prec__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .prec__wrap {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+    .prec__meta {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .prec__list {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .prec__docs {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .prec__docs-heading {
+    color: var(--accent);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.85rem;
+  }
+
+  .prec__docs ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .prec__docs a {
+    font-size: 0.875rem;
+    color: var(--ink-strong);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .prec__docs a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  .prec__heading {
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  /* ---- detail ---- */
+  .pdetail__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 56rem) {
+    .pdetail__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .pdetail__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .pdetail__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 1.15rem;
+  }
+
+  .pdetail__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+    counter-reset: pdl;
+  }
+
+  .pdetail__list li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .pdetail__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.66em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .pdetail__list--num li {
+    counter-increment: pdl;
+  }
+
+  .pdetail__list--num li::before {
+    content: counter(pdl, decimal-leading-zero);
+    top: 0.1em;
+    width: auto;
+    height: auto;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  /* ---- gallery / related ---- */
+  .pgal__grid,
+  .prel__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .pgal__grid,
+    .prel__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .prel__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .prel__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- programme link ---- */
+  .pprog__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .pprog__label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .pprog__text {
+    max-width: 30ch;
+  }
+
+  .pprog__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+</style>

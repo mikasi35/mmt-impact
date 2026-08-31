@@ -1,0 +1,345 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import GroupEcosystem from '@components/sections/GroupEcosystem.astro';
+import { mission, vision, values } from '@data/organisation';
+import { headquarters } from '@data/site';
+
+const crumbs = [{ label: 'Who We Are', href: '/who-we-are' }];
+
+const pillars = [
+  {
+    href: '/who-we-are/mission',
+    label: 'Mission & Vision',
+    body: 'What the organisation exists to do, and the end state it works toward.',
+  },
+  {
+    href: '/who-we-are/values',
+    label: 'Our Values',
+    body: 'Five commitments, each with a test attached that we can actually be held to.',
+  },
+  {
+    href: '/who-we-are/approach',
+    label: 'How We Work',
+    body: 'The six-stage delivery method applied to every programme.',
+  },
+  {
+    href: '/who-we-are/leadership',
+    label: 'Leadership',
+    body: 'The accountable roles and reporting lines the organisation operates under.',
+  },
+  {
+    href: '/who-we-are/governance',
+    label: 'Governance',
+    body: 'Board, committees, controls, and where independent oversight sits.',
+  },
+  {
+    href: '/who-we-are/mmt-group',
+    label: 'MMT Group',
+    body: 'How MMT Impact relates to MMT Care and MMT Alliance — and how it does not.',
+  },
+];
+---
+
+<PageLayout
+  title="About MMT Impact"
+  description="MMT Impact is a development and humanitarian organisation working in South Sudan across education, community support, empowerment, livelihoods, humanitarian action and institutional development."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are',
+    lines: ['A development', 'organisation built', 'to be accountable.'],
+    lede: 'MMT Impact works with communities, governments, development partners and international organisations to create sustainable opportunities, strengthen livelihoods and improve lives.',
+    seed: 'who-we-are-hero',
+    src: '/images/who-we-are-page/who-are-we-page-hero.jpg',
+    variant: 'terrain',
+    facts: [
+      { label: 'Registered focus', value: 'Development & humanitarian' },
+      { label: 'Country office', value: `${headquarters.city}, ${headquarters.country}` },
+      { label: 'Programme areas', value: 'Six' },
+      { label: 'Group', value: 'Member of the MMT Group' },
+    ],
+  }}
+>
+  <!-- Our story -->
+  <EditorialSplit
+    index="01"
+    label="Our Story"
+    heading={'Development that begins\nwith communities.'}
+    ratio="lead"
+    surface="paper"
+    id="story"
+  >
+    <div class="prose-editorial">
+      <p>
+        MMT Impact was established to do development work in South Sudan the way the sector says it
+        should be done, and often is not: designed with communities rather than for them, delivered
+        by people who live in the context, and reported on in figures that can be checked.
+      </p>
+      <p>
+        That is not a novel ambition. What makes it achievable is structure. The organisation was
+        built with a governance framework, a policy suite and a monitoring function in place before
+        delivery began, rather than assembled retrospectively when a donor asked for them.
+      </p>
+      <p>
+        MMT Impact is a member of the wider MMT Group, which gives it access to expertise in
+        procurement, supply chain, finance and regulated service delivery that a new organisation
+        would otherwise take years to build. It does not give it another organisation’s track
+        record, and we are precise about that distinction throughout this site.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Mission / vision -->
+  <section class="mv surface-dark section" aria-labelledby="mv-heading">
+    <div class="wrap">
+      <SectionLabel index="02" label="Mission & Vision" />
+      <div class="mv__grid">
+        <div class="mv__block" data-reveal>
+          <p class="t-meta mv__label">Mission</p>
+          <p class="t-serif-lead mv__text" id="mv-heading">{mission}</p>
+        </div>
+        <div class="mv__block" data-reveal>
+          <p class="t-meta mv__label">Vision</p>
+          <p class="t-serif-lead mv__text">{vision}</p>
+        </div>
+      </div>
+      <a class="link-rule mv__cta" href="/who-we-are/mission" data-reveal>
+        Mission & vision in full
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="vals surface-light section" aria-labelledby="vals-heading">
+    <div class="wrap">
+      <SectionLabel index="03" label="Our Values" meta="Five commitments" />
+      <h2 class="t-h1 vals__heading" id="vals-heading" data-reveal>
+        Five commitments,<br />each with a test attached.
+      </h2>
+
+      <ol class="vals__list">
+        {
+          values.map((v) => (
+            <li class="val" data-reveal data-reveal-group="values">
+              <span class="t-meta val__num">{v.number}</span>
+              <div class="val__body">
+                <h3 class="val__name">{v.name}</h3>
+                <p class="val__statement">{v.statement}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <a class="link-rule vals__cta" href="/who-we-are/values" data-reveal>
+        What each value means in practice
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Plate break -->
+  <section class="break surface-sand section-sm" data-parallax-scope>
+    <div class="wrap-wide">
+      <Plate
+        seed="who-we-are-break"
+        src="/images/who-we-are-page/community-consultation-and-programme-design-south-sudan.jpg"
+        variant="cohort"
+        tone="navy"
+        ratio="band"
+        parallax={8}
+        caption="Community consultation and programme design, South Sudan"
+        alt="Community consultation and programme design session, South Sudan"
+      />
+    </div>
+  </section>
+
+  <!-- Section index -->
+  <section class="pillars surface-paper section" aria-labelledby="pillars-heading">
+    <div class="wrap">
+      <SectionLabel index="04" label="In this section" />
+      <h2 class="t-h2 pillars__heading" id="pillars-heading" data-reveal>Read further.</h2>
+      <ul class="pillars__list">
+        {
+          pillars.map((p, i) => (
+            <li data-reveal data-reveal-group="pillars">
+              <a class="pill" href={p.href}>
+                <span class="t-meta pill__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="pill__label">{p.label}</span>
+                <span class="t-small pill__body">{p.body}</span>
+                <span class="pill__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <GroupEcosystem detail="home" index="05" />
+</PageLayout>
+
+<style>
+  /* ---- mission / vision ---- */
+  .mv__grid {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 56rem) {
+    .mv__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .mv__block {
+    background: var(--surface);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+
+  .mv__label {
+    color: var(--accent);
+  }
+
+  .mv__text {
+    color: #fff;
+    max-width: 30ch;
+  }
+
+  .mv__cta {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    color: #fff;
+  }
+
+  /* ---- values ---- */
+  .vals__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .vals__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .val {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding-block: clamp(1.25rem, 2.5vw, 2rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .val__num {
+    color: var(--accent);
+    padding-top: 0.5rem;
+  }
+
+  .val__body {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .val__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.4vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink-strong);
+  }
+
+  .val__statement {
+    font-size: var(--text-lead);
+    color: var(--ink-muted);
+    max-width: 54ch;
+  }
+
+  .vals__cta {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- pillars ---- */
+  .pillars__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .pillars__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  @media (min-width: 48rem) {
+    .pillars__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .pillars__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pill {
+    display: grid;
+    gap: 0.5rem;
+    background: var(--surface);
+    padding: clamp(1.35rem, 2.5vw, 2rem);
+    height: 100%;
+    align-content: start;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: background 220ms var(--ease-institutional);
+  }
+
+  .pill:hover {
+    background: var(--surface-raised);
+  }
+
+  .pill__num {
+    color: var(--accent);
+  }
+
+  .pill__label {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .pill__body {
+    color: var(--ink-muted);
+  }
+
+  .pill__arrow {
+    position: absolute;
+    top: clamp(1.35rem, 2.5vw, 2rem);
+    right: clamp(1.35rem, 2.5vw, 2rem);
+    color: var(--ink-faint);
+    transition: transform 380ms var(--ease-out-expo), color 220ms;
+  }
+
+  .pill:hover .pill__arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+</style>

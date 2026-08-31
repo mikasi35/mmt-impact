@@ -1,0 +1,348 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { formatDate, isPast } from '@lib/utils';
+import { contact } from '@data/site';
+
+const all = await getCollection('jobs', ({ data }) => !data.draft);
+const open = all.filter((j) => !isPast(j.data.closes ?? undefined));
+
+const TYPE_LABEL: Record<string, string> = {
+  vacancy: 'Current Vacancies',
+  consultancy: 'Consultancies',
+  internship: 'Internships',
+  volunteer: 'Volunteer Opportunities',
+};
+
+const groups = (['vacancy', 'consultancy', 'internship', 'volunteer'] as const)
+  .map((t) => ({ id: t, label: TYPE_LABEL[t]!, items: open.filter((j) => j.data.type === t) }))
+  .filter((g) => g.items.length > 0);
+
+const crumbs = [{ label: 'Careers', href: '/careers' }];
+---
+
+<PageLayout
+  title="Careers"
+  description="Vacancies, consultancies, internships and volunteer opportunities at MMT Impact in South Sudan, with local recruitment as the default."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Careers',
+    lines: ['Work where the', 'work happens.'],
+    lede: 'MMT Impact recruits locally by default. Delivery runs through people who live in and understand the context, and we build capability rather than importing it.',
+    seed: 'careers-hero',
+    variant: 'cohort',
+    facts: [
+      { label: 'Open roles', value: String(open.length) },
+      { label: 'Based', value: 'Juba, South Sudan' },
+      { label: 'Recruitment fee', value: 'None, ever' },
+      { label: 'Applications', value: contact.careers },
+    ],
+  }}
+  cta={false}
+>
+  <!-- Open roles -->
+  <section class="roles surface-paper section" aria-labelledby="roles-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Opportunities" meta={`${open.length} open`} />
+      <h2 class="t-h2 roles__heading" id="roles-h" data-reveal>What is open.</h2>
+
+      {
+        groups.length > 0 ? (
+          <div class="roles__groups">
+            {groups.map((g) => (
+              <div class="rgroup" data-reveal data-reveal-group="roles">
+                <h3 class="t-meta rgroup__heading">{g.label}</h3>
+                <ul class="rgroup__list">
+                  {g.items.map((j) => (
+                    <li class="jrow">
+                      <a class="jrow__link" href={`/careers/${j.id}`}>
+                        <span class="jrow__main">
+                          <span class="jrow__title">{j.data.title}</span>
+                          <span class="t-small jrow__summary">{j.data.summary}</span>
+                        </span>
+                        <span class="jrow__meta">
+                          <span class="t-meta">{j.data.location}</span>
+                          <span class="t-meta">{j.data.contract}</span>
+                          <span class="t-meta jrow__closes">
+                            {j.data.closes ? `Closes ${formatDate(j.data.closes)}` : 'Rolling'}
+                          </span>
+                        </span>
+                        <span class="jrow__arrow" aria-hidden="true">
+                          →
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="roles__empty">
+            <EmptyState
+              eyebrow="Recruitment"
+              title="No roles are open at the moment."
+              body="Vacancies, consultancies, internships and volunteer opportunities are published here when open, with a full role description and a closing date. Register your interest below and we will contact you when something matches."
+              action={{ label: 'Register your interest', href: '#talent' }}
+              secondary={{ label: 'Consultant registration', href: '/partnerships/consultant-registration' }}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- How we recruit -->
+  <section class="how surface-dark section" aria-labelledby="how-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="How we recruit" />
+      <h2 class="t-h2 how__heading" id="how-h" data-reveal>What you can expect.</h2>
+      <NumberedGrid
+        columns={2}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Local recruitment by default',
+            body: 'Roles are advertised locally first. An international recruitment happens only where a required capability genuinely is not available in-country, and the role then carries an obligation to transfer it.',
+          },
+          {
+            number: '02',
+            title: 'Published criteria',
+            body: 'Every role publishes its responsibilities and requirements. Shortlisting is against those criteria, by a panel, with the scoring recorded.',
+          },
+          {
+            number: '03',
+            title: 'Safeguarding checks',
+            body: 'All appointments are subject to reference checks that ask specifically about safeguarding conduct, and to acceptance of our Code of Conduct and PSEA obligations.',
+          },
+          {
+            number: '04',
+            title: 'No fees, at any stage',
+            body: 'MMT Impact never charges a fee to apply, to interview, or to be appointed. Nobody acting for us is authorised to request payment or any personal benefit.',
+          },
+        ]}
+      />
+
+      <div class="how__warn" data-reveal>
+        <p class="t-meta how__warn-label">Recruitment fraud</p>
+        <p class="t-small">
+          If anyone requests payment in connection with an MMT Impact role, or contacts you from a
+          domain that is not <strong>mmtimpact.org</strong>, do not pay and do not send personal
+          documents. Report it to <a href={`mailto:${contact.careers}`}>{contact.careers}</a> or
+          through our <a href="/transparency#whistleblowing">confidential reporting channel</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Talent register -->
+  <section class="talent surface-light section" id="talent" aria-labelledby="talent-h">
+    <div class="wrap talent__wrap">
+      <div class="talent__lead">
+        <SectionLabel index="03" label="Register your interest" />
+        <h2 class="t-h2 talent__heading" id="talent-h" data-reveal>Talent register.</h2>
+        <p class="t-lead talent__body" data-reveal>
+          Tell us what you do and where you are, and we will contact you when a role matches. This
+          is not an application to a specific vacancy.
+        </p>
+        <dl class="talent__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.careers}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Data handling</dt>
+            <dd>
+              Held under our <a href="/legal/privacy">privacy notice</a>, never published, and
+              deleted on request.
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="talent__form" data-reveal>
+        <EnquiryForm
+          variant="application"
+          title="Talent register"
+          subject="Talent register — MMT Impact"
+          intro="Attach a CV and tell us the kind of role you are looking for."
+        />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .roles__heading,
+  .how__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .how__heading {
+    color: #fff;
+  }
+
+  .roles__groups {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .rgroup__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .rgroup__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .jrow {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .jrow__link {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+    padding-block: 1.35rem;
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 380ms var(--ease-out-expo);
+  }
+
+  @media (max-width: 56rem) {
+    .jrow__link {
+      grid-template-columns: 1fr auto;
+    }
+    .jrow__meta {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .jrow__link:hover {
+    padding-left: clamp(0.5rem, 1.5vw, 1rem);
+  }
+
+  .jrow__main {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .jrow__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .jrow__summary {
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  .jrow__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    color: var(--ink-faint);
+  }
+
+  .jrow__closes {
+    color: var(--accent-ink);
+  }
+
+  .jrow__arrow {
+    color: var(--ink-faint);
+    transition: transform 380ms var(--ease-out-expo), color 220ms;
+  }
+
+  .jrow__link:hover .jrow__arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .how__warn {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: color-mix(in srgb, #fff 4%, transparent);
+    max-width: 78ch;
+  }
+
+  .how__warn-label {
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .how__warn a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ---- talent ---- */
+  .talent__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .talent__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .talent__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .talent__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .talent__body {
+    max-width: 44ch;
+  }
+
+  .talent__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .talent__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .talent__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .talent__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+
+  .talent__facts a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

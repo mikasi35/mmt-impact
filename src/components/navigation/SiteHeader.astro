@@ -1,0 +1,903 @@
+---
+import Logo from '@components/ui/Logo.astro';
+import { primaryNav, utilityNav } from '@data/navigation';
+import { headquarters } from '@data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+
+<header class="site-header" data-header>
+  <!-- Utility strip: the institutional register, and where the country office lives. -->
+  <div class="utility">
+    <div class="wrap-wide utility__inner">
+      <p class="t-meta utility__place">
+        <span class="utility__dot" aria-hidden="true"></span>
+        {headquarters.label} — {headquarters.city}
+        <span class="utility__coord">{headquarters.coordinateLabel}</span>
+      </p>
+      <nav class="utility__nav" aria-label="Utility">
+        <ul>
+          {
+            utilityNav.map((l) => (
+              <li>
+                <a class="t-meta" href={l.href}>
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="bar">
+    <div class="wrap-wide bar__inner">
+      <a class="bar__logo" href="/" aria-label="MMT Impact — home">
+        <Logo size={46} />
+      </a>
+
+      <nav class="primary" aria-label="Primary">
+        <ul class="primary__list">
+          {
+            primaryNav.map((group, i) => (
+              <li class="primary__item" data-nav-item>
+                {group.columns ? (
+                  <>
+                    <button
+                      type="button"
+                      class="primary__trigger"
+                      aria-expanded="false"
+                      aria-controls={`meganav-${i}`}
+                      data-nav-trigger
+                      data-active={isActive(group.href) ? 'true' : undefined}
+                    >
+                      {group.label}
+                      <svg width="9" height="6" viewBox="0 0 9 6" aria-hidden="true" class="primary__chev">
+                        <path d="M1 1l3.5 3.5L8 1" stroke="currentColor" stroke-width="1.4" fill="none" />
+                      </svg>
+                    </button>
+
+                    <div class="mega" id={`meganav-${i}`} data-nav-panel hidden>
+                      <div class="wrap-wide mega__inner">
+                        <div class="mega__lead">
+                          <p class="t-meta mega__index">{String(i + 1).padStart(2, '0')}</p>
+                          <a class="t-serif-lead mega__title" href={group.href}>
+                            {group.label}
+                          </a>
+                          {group.intro && <p class="t-small mega__intro">{group.intro}</p>}
+                          <a class="link-rule mega__all" href={group.href}>
+                            Overview
+                            <span class="btn-arrow" aria-hidden="true">→</span>
+                          </a>
+                        </div>
+
+                        <div class="mega__cols">
+                          {group.columns.map((col) => (
+                            <div class="mega__col">
+                              {col.heading && col.heading.trim() && (
+                                <p class="t-meta mega__heading">{col.heading}</p>
+                              )}
+                              <ul>
+                                {col.links.map((link) => (
+                                  <li>
+                                    <a class="mega__link" href={link.href}>
+                                      <span class="mega__link-label">{link.label}</span>
+                                      {link.description && (
+                                        <span class="mega__link-desc">{link.description}</span>
+                                      )}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+
+                        {group.feature && (
+                          <a class="mega__feature" href={group.feature.href}>
+                            <p class="t-meta mega__feature-eyebrow">{group.feature.eyebrow}</p>
+                            <p class="t-h4 mega__feature-title">{group.feature.title}</p>
+                            <p class="t-small mega__feature-body">{group.feature.body}</p>
+                            <span class="link-rule mega__feature-cta">
+                              {group.feature.cta}
+                              <span class="btn-arrow" aria-hidden="true">→</span>
+                            </span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <a
+                    class="primary__trigger"
+                    href={group.href}
+                    data-active={isActive(group.href) ? 'true' : undefined}
+                  >
+                    {group.label}
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="bar__actions">
+        <a class="btn btn--accent btn--sm bar__cta" href="/get-involved/partner">
+          Partner With Us
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <button
+          type="button"
+          class="burger"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          aria-label="Open menu"
+          data-burger
+        >
+          <span class="burger__box" aria-hidden="true">
+            <span></span>
+            <span></span>
+          </span>
+          <span class="t-meta burger__label" data-burger-label>Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- mobile -->
+  <div class="mobile-nav" id="mobile-nav" data-mobile-nav hidden>
+    <div class="mobile-nav__scroll">
+      <nav aria-label="Mobile primary">
+        <ul class="mobile-nav__list">
+          {
+            primaryNav.map((group, i) => (
+              <li class="mobile-nav__item">
+                {group.columns ? (
+                  <details class="mobile-nav__details">
+                    <summary class="mobile-nav__summary">
+                      <span class="t-meta mobile-nav__index">{String(i + 1).padStart(2, '0')}</span>
+                      <span class="mobile-nav__label">{group.label}</span>
+                      <span class="mobile-nav__plus" aria-hidden="true" />
+                    </summary>
+                    <div class="mobile-nav__panel">
+                      <a class="mobile-nav__overview" href={group.href}>
+                        {group.label} overview
+                      </a>
+                      {group.columns.map((col) => (
+                        <ul class="mobile-nav__sublist">
+                          {col.links.map((link) => (
+                            <li>
+                              <a href={link.href}>{link.label}</a>
+                            </li>
+                          ))}
+                        </ul>
+                      ))}
+                    </div>
+                  </details>
+                ) : (
+                  <a class="mobile-nav__summary" href={group.href}>
+                    <span class="t-meta mobile-nav__index">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="mobile-nav__label">{group.label}</span>
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="mobile-nav__foot">
+        <a class="btn btn--accent mobile-nav__cta" href="/get-involved/partner">
+          Partner With Us
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <ul class="mobile-nav__utility">
+          {
+            utilityNav.map((l) => (
+              <li>
+                <a class="t-meta" href={l.href}>
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="t-meta mobile-nav__place">
+          {headquarters.city}, {headquarters.country} · {headquarters.coordinateLabel}
+        </p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="header-spacer" aria-hidden="true"></div>
+
+<style>
+  /* ------------------------------------------------------------------------
+     The header is a LIGHT surface floating over mostly dark hero sections.
+     It scopes its own semantic tokens rather than inheriting from the section
+     beneath it, so the same markup works on every page.
+     ------------------------------------------------------------------------ */
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    background: #fff;
+    color: var(--color-navy-900);
+    --ink: var(--color-navy-900);
+    --ink-strong: var(--color-navy-950);
+    --ink-muted: var(--color-grey-700);
+    --ink-faint: #6c7679;
+    --accent: var(--color-ochre-600);
+    --rule: color-mix(in srgb, var(--color-navy-950) 12%, transparent);
+    --rule-strong: color-mix(in srgb, var(--color-navy-950) 26%, transparent);
+    --focus-ring: var(--color-navy-800);
+    --logo-accent: var(--color-ochre-600);
+    border-bottom: 1px solid var(--rule);
+    transition: transform 380ms var(--ease-institutional),
+      box-shadow 380ms var(--ease-institutional);
+  }
+
+  /* Header retreats on downward scroll, returns immediately on upward. */
+  .site-header[data-hidden="true"] {
+    transform: translateY(-100%);
+  }
+
+  .site-header[data-scrolled="true"] {
+    box-shadow: 0 12px 32px -24px rgb(7 24 39 / 0.5);
+  }
+
+  .header-spacer {
+    height: var(--header-height, 71px);
+  }
+
+  @media (min-width: 64rem) {
+    .header-spacer {
+      height: var(--header-height, 105px);
+    }
+  }
+
+  /* ---- utility strip ---- */
+  .utility {
+    background: var(--color-off-white);
+    border-bottom: 1px solid var(--rule);
+  }
+  .utility__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 34px;
+  }
+  .utility__place {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink-muted);
+  }
+  .utility__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+  .utility__coord {
+    color: var(--ink-faint);
+    margin-left: 0.35rem;
+  }
+  .utility__nav ul {
+    display: flex;
+    gap: 1.6rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .utility__nav a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-institutional);
+  }
+  .utility__nav a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 64rem) {
+    .utility {
+      display: none;
+    }
+  }
+
+  /* ---- main bar ---- */
+  .bar__inner {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    min-height: 70px;
+  }
+
+  .bar__logo {
+    text-decoration: none;
+    color: var(--ink-strong);
+    flex: none;
+  }
+
+  .primary {
+    margin-left: auto;
+  }
+
+  .primary__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.4rem, 1.1vw, 1.15rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .primary__item {
+    position: static;
+  }
+
+  .primary__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: 0;
+    padding: 0.5rem 0.2rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    color: var(--color-navy-800);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+    transition: color var(--duration-fast) var(--ease-institutional);
+  }
+
+  .primary__trigger::after {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    right: 0.2rem;
+    bottom: 0.1rem;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 340ms var(--ease-out-expo);
+  }
+
+  .primary__trigger:hover,
+  .primary__trigger[aria-expanded="true"],
+  .primary__trigger[data-active="true"] {
+    color: var(--color-navy-950);
+  }
+
+  .primary__trigger:hover::after,
+  .primary__trigger[aria-expanded="true"]::after,
+  .primary__trigger[data-active="true"]::after {
+    transform: scaleX(1);
+  }
+
+  .primary__chev {
+    opacity: 0.45;
+    transition: transform 260ms var(--ease-institutional);
+  }
+  .primary__trigger[aria-expanded="true"] .primary__chev {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
+  @media (max-width: 76rem) {
+    .primary {
+      display: none;
+    }
+  }
+
+  /* ---- mega panel ---- */
+  .mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--color-off-white);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule-strong);
+    box-shadow: 0 32px 64px -34px rgb(7 24 39 / 0.35);
+  }
+
+  .mega[hidden] {
+    display: none;
+  }
+
+  .mega__inner {
+    display: grid;
+    grid-template-columns: minmax(15rem, 1fr) minmax(0, 2.1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-block: clamp(2rem, 3.5vw, 3.25rem);
+  }
+
+  .mega__inner:has(.mega__feature) {
+    grid-template-columns: minmax(14rem, 0.95fr) minmax(0, 1.9fr) minmax(13rem, 0.85fr);
+  }
+
+  .mega__index {
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+
+  .mega__title {
+    display: block;
+    color: var(--ink-strong);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+  }
+
+  .mega__intro {
+    color: var(--ink-muted);
+    max-width: 30ch;
+    margin-bottom: 1.5rem;
+  }
+
+  .mega__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .mega__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .mega__heading {
+    color: var(--ink-faint);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .mega__link {
+    display: block;
+    padding: 0.5rem 0.7rem 0.5rem 0;
+    text-decoration: none;
+    border-left: 1px solid transparent;
+    padding-left: 0;
+    transition: border-color 200ms var(--ease-institutional),
+      padding-left 260ms var(--ease-out-expo);
+  }
+
+  .mega__link:hover,
+  .mega__link:focus-visible {
+    border-left-color: var(--accent);
+    padding-left: 0.75rem;
+  }
+
+  .mega__link-label {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+    line-height: 1.3;
+  }
+
+  .mega__link-desc {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    margin-top: 0.2rem;
+  }
+
+  .mega__feature {
+    display: block;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border: 1px solid var(--rule-strong);
+    background: #fff;
+    text-decoration: none;
+    align-self: start;
+    transition: border-color 240ms var(--ease-institutional);
+  }
+  .mega__feature:hover {
+    border-color: var(--accent);
+  }
+  .mega__feature-eyebrow {
+    color: var(--accent);
+    margin-bottom: 0.85rem;
+  }
+  .mega__feature-title {
+    color: var(--ink-strong);
+    margin-bottom: 0.5rem;
+  }
+  .mega__feature-body {
+    color: var(--ink-muted);
+    margin-bottom: 1.25rem;
+  }
+  .mega__feature-cta {
+    color: var(--ink-strong);
+    font-size: 0.6875rem;
+  }
+
+  /* ---- actions ---- */
+  .bar__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: none;
+  }
+
+  /* Below the desktop-nav breakpoint nothing else pushes the actions right,
+     so do it explicitly — the burger belongs at the far edge. */
+  @media (max-width: 76rem) {
+    .bar__actions {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .bar__cta {
+      display: none;
+    }
+  }
+
+  .burger {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+    background: none;
+    border: 0;
+    padding: 0.5rem 0;
+    color: var(--ink-strong);
+    cursor: pointer;
+  }
+
+  @media (max-width: 76rem) {
+    .burger {
+      display: inline-flex;
+    }
+  }
+
+  .burger__box {
+    display: grid;
+    gap: 5px;
+    width: 22px;
+  }
+  .burger__box span {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 300ms var(--ease-out-expo), opacity 200ms;
+  }
+  .burger[aria-expanded="true"] .burger__box span:first-child {
+    transform: translateY(3.25px) rotate(45deg);
+  }
+  .burger[aria-expanded="true"] .burger__box span:last-child {
+    transform: translateY(-3.25px) rotate(-45deg);
+  }
+  .burger__label {
+    color: var(--ink-muted);
+  }
+
+  /* ---- mobile nav ---- */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    top: var(--header-height, 71px);
+    background: #fff;
+    overflow: hidden;
+  }
+  .mobile-nav[hidden] {
+    display: none;
+  }
+  .mobile-nav__scroll {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(1.5rem, 5vw, 3rem) var(--spacing-gutter) 4rem;
+  }
+  .mobile-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .mobile-nav__item {
+    border-bottom: 1px solid var(--rule);
+  }
+  .mobile-nav__summary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.15rem 0;
+    cursor: pointer;
+    list-style: none;
+    text-decoration: none;
+    color: var(--ink-strong);
+  }
+  .mobile-nav__summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-nav__index {
+    color: var(--accent);
+    flex: none;
+  }
+  .mobile-nav__label {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .mobile-nav__plus {
+    margin-left: auto;
+    position: relative;
+    width: 13px;
+    height: 13px;
+    flex: none;
+  }
+  .mobile-nav__plus::before,
+  .mobile-nav__plus::after {
+    content: "";
+    position: absolute;
+    background: var(--accent);
+    transition: transform 300ms var(--ease-out-expo);
+  }
+  .mobile-nav__plus::before {
+    inset: 6px 0 6px 0;
+    height: 1.5px;
+  }
+  .mobile-nav__plus::after {
+    inset: 0 6px 0 6px;
+    width: 1.5px;
+  }
+  .mobile-nav__details[open] .mobile-nav__plus::after {
+    transform: scaleY(0);
+  }
+  .mobile-nav__panel {
+    padding-bottom: 1.35rem;
+  }
+  .mobile-nav__overview {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 0.9rem;
+  }
+  .mobile-nav__sublist {
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .mobile-nav__sublist a {
+    display: block;
+    padding: 0.6rem 0;
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .mobile-nav__foot {
+    margin-top: 2.25rem;
+    display: grid;
+    gap: 1.75rem;
+    justify-items: start;
+  }
+  .mobile-nav__cta {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mobile-nav__utility {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.5rem;
+  }
+  .mobile-nav__utility a {
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .mobile-nav__place {
+    color: var(--ink-faint);
+  }
+
+  :global(body.nav-open) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  /**
+   * Navigation behaviour.
+   *
+   * Mega panels: pointer devices open on hover with a short intent delay;
+   * keyboard and touch open on activation. Escape closes and returns focus.
+   * Mobile: a real focus trap, scroll lock, and Escape to close.
+   */
+  function initHeader() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    if (!header) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — without this guard, every nav trigger and the mobile
+    // burger would get a second click/hover listener, so a single click
+    // could toggle a panel open then immediately closed again.
+    if (header.dataset.bound === 'true') return;
+    header.dataset.bound = 'true';
+
+    const items = Array.from(header.querySelectorAll<HTMLElement>('[data-nav-item]'));
+    const burger = header.querySelector<HTMLButtonElement>('[data-burger]');
+    const burgerLabel = header.querySelector<HTMLElement>('[data-burger-label]');
+    const mobile = header.querySelector<HTMLElement>('[data-mobile-nav]');
+    const fine = window.matchMedia('(pointer: fine)').matches;
+
+    /* ---- measure real header height so nothing sits under it ---- */
+    const setHeight = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    };
+    setHeight();
+    const ro = new ResizeObserver(setHeight);
+    ro.observe(header);
+
+    /* ---- mega panels ---- */
+    let openTimer: number | undefined;
+    let closeTimer: number | undefined;
+
+    const closeAll = (except?: HTMLElement) => {
+      items.forEach((item) => {
+        if (item === except) return;
+        const trigger = item.querySelector<HTMLElement>('[data-nav-trigger]');
+        const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
+        if (!trigger || !panel) return;
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+      });
+    };
+
+    const open = (item: HTMLElement) => {
+      const trigger = item.querySelector<HTMLElement>('[data-nav-trigger]');
+      const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
+      if (!trigger || !panel) return;
+      closeAll(item);
+      trigger.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+    };
+
+    items.forEach((item) => {
+      const trigger = item.querySelector<HTMLButtonElement>('[data-nav-trigger]');
+      const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
+      if (!trigger || !panel) return;
+
+      trigger.addEventListener('click', () => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        if (isOpen) closeAll();
+        else open(item);
+      });
+
+      if (fine) {
+        const enter = () => {
+          window.clearTimeout(closeTimer);
+          openTimer = window.setTimeout(() => open(item), 90);
+        };
+        const leave = () => {
+          window.clearTimeout(openTimer);
+          closeTimer = window.setTimeout(() => closeAll(), 220);
+        };
+        item.addEventListener('mouseenter', enter);
+        item.addEventListener('mouseleave', leave);
+        panel.addEventListener('mouseenter', () => window.clearTimeout(closeTimer));
+        panel.addEventListener('mouseleave', leave);
+      }
+
+      // Close when focus leaves the group entirely (keyboard users).
+      item.addEventListener('focusout', (e) => {
+        const next = (e as FocusEvent).relatedTarget as Node | null;
+        if (next && item.contains(next)) return;
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+      });
+    });
+
+    /* ---- mobile ---- */
+    const FOCUSABLE =
+      'a[href], button:not([disabled]), summary, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    const setMobile = (isOpen: boolean) => {
+      if (!burger || !mobile) return;
+      burger.setAttribute('aria-expanded', String(isOpen));
+      burger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+      mobile.hidden = !isOpen;
+      document.body.classList.toggle('nav-open', isOpen);
+      if (burgerLabel) burgerLabel.textContent = isOpen ? 'Close' : 'Menu';
+      if (isOpen) {
+        mobile.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+      }
+    };
+
+    burger?.addEventListener('click', () => {
+      setMobile(burger.getAttribute('aria-expanded') !== 'true');
+    });
+
+    mobile?.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const nodes = Array.from(mobile.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (n) => n.offsetParent !== null
+      );
+      if (!nodes.length) return;
+      const first = nodes[0]!;
+      const last = nodes[nodes.length - 1]!;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (burger?.getAttribute('aria-expanded') === 'true') {
+        setMobile(false);
+        burger.focus();
+        return;
+      }
+      const openItem = items.find(
+        (i) => i.querySelector('[data-nav-trigger]')?.getAttribute('aria-expanded') === 'true'
+      );
+      if (openItem) {
+        closeAll();
+        openItem.querySelector<HTMLElement>('[data-nav-trigger]')?.focus();
+      }
+    });
+
+    /* ---- retract on scroll down, reveal on scroll up ---- */
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const menuOpen = burger?.getAttribute('aria-expanded') === 'true';
+        const panelOpen = items.some(
+          (i) => i.querySelector('[data-nav-trigger]')?.getAttribute('aria-expanded') === 'true'
+        );
+        header.dataset.scrolled = String(y > 8);
+        if (!menuOpen && !panelOpen) {
+          header.dataset.hidden = String(y > lastY && y > 260);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        ro.disconnect();
+        document.body.classList.remove('nav-open');
+      },
+      { once: true }
+    );
+  }
+
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
+</script>

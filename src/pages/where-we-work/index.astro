@@ -1,0 +1,286 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import PresenceMap from '@components/geography/PresenceMap.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import { impactPresence, groupPresence } from '@data/countries';
+import { headquarters } from '@data/site';
+
+const crumbs = [{ label: 'Where We Work', href: '/where-we-work' }];
+---
+
+<PageLayout
+  title="Where We Work"
+  description="MMT Impact operates from a country office in Juba, South Sudan. The wider MMT Group has a presence across Kenya, Somalia, the UAE and Australia."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Where We Work',
+    lines: ['One country.', 'One office.', 'Stated plainly.'],
+    lede: 'MMT Impact operates in South Sudan. The wider MMT Group has a presence in other markets — and this page is careful about which is which.',
+    seed: 'where-hero',
+    variant: 'graticule',
+    facts: [
+      { label: 'MMT Impact presence', value: `${headquarters.city}, South Sudan` },
+      { label: 'Position', value: headquarters.coordinateLabel },
+      { label: 'Group locations', value: `${groupPresence.length} additional` },
+      { label: 'Basemap', value: 'Self-hosted, no tracking' },
+    ],
+  }}
+>
+  <!-- Map -->
+  <section class="mapsec surface-light section" aria-labelledby="map-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Presence map" meta="Interactive · list alternative provided" />
+      <h2 class="t-h2 mapsec__heading" id="map-h" data-reveal>
+        Where each organisation<br />actually is.
+      </h2>
+
+      <div class="mapsec__map" data-reveal>
+        <PresenceMap />
+      </div>
+    </div>
+  </section>
+
+  <!-- MMT Impact presence -->
+  <section class="own surface-dark section" aria-labelledby="own-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="MMT Impact presence" meta="Our own footprint" />
+      <h2 class="t-h2 own__heading" id="own-h" data-reveal>Our operating base.</h2>
+
+      <ul class="own__list">
+        {
+          impactPresence.map((p) => (
+            <li class="ocard" data-reveal>
+              <div class="ocard__head">
+                <p class="t-meta ocard__entity">{p.entity}</p>
+                <p class="ocard__city">{p.city}</p>
+                <p class="t-meta ocard__coord">{p.coordinateLabel}</p>
+              </div>
+              <div class="ocard__body">
+                <p class="t-meta ocard__role">{p.role} · {p.country}</p>
+                <p class="t-body ocard__detail">{p.detail}</p>
+                {p.href && (
+                  <a class="link-rule ocard__link" href={p.href}>
+                    South Sudan country programme
+                    <span class="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Group presence -->
+  <section class="grouppres surface-sand section" id="group-presence" aria-labelledby="gp-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Wider MMT Group presence" meta="Not MMT Impact offices" />
+      <h2 class="t-h2 grouppres__heading" id="gp-h" data-reveal>
+        Where other Group<br />organisations operate.
+      </h2>
+      <p class="t-lead grouppres__note" data-reveal>
+        These are the locations of MMT Alliance and MMT Care. MMT Impact does not hold an office in
+        any of them, and nothing on this site should be read as claiming otherwise.
+      </p>
+
+      <div class="grouppres__table">
+        <div class="gprow gprow--head" aria-hidden="true">
+          <span class="t-meta">Location</span>
+          <span class="t-meta">Organisation</span>
+          <span class="t-meta">Role</span>
+        </div>
+        {
+          groupPresence.map((p) => (
+            <div class="gprow" data-reveal data-reveal-group="gp">
+              <span class="gprow__loc">
+                <span class="gprow__city">{p.city}</span>
+                <span class="t-meta gprow__country">{p.country}</span>
+              </span>
+              <span class="gprow__entity">{p.entity}</span>
+              <span class="gprow__role">{p.role}</span>
+            </div>
+          ))
+        }
+      </div>
+
+      <a class="link-rule grouppres__cta" href="/who-we-are/mmt-group" data-reveal>
+        About the MMT Group
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="04"
+    label="Expansion"
+    heading={'We will say so when\nwe open somewhere.'}
+    ratio="lead"
+    surface="paper"
+    id="expansion"
+  >
+    <div class="prose-editorial">
+      <p>
+        A common pattern in organisational marketing is a world map with a pin in every country
+        where anyone connected to the organisation has ever worked. It is effective and it is
+        misleading, and institutional funders have learned to discount it.
+      </p>
+      <p>
+        MMT Impact operates in South Sudan. If and when we establish a presence elsewhere — with a
+        registered entity, a mandate and staff on the ground — this page will say so, with a date.
+      </p>
+      <p>
+        Where a programme requires reach beyond our own footprint, we say how it will be achieved:
+        through a named implementing partner, through a consortium, or through capability available
+        from another MMT Group organisation under a specified contractual arrangement.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .mapsec__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- own presence ---- */
+  .own__heading {
+    color: #fff;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .own__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ocard {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, #fff 3%, transparent);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .ocard {
+      grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    }
+  }
+
+  .ocard__entity {
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .ocard__city {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: #fff;
+  }
+
+  .ocard__coord {
+    margin-top: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .ocard__role {
+    color: var(--ink-faint);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.15rem;
+  }
+
+  .ocard__detail {
+    max-width: 62ch;
+  }
+
+  .ocard__link {
+    display: inline-flex;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    color: #fff;
+  }
+
+  /* ---- group table ---- */
+  .grouppres__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .grouppres__note {
+    max-width: 62ch;
+  }
+
+  .grouppres__table {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .gprow {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem clamp(1rem, 3vw, 2.5rem);
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  @media (max-width: 40rem) {
+    .gprow {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+    .gprow--head {
+      display: none;
+    }
+  }
+
+  .gprow--head {
+    padding-block: 0.75rem;
+  }
+
+  .gprow--head span {
+    color: var(--ink-faint);
+  }
+
+  .gprow__loc {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .gprow__city {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .gprow__country {
+    color: var(--ink-faint);
+  }
+
+  .gprow__entity {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--accent-ink);
+  }
+
+  .gprow__role {
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+
+  .grouppres__cta {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>

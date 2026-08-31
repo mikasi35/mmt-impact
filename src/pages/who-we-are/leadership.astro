@@ -1,0 +1,217 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import { executiveRoles, leadershipNote } from '@data/organisation';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'Leadership', href: '/who-we-are/leadership' },
+];
+
+const appointed = executiveRoles.filter((r) => r.name);
+---
+
+<PageLayout
+  title="Leadership"
+  description="The accountable roles, remits and reporting lines under which MMT Impact operates, including the independent reporting line for safeguarding."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / Leadership',
+    lines: ['Who is accountable,', 'and for what.'],
+    lede: 'MMT Impact publishes the structure it operates under. Individual profiles are published as each appointment is confirmed and the individual has consented to publication.',
+    seed: 'leadership-hero',
+    variant: 'network',
+    size: 'compact',
+  }}
+>
+  <section class="roles surface-paper section" aria-labelledby="roles-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Executive structure" meta={`${executiveRoles.length} accountable roles`} />
+
+      <h2 class="t-h2 roles__heading" id="roles-h" data-reveal>
+        The accountable structure.
+      </h2>
+
+      <p class="t-lead roles__note" data-reveal>{leadershipNote}</p>
+
+      <ol class="roles__list">
+        {
+          executiveRoles.map((r, i) => (
+            <li class="role" data-reveal data-reveal-group="roles">
+              <div class="role__head">
+                <span class="t-meta role__num">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="role__title">{r.role}</h3>
+                {r.name ? (
+                  <p class="role__name">{r.name}</p>
+                ) : (
+                  <p class="t-meta role__status">Appointment in progress</p>
+                )}
+              </div>
+
+              <div class="role__body">
+                <p class="t-body role__remit">{r.remit}</p>
+                {r.bio && <p class="t-small role__bio">{r.bio}</p>}
+                <dl class="role__meta">
+                  <div>
+                    <dt class="t-meta">Reports to</dt>
+                    <dd>{r.reportsTo}</dd>
+                  </div>
+                  <div>
+                    <dt class="t-meta">Based</dt>
+                    <dd>{r.location}</dd>
+                  </div>
+                </dl>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      {
+        appointed.length === 0 && (
+          <p class="t-small roles__disclosure" data-reveal>
+            No individual profiles are published at this time. MMT Impact does not publish names or
+            biographies before an appointment is confirmed. Details of current post-holders are
+            provided to institutional partners on request during due diligence —{' '}
+            <a href={`mailto:${contact.general}`}>{contact.general}</a>.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="02"
+    label="Independence"
+    heading={'Safeguarding does not\nreport through the\npeople it may need\nto investigate.'}
+    ratio="lead"
+    surface="dark"
+    id="independence"
+  >
+    <div class="prose-editorial prose-editorial--dark">
+      <p>
+        The Safeguarding and PSEA Focal Point holds a direct reporting line to the Board, separate
+        from the executive management chain.
+      </p>
+      <p>
+        The reason is structural rather than symbolic. Where safeguarding concerns escalate only
+        through line management, a concern about a senior manager reaches the Board through that
+        manager. Removing that dependency is one of the few governance decisions that materially
+        changes what can be reported.
+      </p>
+      <p>
+        The Programme & Safeguarding Committee receives case oversight independently of the Senior
+        Management Team, and the Board holds ultimate accountability for safeguarding.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .roles__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .roles__note {
+    max-width: 62ch;
+  }
+
+  .roles__list {
+    list-style: none;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .role {
+    display: grid;
+    gap: clamp(1rem, 3vw, 3rem);
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .role {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+  }
+
+  .role__head {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .role__num {
+    color: var(--accent);
+  }
+
+  .role__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .role__name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+  }
+
+  .role__status {
+    color: var(--accent);
+  }
+
+  .role__remit {
+    max-width: 56ch;
+  }
+
+  .role__bio {
+    margin-top: 0.75rem;
+    max-width: 56ch;
+  }
+
+  .role__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1rem clamp(1.5rem, 3vw, 2.5rem);
+    margin: 1.25rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .role__meta > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .role__meta dt {
+    color: var(--ink-faint);
+  }
+
+  .role__meta dd {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--ink-strong);
+  }
+
+  .roles__disclosure {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    max-width: 72ch;
+  }
+
+  .roles__disclosure a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

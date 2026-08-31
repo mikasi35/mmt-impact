@@ -1,0 +1,89 @@
+---
+import { formatMetric, type Metric } from '@data/impact';
+
+interface Props {
+  metric: Metric;
+  size?: 'lg' | 'md';
+  index?: number;
+}
+
+const { metric, size = 'lg', index } = Astro.props;
+const display = formatMetric(metric);
+const animatable = metric.value !== null;
+---
+
+<div class={`imetric imetric--${size}`} data-reveal data-reveal-group="impact">
+  {index !== undefined && <span class="t-meta imetric__index">{String(index).padStart(2, '0')}</span>}
+
+  <p class="t-num imetric__value">
+    {
+      animatable ? (
+        <>
+          {/* The real figure is in the DOM. The counter only animates toward it. */}
+          <span data-counter={metric.value} data-counter-suffix={metric.suffix ?? ''}>
+            {display}
+          </span>
+        </>
+      ) : (
+        <span class="imetric__pending" title="Not yet verified for publication">
+          —
+        </span>
+      )
+    }
+  </p>
+
+  <p class="imetric__label">{metric.label}</p>
+
+  {
+    metric.note ? (
+      <p class="t-small imetric__note">{metric.note}</p>
+    ) : (
+      metric.value === null && <p class="t-meta imetric__note imetric__note--pending">In reporting</p>
+    )
+  }
+</div>
+
+<style>
+  .imetric {
+    display: grid;
+    align-content: start;
+    gap: 0.55rem;
+    padding-top: 1.35rem;
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .imetric__index {
+    color: var(--accent);
+  }
+
+  .imetric__value {
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    color: var(--ink-strong);
+  }
+
+  .imetric--md .imetric__value {
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+  }
+
+  .imetric__pending {
+    color: var(--ink-faint);
+  }
+
+  .imetric__label {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--ink-strong);
+    margin-top: 0.35rem;
+  }
+
+  .imetric__note {
+    color: var(--ink-faint);
+    max-width: 32ch;
+  }
+
+  .imetric__note--pending {
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/layout/Breadcrumbs.astro';
+import PageHero from '@components/sections/PageHero.astro';
+import PartnerCTA from '@components/sections/PartnerCTA.astro';
+import { breadcrumbSchema, type Crumb, type SEOProps } from '@lib/seo';
+import type { PlateVariant, PlateTone } from '@lib/plates';
+
+interface Props extends SEOProps {
+  crumbs: Crumb[];
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    lede?: string;
+    facts?: { label: string; value: string }[];
+    seed: string;
+    /** Real photograph, when one exists for this page. */
+    src?: string;
+    variant?: PlateVariant;
+    tone?: PlateTone;
+    surface?: 'dark' | 'forest';
+    size?: 'default' | 'compact' | 'tall';
+    actions?: { label: string; href: string; style?: 'accent' | 'ghost' }[];
+  };
+  /** Set false on pages that close with their own bespoke call to action. */
+  cta?: boolean;
+  ctaProps?: Record<string, unknown>;
+  schema?: Record<string, unknown>[];
+}
+
+const { crumbs, hero, cta = true, ctaProps = {}, schema = [], ...seo } = Astro.props;
+---
+
+<BaseLayout {...seo} schema={[breadcrumbSchema(crumbs), ...schema]}>
+  <PageHero {...hero} />
+  <Breadcrumbs crumbs={crumbs} />
+  <slot />
+  {cta && <PartnerCTA {...(ctaProps as any)} />}
+</BaseLayout>

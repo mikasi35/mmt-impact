@@ -1,0 +1,254 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import { openOpportunities, opportunitiesNote } from '@data/partnerships';
+import { formatDate } from '@lib/utils';
+import { contact } from '@data/site';
+
+const jobs = await getCollection('jobs', ({ data }) => !data.draft);
+
+const crumbs = [
+  { label: 'Partners & Opportunities', href: '/partnerships' },
+  { label: 'Current Opportunities', href: '/partnerships/current-opportunities' },
+];
+---
+
+<PageLayout
+  title="Current Opportunities"
+  description="Open requests for proposals, expressions of interest, consultancy assignments and partnership calls from MMT Impact in South Sudan."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Partners & Opportunities / Opportunities',
+    lines: ['Open', 'opportunities.'],
+    lede: opportunitiesNote,
+    seed: 'opportunities-hero',
+    variant: 'network',
+    size: 'compact',
+    facts: [
+      { label: 'Open now', value: String(openOpportunities.length) },
+      { label: 'Vacancies', value: String(jobs.length) },
+      { label: 'Registration fee', value: 'None, ever' },
+      { label: 'Procurement contact', value: contact.procurement },
+    ],
+  }}
+  cta={false}
+>
+  <section class="opps surface-paper section" aria-labelledby="opps-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Open opportunities" meta={`${openOpportunities.length} currently open`} />
+      <h2 class="t-h2 opps__heading" id="opps-h" data-reveal>What is open right now.</h2>
+
+      {
+        openOpportunities.length > 0 ? (
+          <div class="opps__table">
+            <div class="orow orow--head" aria-hidden="true">
+              <span class="t-meta">Reference</span>
+              <span class="t-meta">Opportunity</span>
+              <span class="t-meta">Type</span>
+              <span class="t-meta">Closes</span>
+            </div>
+            {openOpportunities.map((o) => (
+              <article class="orow" data-reveal data-reveal-group="opps">
+                <span class="t-meta orow__ref">{o.reference}</span>
+                <span class="orow__main">
+                  <h3 class="orow__title">{o.title}</h3>
+                  <p class="t-small orow__summary">{o.summary}</p>
+                  <p class="t-meta orow__loc">{o.location}</p>
+                </span>
+                <span class="t-meta orow__type">{o.type}</span>
+                <span class="orow__closes">
+                  <span class="t-meta">{formatDate(o.closes)}</span>
+                  {o.file && (
+                    <a class="btn btn--ghost btn--sm orow__doc" href={o.file} download>
+                      Documents
+                      <span aria-hidden="true">↓</span>
+                    </a>
+                  )}
+                </span>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="opps__empty">
+            <EmptyState
+              eyebrow="Nothing open today"
+              title="No opportunities are currently open."
+              body="Requests for proposals, expressions of interest, consultancy assignments and partnership calls appear here when open. Register as a supplier or consultant and we will notify you directly when one matches your profile."
+              action={{ label: 'Register as a supplier', href: '/partnerships/supplier-registration' }}
+              secondary={{ label: 'Register as a consultant', href: '/partnerships/consultant-registration' }}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="fair surface-dark section" aria-labelledby="fair-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="How we award" />
+      <h2 class="t-h2 fair__heading" id="fair-h" data-reveal>How an award is made.</h2>
+      <NumberedGrid
+        columns={2}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Open publication',
+            body: 'Opportunities above the direct-award threshold in our procurement policy are published openly on this page, and registered suppliers in the relevant category are notified.',
+          },
+          {
+            number: '02',
+            title: 'Documented evaluation',
+            body: 'Bids are evaluated against criteria published in the tender documents, by a panel, with the scoring recorded and retained.',
+          },
+          {
+            number: '03',
+            title: 'Segregation of duties',
+            body: 'The person who specifies a requirement is not the person who evaluates bids, and neither approves the payment. Conflicts of interest are declared and the interested party is excluded.',
+          },
+          {
+            number: '04',
+            title: 'Due diligence before contract',
+            body: 'The successful supplier is screened for financial standing, beneficial ownership, safeguarding standards and, where applicable, sanctions.',
+          },
+        ]}
+      />
+
+      <div class="fair__warn" data-reveal>
+        <p class="t-meta fair__warn-label">Procurement fraud</p>
+        <p class="t-small">
+          MMT Impact never charges a fee to register, to bid, or to be awarded a contract, and no
+          member of our staff is authorised to request a payment or personal benefit in connection
+          with a procurement. If this happens, report it to
+          <a href={`mailto:${contact.procurement}`}>{contact.procurement}</a> or through our
+          <a href="/transparency#whistleblowing">confidential reporting channel</a>. Reports can be
+          made anonymously.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="also surface-sand section-sm">
+    <div class="wrap">
+      <SectionLabel index="03" label="Also open" />
+      <NumberedGrid
+        columns={3}
+        style="panel"
+        items={[
+          {
+            number: '01',
+            title: 'Careers',
+            body: 'Vacancies, internships and volunteer roles at MMT Impact.',
+            href: '/careers',
+          },
+          {
+            number: '02',
+            title: 'Supplier roster',
+            body: 'Register to be notified when a procurement opens in your category.',
+            href: '/partnerships/supplier-registration',
+          },
+          {
+            number: '03',
+            title: 'Consultant roster',
+            body: 'Register your discipline, experience and availability for assignments.',
+            href: '/partnerships/consultant-registration',
+          },
+        ]}
+      />
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .opps__heading,
+  .fair__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .fair__heading {
+    color: #fff;
+  }
+
+  .opps__table {
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .orow {
+    display: grid;
+    grid-template-columns: minmax(6rem, 0.5fr) minmax(0, 2fr) minmax(5rem, 0.5fr) minmax(8rem, 0.7fr);
+    gap: 0.75rem clamp(1rem, 2.5vw, 2rem);
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  @media (max-width: 56rem) {
+    .orow {
+      grid-template-columns: 1fr;
+    }
+    .orow--head {
+      display: none;
+    }
+  }
+
+  .orow--head {
+    padding-block: 0.75rem;
+  }
+
+  .orow--head span {
+    color: var(--ink-faint);
+  }
+
+  .orow__ref,
+  .orow__type {
+    color: var(--accent-ink);
+  }
+
+  .orow__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    margin-bottom: 0.4rem;
+  }
+
+  .orow__summary {
+    color: var(--ink-muted);
+    max-width: 56ch;
+    margin-bottom: 0.4rem;
+  }
+
+  .orow__loc {
+    color: var(--ink-faint);
+  }
+
+  .orow__closes {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+
+  .fair__warn {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: color-mix(in srgb, #fff 4%, transparent);
+    max-width: 78ch;
+  }
+
+  .fair__warn-label {
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .fair__warn a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

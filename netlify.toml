@@ -1,0 +1,36 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Security headers live in public/_headers so they are shared with
+# Cloudflare Pages. Netlify reads that file from the publish directory.
+
+[[redirects]]
+  from = "/programmes/*"
+  to = "/what-we-do/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/*"
+  to = "/impact/projects/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about"
+  to = "/who-we-are"
+  status = 301
+
+[[redirects]]
+  from = "/tenders"
+  to = "/partnerships/current-opportunities"
+  status = 301
+
+[[redirects]]
+  from = "/donate"
+  to = "/get-involved/support"
+  status = 301

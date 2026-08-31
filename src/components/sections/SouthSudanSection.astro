@@ -1,0 +1,159 @@
+---
+import Plate from '@components/media/Plate.astro';
+import { headquarters } from '@data/site';
+
+/**
+ * Homepage 03 — geographic identity.
+ *
+ * Full-bleed dark section with the coordinate device at full scale. This is the
+ * moment the site establishes WHERE, and it is given its own visual register:
+ * no cards, no columns of body copy, one statement and a position.
+ */
+---
+
+<section class="ss surface-dark" data-parallax-scope aria-labelledby="ss-heading">
+  <div class="ss__media">
+    <Plate seed="south-sudan-geo" variant="graticule" tone="navy" ratio="fill" parallax={10} alt="" />
+    <div class="ss__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class="wrap-wide ss__inner">
+    <div class="ss__marker" data-reveal>
+      <p class="t-meta ss__country">South Sudan</p>
+      <p class="ss__city">{headquarters.city}</p>
+      <p class="t-meta ss__coord">{headquarters.coordinateLabel}</p>
+      <p class="t-meta ss__office">{headquarters.label}</p>
+    </div>
+
+    <div class="ss__statement">
+      <h2 class="t-display ss__heading reveal-lines" id="ss-heading" data-reveal="lines">
+        <span><span>Local knowledge.</span></span>
+        <span><span>Regional perspective.</span></span>
+        <span><span>Sustainable impact.</span></span>
+      </h2>
+
+      <p class="t-lead ss__body" data-reveal>
+        South Sudan is where MMT Impact operates. Programmes are designed in Juba, delivered by
+        teams based in the communities they serve, and accountable to those communities first.
+      </p>
+
+      <div class="ss__actions" data-reveal>
+        <a class="btn btn--accent" href="/where-we-work/south-sudan">
+          Our work in South Sudan
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-rule ss__map-link" href="/where-we-work">
+          View the presence map
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ss {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: clamp(3rem, 7vw, 6.5rem);
+  }
+
+  .ss__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .ss__media :global(.plate),
+  .ss__media :global(.frame) {
+    height: 100%;
+  }
+
+  .ss__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 22% 40%, rgb(7 24 39 / 0.55) 0%, rgb(7 24 39 / 0.9) 70%),
+      linear-gradient(to bottom, rgb(7 24 39 / 0.75), rgb(7 24 39 / 0.95));
+  }
+
+  .ss__inner {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .ss__inner {
+      grid-template-columns: minmax(14rem, 0.5fr) minmax(0, 1.5fr);
+    }
+  }
+
+  /* ---- the coordinate marker ---- */
+  .ss__marker {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .ss__marker::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--color-ochre-400), transparent);
+  }
+
+  .ss__country {
+    color: var(--color-ochre-400);
+    margin-bottom: 0.85rem;
+  }
+
+  .ss__city {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    color: #fff;
+  }
+
+  .ss__coord {
+    margin-top: 0.9rem;
+    color: #93a8b6;
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+  }
+
+  .ss__office {
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid color-mix(in srgb, #fff 16%, transparent);
+    color: #7a8f9d;
+  }
+
+  /* ---- statement ---- */
+  .ss__heading {
+    color: #fff;
+    max-width: 18ch;
+  }
+
+  .ss__body {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: 52ch;
+    color: #b9c8d2;
+  }
+
+  .ss__actions {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .ss__map-link {
+    color: #fff;
+  }
+</style>

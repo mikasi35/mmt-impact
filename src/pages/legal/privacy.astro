@@ -1,0 +1,219 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { contact, site } from '@data/site';
+
+const crumbs = [{ label: 'Privacy Notice', href: '/legal/privacy' }];
+const updated = '17 February 2026';
+---
+
+<PageLayout
+  title="Privacy Notice"
+  description="How MMT Impact collects, uses, stores and protects personal data, including data provided through enquiry, registration and application forms."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Legal / Privacy',
+    lines: ['Privacy notice.'],
+    lede: 'How we collect, use, store and protect personal data — including the data you provide through a form on this site.',
+    seed: 'privacy-hero',
+    variant: 'strata',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <section class="legal surface-paper section" aria-labelledby="legal-h">
+    <div class="wrap legal__wrap">
+      <aside class="legal__rail">
+        <div class="legal__rail-inner">
+          <SectionLabel index="—" label="Privacy notice" />
+          <p class="t-meta legal__updated">Last updated {updated}</p>
+          <nav class="legal__toc" aria-label="On this page">
+            <ul>
+              <li><a href="#who">Who we are</a></li>
+              <li><a href="#what">What we collect</a></li>
+              <li><a href="#why">Why we collect it</a></li>
+              <li><a href="#sharing">Who we share it with</a></li>
+              <li><a href="#retention">How long we keep it</a></li>
+              <li><a href="#security">How we protect it</a></li>
+              <li><a href="#rights">Your rights</a></li>
+              <li><a href="#beneficiary">Programme participant data</a></li>
+              <li><a href="#contact-dp">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="prose-editorial legal__body">
+        <h2 id="who">Who we are</h2>
+        <p>
+          {site.legalName} is a development and humanitarian organisation operating from a country
+          office in Juba, South Sudan. We are the data controller for personal data collected
+          through this website and through our programmes.
+        </p>
+        <p>
+          MMT Impact is a member of the wider MMT Group. Each organisation in the Group is a
+          separate legal entity and controls its own data. Data you provide to MMT Impact is not
+          shared with another Group organisation except where set out below.
+        </p>
+
+        <h2 id="what">What we collect</h2>
+        <p>Through this website we collect only what a form asks for:</p>
+        <ul>
+          <li><strong>Enquiry and partnership forms:</strong> name, organisation, position, country, email, phone, partnership type, your message, and any document you attach.</li>
+          <li><strong>Supplier and consultant registration:</strong> the above, plus supply category or discipline, registration number, operating locations, experience and availability.</li>
+          <li><strong>Job applications and the talent register:</strong> the above, plus your CV, cover letter and any supporting documents.</li>
+          <li><strong>Analytics:</strong> where privacy-conscious analytics are enabled, aggregate page views, referrer and country. No cookies are set for this purpose and individuals are not identified or tracked across sites.</li>
+        </ul>
+        <p>
+          We do not ask for special category data through this website. Please do not include health
+          information, political or religious affiliation, or details about other identifiable
+          people in a free-text field.
+        </p>
+
+        <h2 id="why">Why we collect it</h2>
+        <ul>
+          <li>To respond to your enquiry — the reason you submitted it.</li>
+          <li>To assess a partnership, supply or consultancy proposal.</li>
+          <li>To assess a job application and administer recruitment.</li>
+          <li>To meet our legal, audit and donor reporting obligations.</li>
+          <li>To notify registered suppliers and consultants of relevant opportunities, where you asked us to.</li>
+        </ul>
+        <p>
+          We rely on your consent where you have given it, and on our legitimate interest in
+          operating the organisation and responding to enquiries directed to us. We do not use your
+          data for automated decision-making or profiling.
+        </p>
+
+        <h2 id="sharing">Who we share it with</h2>
+        <p>
+          We do not sell, rent or trade personal data. We share it only where it is necessary:
+        </p>
+        <ul>
+          <li>With service providers who host our website, email and document storage, under contract and only for those purposes.</li>
+          <li>With auditors, and with donors where a funding agreement requires it — in which case we tell you.</li>
+          <li>Where we are legally required to, or where there is a serious safeguarding or safety concern.</li>
+        </ul>
+        <p>
+          Where data is transferred outside the country in which it was collected — for example to a
+          hosting provider — we take steps to ensure it remains protected to an equivalent standard.
+        </p>
+
+        <h2 id="retention">How long we keep it</h2>
+        <ul>
+          <li><strong>General enquiries:</strong> up to 24 months from last contact.</li>
+          <li><strong>Partnership, supplier and consultant records:</strong> for the duration of the relationship, and for six years afterwards where a contract existed, for audit purposes.</li>
+          <li><strong>Unsuccessful job applications:</strong> 12 months, unless you ask us to keep them on the talent register.</li>
+          <li><strong>Talent register:</strong> 24 months, then deleted unless you ask us to renew it.</li>
+        </ul>
+
+        <h2 id="security">How we protect it</h2>
+        <ul>
+          <li>The site is served over HTTPS, and form submissions are encrypted in transit.</li>
+          <li>Access to submissions is restricted to the staff who need it for their role.</li>
+          <li>Uploaded documents are stored in access-controlled storage, are never published, and are never made publicly reachable.</li>
+          <li>Access is logged, and administrative accounts require multi-factor authentication.</li>
+        </ul>
+        <p>
+          If a personal data breach occurs that is likely to result in a risk to you, we will notify
+          you and any relevant authority without undue delay.
+        </p>
+
+        <h2 id="rights">Your rights</h2>
+        <p>You can ask us to:</p>
+        <ul>
+          <li>Confirm what personal data we hold about you, and provide a copy.</li>
+          <li>Correct anything inaccurate.</li>
+          <li>Delete your data, where we are not required to keep it.</li>
+          <li>Restrict or object to how we use it.</li>
+          <li>Withdraw consent at any time, where we rely on consent.</li>
+        </ul>
+        <p>
+          Write to <a href={`mailto:${contact.general}`}>{contact.general}</a>. We respond within 30
+          days. There is no charge.
+        </p>
+
+        <h2 id="beneficiary">Programme participant data</h2>
+        <p>
+          Data about people who take part in our programmes is handled under our Data Protection
+          Policy and our safeguarding framework, which apply stricter standards than this notice.
+        </p>
+        <ul>
+          <li>We collect the minimum needed to deliver and evaluate a programme.</li>
+          <li>Participants are told what is collected, why, and who will see it, in a language they use.</li>
+          <li>Data that could expose someone to risk is anonymised or held separately with restricted access.</li>
+          <li>No identifiable image or story is published without informed consent, which can be withdrawn.</li>
+          <li>Participation in a programme is never conditional on consenting to be photographed or featured.</li>
+        </ul>
+
+        <h2 id="contact-dp">Contact</h2>
+        <p>
+          Questions about this notice, or about how we handle your data, go to{' '}
+          <a href={`mailto:${contact.general}`}>{contact.general}</a>.
+        </p>
+        <p>
+          If you have a concern about how we have handled personal data and are not satisfied with
+          our response, you may raise it through our{' '}
+          <a href="/transparency#whistleblowing">confidential reporting channel</a>, or with the
+          relevant data protection authority in your jurisdiction.
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .legal__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .legal__wrap {
+      grid-template-columns: minmax(0, 0.45fr) minmax(0, 1.55fr);
+    }
+    .legal__rail-inner {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .legal__updated {
+    margin-top: 1.25rem;
+    color: var(--ink-faint);
+  }
+
+  .legal__toc {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .legal__toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .legal__toc a {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-left: 1px solid transparent;
+    padding-left: 0;
+    display: block;
+    transition: border-color 200ms, padding-left 260ms var(--ease-out-expo), color 200ms;
+  }
+
+  .legal__toc a:hover {
+    border-left-color: var(--accent);
+    padding-left: 0.6rem;
+    color: var(--ink-strong);
+  }
+
+  .legal__body h2 {
+    scroll-margin-top: calc(var(--header-height, 104px) + 2rem);
+  }
+</style>

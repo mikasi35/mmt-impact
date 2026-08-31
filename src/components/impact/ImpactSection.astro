@@ -1,0 +1,136 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import ImpactMetric from '@components/impact/ImpactMetric.astro';
+import { headlineMetrics, impactBasis, impactAsAt } from '@data/impact';
+
+/**
+ * Homepage 05 — Impact.
+ *
+ * The basis line under the figures is not a legal footnote bolted on at the
+ * end. It is part of the design, because a reader from a UN agency will look
+ * for it, and a dashboard that cannot say what its numbers mean is worth less
+ * than one with smaller numbers that can.
+ */
+---
+
+<section class="impact surface-dark section-sm" aria-labelledby="impact-heading">
+  <div class="wrap">
+    <SectionLabel index="04" label="Our Impact" meta={impactAsAt} />
+
+    <div class="impact__head">
+      <h2 class="t-h1 impact__heading" id="impact-heading" data-reveal>
+        What the work has reached.
+      </h2>
+      <p class="t-lead impact__intro" data-reveal>
+        We publish figures that can be defined, disaggregated and evidenced. Where a figure has not
+        yet been verified for publication, we say so rather than estimate it.
+      </p>
+    </div>
+
+    <div class="impact__grid">
+      {headlineMetrics.map((m, i) => <ImpactMetric metric={m} size="md" index={i + 1} />)}
+    </div>
+
+    <div class="impact__foot">
+      <p class="t-small impact__basis" data-reveal>{impactBasis}</p>
+      <div class="impact__actions" data-reveal>
+        <a class="btn btn--ghost" href="/impact">
+          Impact dashboard
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-rule impact__link" href="/resources">
+          Reports & publications
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .impact {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .impact::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, #fff 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, #fff 4%, transparent) 1px, transparent 1px);
+    background-size: clamp(56px, 8vw, 110px) clamp(56px, 8vw, 110px);
+    mask-image: radial-gradient(ellipse at 70% 20%, #000 10%, transparent 72%);
+  }
+
+  .impact > * {
+    position: relative;
+  }
+
+  .impact__head {
+    display: grid;
+    gap: clamp(1.25rem, 2.5vw, 2.25rem);
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 64rem) {
+    .impact__head {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: end;
+    }
+  }
+
+  .impact__heading {
+    color: #fff;
+  }
+
+  .impact__intro {
+    max-width: 48ch;
+  }
+
+  .impact__grid {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 3rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  }
+
+  .impact__foot {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .impact__foot {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+  }
+
+  .impact__basis {
+    max-width: 62ch;
+    color: var(--ink-faint);
+  }
+
+  .impact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  @media (min-width: 64rem) {
+    .impact__actions {
+      justify-content: flex-end;
+    }
+  }
+
+  .impact__link {
+    color: #fff;
+  }
+</style>

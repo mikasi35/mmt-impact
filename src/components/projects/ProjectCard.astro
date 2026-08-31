@@ -1,0 +1,176 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Plate from '@components/media/Plate.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  size?: 'default' | 'compact';
+}
+
+const { project, size = 'default' } = Astro.props;
+const d = project.data;
+
+const STATUS_LABEL: Record<string, string> = {
+  active: 'Active',
+  'in-design': 'In design',
+  planned: 'Planned',
+  completed: 'Completed',
+};
+
+const period = [
+  d.startDate ? d.startDate.getFullYear() : null,
+  d.endDate ? d.endDate.getFullYear() : null,
+]
+  .filter(Boolean)
+  .join('–');
+---
+
+<article class={`pcard pcard--${size}`} data-reveal data-reveal-group="projects">
+  <a class="pcard__link" href={`/impact/projects/${project.id}`}>
+    <div class="pcard__media">
+      <Plate
+        seed={`project-${project.id}`}
+        variant={d.media?.variant}
+        tone={d.media?.tone ?? 'navy'}
+        ratio={size === 'compact' ? 'wide' : 'hero'}
+        alt=""
+      />
+    </div>
+
+    <div class="pcard__body">
+      <div class="pcard__meta">
+        <span class="status" data-status={d.status}>{STATUS_LABEL[d.status]}</span>
+        {period && <span class="t-meta pcard__period">{period}</span>}
+      </div>
+
+      <h3 class="pcard__title">{d.title}</h3>
+      <p class="t-small pcard__summary">{d.summary}</p>
+
+      <dl class="pcard__facts">
+        <div>
+          <dt class="t-meta">Location</dt>
+          <dd>{d.location}</dd>
+        </div>
+        <div>
+          <dt class="t-meta">Beneficiaries</dt>
+          <dd>{d.beneficiaries === null ? 'In reporting' : d.beneficiaries.toLocaleString('en-GB')}</dd>
+        </div>
+      </dl>
+
+      <span class="pcard__more">
+        View project
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .pcard {
+    min-width: 0;
+  }
+
+  .pcard__link {
+    display: grid;
+    gap: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    align-content: start;
+  }
+
+  .pcard__media {
+    overflow: hidden;
+  }
+
+  .pcard__media :global(.frame) {
+    transition: transform 900ms var(--ease-out-expo);
+  }
+
+  .pcard__link:hover .pcard__media :global(.frame),
+  .pcard__link:focus-visible .pcard__media :global(.frame) {
+    transform: scale(1.03);
+  }
+
+  .pcard__body {
+    display: grid;
+    gap: 0.7rem;
+    align-content: start;
+  }
+
+  .pcard__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pcard__period {
+    color: var(--ink-faint);
+  }
+
+  .pcard__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    transition: color 220ms var(--ease-institutional);
+  }
+
+  .pcard__link:hover .pcard__title {
+    color: var(--accent-ink);
+  }
+
+  .pcard__summary {
+    color: var(--ink-muted);
+    max-width: 46ch;
+  }
+
+  .pcard__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin: 0.35rem 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .pcard__facts > div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .pcard__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .pcard__facts dd {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--ink-strong);
+  }
+
+  .pcard__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+
+  .pcard__more .btn-arrow {
+    transition: transform 380ms var(--ease-out-expo);
+  }
+
+  .pcard__link:hover .pcard__more .btn-arrow {
+    transform: translateX(5px);
+  }
+</style>

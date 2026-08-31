@@ -1,0 +1,238 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import { mission, vision, positioning } from '@data/organisation';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'Mission & Vision', href: '/who-we-are/mission' },
+];
+
+const IMG = '/images/who-we-are-mission-vision-page';
+---
+
+<PageLayout
+  title="Mission & Vision"
+  description="MMT Impact exists to strengthen communities and create sustainable opportunities through education, empowerment, social support, livelihoods and inclusive development."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / Mission & Vision',
+    lines: ['What we exist', 'to do.'],
+    lede: positioning,
+    seed: 'mission-hero',
+    src: `${IMG}/hero.jpg`,
+    variant: 'horizon',
+    size: 'compact',
+  }}
+>
+  <!-- Mission — statement parallel to a portrait image -->
+  <section class="stmt surface-paper section-sm" aria-labelledby="mission-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Mission" />
+      <div class="stmt__grid">
+        <p class="stmt__text" id="mission-h" data-reveal>{mission}</p>
+        <div class="stmt__media" data-parallax-scope>
+          <Plate
+            seed="mission-statement"
+            src={`${IMG}/01-mission.jpg`}
+            variant="terrain"
+            tone="navy"
+            ratio="portrait"
+            parallax={7}
+            alt="Community members central to MMT Impact's mission, South Sudan"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision — reduced, fixed background photograph -->
+  <section
+    class="vstmt surface-dark"
+    aria-labelledby="vision-h"
+    style={`--vstmt-bg:url('${IMG}/02-vision.jpg')`}
+  >
+    <div class="vstmt__scrim" aria-hidden="true"></div>
+    <div class="wrap vstmt__inner">
+      <SectionLabel index="02" label="Vision" />
+      <p class="vstmt__text" id="vision-h" data-reveal>{vision}</p>
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="03"
+    label="What this means"
+    heading={'A mission is only\nuseful if it excludes\nsomething.'}
+    ratio="lead"
+    gap="tight"
+    sticky
+    size="sm"
+    surface="light"
+    id="meaning"
+  >
+    <Plate
+      slot="lead"
+      seed="mission-meaning"
+      src={`${IMG}/03-What-this-means.jpg`}
+      variant="cohort"
+      tone="navy"
+      ratio="wide"
+      alt=""
+    />
+
+    <div class="prose-editorial">
+      <p>
+        Most organisational missions could be adopted by any organisation in the sector without
+        changing a word. Ours is meant to be narrower than that, and the narrowing is deliberate.
+      </p>
+
+      <h3>Strengthen communities</h3>
+      <p>
+        Our unit of work is the community, not the individual beneficiary and not the national
+        indicator. That determines how we assess need, who validates our targeting, and who we are
+        accountable to first.
+      </p>
+
+      <h3>Create sustainable opportunities</h3>
+      <p>
+        An opportunity that exists only while a grant is running is not an opportunity, it is a
+        stipend. We hold programmes to what remains once support ends — enterprises still trading,
+        trainers still teaching, systems still operating.
+      </p>
+
+      <h3>Through education, empowerment, social support, livelihoods and inclusive development</h3>
+      <p>
+        These are our instruments. We do not present ourselves as a specialist health, nutrition,
+        WASH or protection agency. Where a community need falls outside our competence, our
+        obligation is a safe referral to an organisation mandated to meet it, not an extension of
+        our own scope to capture the funding.
+      </p>
+
+      <h3>Inclusive</h3>
+      <p>
+        Inclusion is a design requirement rather than a reporting category. If a programme’s results
+        cannot be disaggregated to show reach among women, young people, people with disabilities
+        and displaced households, we treat that as a design failure, not a data limitation.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <EditorialSplit
+    index="04"
+    label="The vision, examined"
+    heading={'A world where every\ncommunity has the\nopportunity to thrive.'}
+    ratio="lead"
+    gap="tight"
+    sticky
+    size="sm"
+    surface="sand"
+    id="vision-detail"
+  >
+    <Plate
+      slot="lead"
+      seed="mission-vision-detail"
+      src={`${IMG}/04-The-vision-examined.jpg`}
+      variant="horizon"
+      tone="green"
+      ratio="wide"
+      alt=""
+    />
+
+    <div class="prose-editorial">
+      <p>
+        A vision statement describes an end state that the organisation will not, on its own, bring
+        about. Ours is no exception, and stating it plainly matters more than the sentence itself.
+      </p>
+      <p>
+        MMT Impact will not create a world where every community thrives. Governments, communities,
+        markets and institutions will do that, or they will not. What an organisation of our kind
+        can do is remove specific constraints in specific places — a training system that does not
+        connect to employment, a producer group with no route to a buyer, a local organisation
+        excluded from funding by a compliance gap — and do it well enough that the change holds.
+      </p>
+      <p>
+        The word that carries the weight is <strong>opportunity</strong>. We are not in a position
+        to guarantee outcomes for the people we work with, and we do not claim to be. We are in a
+        position to widen the set of choices available to them, and to be measured on whether we
+        did.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  /* ---- 01 Mission: statement parallel to a portrait image ---- */
+  .stmt__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    align-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .stmt__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+  }
+
+  .stmt__text {
+    font-family: var(--font-display);
+    font-size: clamp(1.875rem, 4vw, 3.25rem);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: var(--ink-strong);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  .stmt__media {
+    aspect-ratio: 4 / 5;
+  }
+
+  .stmt__media :global(.frame),
+  .stmt__media :global(.plate) {
+    height: 100%;
+  }
+
+  /* ---- 02 Vision: reduced, fixed background photograph ----
+     Same technique as the homepage focus band — a real `background-image`
+     here instead of a generated plate, `background-attachment: fixed` only
+     where a pointer device can render it smoothly. */
+  .vstmt {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    background-image: var(--vstmt-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .vstmt {
+      background-attachment: fixed;
+    }
+  }
+
+  .vstmt__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(7 24 39 / 0.72), rgb(7 24 39 / 0.88));
+  }
+
+  .vstmt__text {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.6vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: #fff;
+    max-width: 22ch;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    text-wrap: balance;
+  }
+
+</style>

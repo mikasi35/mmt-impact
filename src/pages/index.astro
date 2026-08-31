@@ -1,0 +1,240 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HomeHero from '@components/hero/HomeHero.astro';
+import WhoWeAre from '@components/sections/WhoWeAre.astro';
+import FocusAreas from '@components/sections/FocusAreas.astro';
+import SouthSudanSection from '@components/sections/SouthSudanSection.astro';
+import ProgrammeIndex from '@components/programmes/ProgrammeIndex.astro';
+import ImpactSection from '@components/impact/ImpactSection.astro';
+import GroupEcosystem from '@components/sections/GroupEcosystem.astro';
+import ApproachTimeline from '@components/sections/ApproachTimeline.astro';
+import FeaturedProject from '@components/projects/FeaturedProject.astro';
+import StoryCard from '@components/sections/StoryCard.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import PartnerCTA from '@components/sections/PartnerCTA.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import { byDateDesc } from '@lib/utils';
+import { NEWS_IMAGE } from '@lib/media-overrides';
+import { site } from '@data/site';
+
+const programmes = (await getCollection('programmes', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const featured = projects.find((p) => p.data.featured) ?? projects[0];
+
+const news = (await getCollection('news', ({ data }) => !data.draft)).sort(byDateDesc).slice(0, 8);
+
+const CATEGORY_LABEL: Record<string, string> = {
+  news: 'News',
+  'field-story': 'Field Story',
+  event: 'Event',
+};
+---
+
+<BaseLayout
+  title={site.name}
+  description={site.shortDescription}
+  canonical="/"
+  type="website"
+>
+  <HomeHero />
+  <WhoWeAre />
+  <FocusAreas />
+  <SouthSudanSection />
+  <ProgrammeIndex programmes={programmes} />
+  <ImpactSection />
+  <GroupEcosystem detail="home" index="05" />
+  <ApproachTimeline index="06" detail="short" />
+
+  {featured && <FeaturedProject project={featured} index="07" />}
+
+  <!-- 08 — News & Stories: one line, horizontally scrollable, ending in Read all. -->
+  <section class="stories surface-paper section-sm" aria-labelledby="stories-heading" data-story-rail>
+    <div class="wrap">
+      <SectionLabel index="08" label="News & Stories" meta="Newsroom" />
+
+      <div class="stories__head">
+        <h2 class="t-h2 stories__heading" id="stories-heading" data-reveal>
+          From the organisation and from the field.
+        </h2>
+
+        {
+          news.length > 0 && (
+            <div class="stories__nav" data-reveal>
+              <button type="button" class="rail-btn" data-rail-prev aria-label="Scroll to previous stories">
+                <span class="btn-arrow" aria-hidden="true">←</span>
+              </button>
+              <button type="button" class="rail-btn" data-rail-next aria-label="Scroll to next stories">
+                <span class="btn-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        news.length > 0 ? (
+          <div class="rail stories__rail" data-rail>
+            {news.map((n) => (
+              <div class="stories__item">
+                <StoryCard
+                  href={`/news/${n.id}`}
+                  title={n.data.title}
+                  summary={n.data.summary}
+                  date={n.data.date}
+                  category={CATEGORY_LABEL[n.data.category] ?? n.data.category}
+                  location={n.data.location}
+                  seed={`news-${n.id}`}
+                  src={NEWS_IMAGE[n.id]}
+                  variant={n.data.media?.variant}
+                  tone={n.data.media?.tone ?? 'navy'}
+                />
+              </div>
+            ))}
+
+            <a class="stories__more" href="/news">
+              <span class="stories__more-label">
+                Read all
+                <span class="btn-arrow" aria-hidden="true">→</span>
+              </span>
+              <span class="t-small stories__more-note">Every article and field story</span>
+            </a>
+          </div>
+        ) : (
+          <div class="stories__empty">
+            <EmptyState
+              eyebrow="Newsroom"
+              title="Our first stories are being written."
+              body="MMT Impact publishes news, field reporting and documented outcomes as programmes move into delivery. Nothing is published here before it has happened."
+              action={{ label: 'Our programmes', href: '/what-we-do' }}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <PartnerCTA form />
+</BaseLayout>
+
+<style>
+  .stories__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  .stories__heading {
+    max-width: 34ch;
+  }
+
+  /* ---- prev/next controls ---- */
+  .stories__nav {
+    display: flex;
+    gap: 0.6rem;
+    flex: none;
+  }
+
+  /* .rail-btn now lives in styles/utilities.css — shared with the "How We
+     Work" carousel. */
+
+  /* ---- one-line carousel ---- */
+  .stories__rail {
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    padding-bottom: 0.75rem;
+    /* Let the row bleed to the viewport edge so the last (partial) card hints
+       there is more to scroll to, rather than stopping dead at the container. */
+    margin-inline: calc(-1 * var(--spacing-gutter));
+    padding-inline: var(--spacing-gutter);
+    scroll-padding-inline: var(--spacing-gutter);
+  }
+
+  .stories__item {
+    width: min(21rem, 78vw);
+    flex: none;
+  }
+
+  .stories__more {
+    flex: none;
+    width: min(15rem, 60vw);
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 1px dashed var(--rule-strong);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 220ms var(--ease-institutional), background 220ms;
+  }
+
+  .stories__more:hover {
+    border-color: var(--accent);
+    border-style: solid;
+    background: var(--surface-raised);
+  }
+
+  .stories__more-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink-strong);
+  }
+
+  .stories__more-note {
+    color: var(--ink-faint);
+  }
+
+  .stories__empty {
+    margin-top: 1rem;
+  }
+</style>
+
+<script>
+  function initStoryRail() {
+    const section = document.querySelector<HTMLElement>('[data-story-rail]');
+    if (!section) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — without this guard, prev/next each get a second click
+    // listener, so every click scrolls twice as far as it should.
+    if (section.dataset.bound === 'true') return;
+    section.dataset.bound = 'true';
+
+    const rail = section.querySelector<HTMLElement>('[data-rail]');
+    const prev = section.querySelector<HTMLButtonElement>('[data-rail-prev]');
+    const next = section.querySelector<HTMLButtonElement>('[data-rail-next]');
+    if (!rail || !prev || !next) return;
+
+    const step = () => Math.min(rail.clientWidth * 0.85, 640);
+
+    const updateButtons = () => {
+      const max = rail.scrollWidth - rail.clientWidth - 1;
+      prev.disabled = rail.scrollLeft <= 0;
+      next.disabled = rail.scrollLeft >= max;
+    };
+
+    prev.addEventListener('click', () => {
+      rail.scrollBy({ left: -step(), behavior: 'smooth' });
+    });
+    next.addEventListener('click', () => {
+      rail.scrollBy({ left: step(), behavior: 'smooth' });
+    });
+
+    rail.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('resize', updateButtons);
+    updateButtons();
+  }
+
+  initStoryRail();
+  document.addEventListener('astro:page-load', initStoryRail);
+</script>

@@ -1,0 +1,383 @@
+---
+import { presence, mapDisclosure } from '@data/countries';
+
+const locations = presence.map((p) => ({
+  id: p.id,
+  city: p.city,
+  country: p.country,
+  coords: p.coords,
+  entity: p.entity,
+  role: p.role,
+  primary: p.primary,
+  coordinateLabel: p.coordinateLabel,
+  href: p.href,
+}));
+---
+
+<div class="pmap surface-dark" data-presence-map>
+  <div class="pmap__inner">
+    <!-- The list is the primary, always-available route to this information.
+         The map is the enhancement — not the other way round. -->
+    <div class="pmap__list-col">
+      <p class="t-meta pmap__list-label">Presence register</p>
+      <ul class="pmap__list">
+        {
+          presence.map((p) => (
+            <li>
+              <button
+                type="button"
+                class={`ploc ${p.primary ? 'ploc--primary' : ''}`}
+                data-loc={p.id}
+                aria-describedby={`loc-detail-${p.id}`}
+              >
+                <span class="ploc__head">
+                  <span class="ploc__city">{p.city}</span>
+                  <span class="t-meta ploc__entity">{p.entity}</span>
+                </span>
+                <span class="t-meta ploc__country">
+                  {p.country} · {p.role}
+                </span>
+                <span class="t-meta ploc__coord">{p.coordinateLabel}</span>
+              </button>
+
+              <div class="ploc__detail" id={`loc-detail-${p.id}`}>
+                <p class="t-small">{p.detail}</p>
+                {p.href && (
+                  <a class="link-rule ploc__link" href={p.href}>
+                    View country programme
+                    <span class="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="pmap__map-col">
+      <div class="pmap__canvas map-shell" data-map-canvas role="application" aria-label="Interactive map of MMT Group presence">
+        <div class="pmap__fallback" data-map-fallback>
+          <p class="t-meta">Map</p>
+          <p class="t-small">
+            The interactive map loads when it scrolls into view. Every location it shows is listed
+            in the presence register alongside.
+          </p>
+        </div>
+      </div>
+
+      <p class="t-small pmap__disclosure">{mapDisclosure}</p>
+    </div>
+  </div>
+</div>
+
+<script is:inline
+  type="application/json"
+  id="map-locations"
+  set:html={JSON.stringify(locations)}
+/>
+
+<script>
+  function initMapSection() {
+    const root = document.querySelector<HTMLElement>('[data-presence-map]');
+    if (!root) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — this component's own `loading`/`controller` guard is
+    // per-call, not per-element, so without this a second invocation would
+    // spin up a second, independent MapLibre instance on the same canvas.
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const canvas = root.querySelector<HTMLElement>('[data-map-canvas]');
+    const fallback = root.querySelector<HTMLElement>('[data-map-fallback]');
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-loc]'));
+    const dataEl = document.getElementById('map-locations');
+    let locations: any[] = [];
+    try {
+      locations = dataEl?.textContent ? JSON.parse(dataEl.textContent) : [];
+    } catch {
+      locations = [];
+    }
+    if (!canvas) return;
+
+    let controller: { focus(id: string): void; reset(): void; destroy(): void } | null = null;
+    let loading = false;
+
+    const select = (id: string) => {
+      buttons.forEach((b) => {
+        const on = b.dataset.loc === id;
+        b.classList.toggle('is-selected', on);
+        b.closest('li')?.classList.toggle('is-open', on);
+      });
+      controller?.focus(id);
+    };
+
+    buttons.forEach((b) => {
+      b.addEventListener('click', () => select(b.dataset.loc!));
+    });
+
+    // Defer MapLibre entirely until the section is near the viewport.
+    const load = async () => {
+      if (loading || controller) return;
+      loading = true;
+      try {
+        const { initPresenceMap } = await import('./map');
+        controller = await initPresenceMap(canvas, locations);
+        fallback?.setAttribute('hidden', '');
+        canvas.addEventListener('marker:select', (e) => select((e as CustomEvent).detail));
+      } catch {
+        if (fallback) {
+          fallback.innerHTML =
+            '<p class="t-meta">Map unavailable</p><p class="t-small">The interactive map could not load. Every location it shows is listed in the presence register alongside.</p>';
+        }
+      }
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            void load();
+          }
+        },
+        { rootMargin: '300px' }
+      );
+      io.observe(canvas);
+    } else {
+      void load();
+    }
+
+    document.addEventListener('astro:before-swap', () => controller?.destroy(), { once: true });
+  }
+
+  initMapSection();
+  document.addEventListener('astro:page-load', initMapSection);
+</script>
+
+<style>
+  .pmap {
+    border: 1px solid var(--rule);
+  }
+
+  .pmap__inner {
+    display: grid;
+  }
+
+  @media (min-width: 64rem) {
+    .pmap__inner {
+      grid-template-columns: minmax(19rem, 0.62fr) minmax(0, 1.38fr);
+    }
+  }
+
+  /* ---- register ---- */
+  .pmap__list-col {
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  @media (min-width: 64rem) {
+    .pmap__list-col {
+      border-bottom: 0;
+      border-right: 1px solid var(--rule);
+      max-height: 40rem;
+      overflow-y: auto;
+    }
+  }
+
+  .pmap__list-label {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.5rem;
+  }
+
+  .pmap__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pmap__list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .ploc {
+    display: grid;
+    gap: 0.3rem;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-left: 2px solid transparent;
+    padding: 1rem 0.5rem 1rem 0.75rem;
+    margin-left: -0.75rem;
+    cursor: pointer;
+    color: inherit;
+    transition: border-color 220ms var(--ease-institutional), background 220ms;
+  }
+
+  .ploc:hover,
+  .ploc.is-selected {
+    border-left-color: var(--accent);
+    background: color-mix(in srgb, #fff 4%, transparent);
+  }
+
+  .ploc__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ploc__city {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .ploc__entity {
+    color: var(--accent);
+    flex: none;
+  }
+
+  .ploc--primary .ploc__entity {
+    color: var(--color-ochre-300);
+  }
+
+  .ploc__country,
+  .ploc__coord {
+    color: var(--ink-faint);
+  }
+
+  .ploc__detail {
+    display: none;
+    padding: 0 0.5rem 1.15rem 0.75rem;
+    color: var(--ink-muted);
+  }
+
+  .pmap__list li.is-open .ploc__detail {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+  }
+
+  .ploc__link {
+    color: #fff;
+    font-size: 0.6875rem;
+  }
+
+  /* ---- map ---- */
+  .pmap__map-col {
+    display: grid;
+  }
+
+  .pmap__canvas {
+    position: relative;
+    min-height: clamp(20rem, 52vh, 34rem);
+    background: #04101b;
+  }
+
+  @media (min-width: 64rem) {
+    .pmap__canvas {
+      min-height: 34rem;
+    }
+  }
+
+  .pmap__fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 0.6rem;
+    padding: 2rem;
+    color: var(--ink-faint);
+  }
+
+  .pmap__fallback :global(.t-meta) {
+    color: var(--accent);
+  }
+
+  .pmap__fallback :global(p) {
+    max-width: 34ch;
+  }
+
+  .pmap__disclosure {
+    padding: clamp(1rem, 2vw, 1.35rem) clamp(1.25rem, 2.5vw, 2rem);
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+
+  /* ---- markers (global: injected by MapLibre outside this scope) ---- */
+  .pmap :global(.mkr) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: #cfdae0;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .pmap :global(.mkr__dot) {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #7d94a3;
+    border: 1.5px solid #04101b;
+    box-shadow: 0 0 0 1px #7d94a3;
+    flex: none;
+    transition: transform 260ms var(--ease-out-expo);
+  }
+
+  .pmap :global(.mkr--primary .mkr__dot) {
+    width: 13px;
+    height: 13px;
+    background: var(--color-ochre-500);
+    box-shadow: 0 0 0 1px var(--color-ochre-500), 0 0 0 7px rgb(201 154 69 / 0.22);
+  }
+
+  .pmap :global(.mkr:hover .mkr__dot),
+  .pmap :global(.mkr.is-selected .mkr__dot) {
+    transform: scale(1.3);
+  }
+
+  .pmap :global(.mkr.is-selected) {
+    color: #fff;
+  }
+
+  .pmap :global(.maplibregl-ctrl-group) {
+    background: rgb(11 34 53 / 0.9);
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 2px;
+  }
+
+  .pmap :global(.maplibregl-ctrl-group button + button) {
+    border-top-color: rgb(255 255 255 / 0.16);
+  }
+
+  .pmap :global(.maplibregl-ctrl-group button span) {
+    filter: invert(1);
+  }
+
+  .pmap :global(.maplibregl-ctrl-attrib) {
+    background: rgb(4 16 27 / 0.75);
+    font-size: 10px;
+  }
+
+  .pmap :global(.maplibregl-ctrl-attrib a) {
+    color: #9fb0bc;
+  }
+</style>

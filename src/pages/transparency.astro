@@ -1,0 +1,388 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import { policies, governanceBodies, transparencyNote } from '@data/organisation';
+import { contact } from '@data/site';
+
+const crumbs = [{ label: 'Transparency & Accountability', href: '/transparency' }];
+
+const byCategory = policies.reduce<Record<string, typeof policies>>((acc, p) => {
+  (acc[p.category] ??= []).push(p);
+  return acc;
+}, {});
+
+const bodies = governanceBodies.map((b, i) => ({
+  number: String(i + 1).padStart(2, '0'),
+  title: b.name,
+  meta: b.cadence,
+  body: b.remit,
+}));
+---
+
+<PageLayout
+  title="Transparency & Accountability"
+  description="MMT Impact governance, policies, safeguarding and PSEA commitments, financial reporting, and confidential channels for raising a concern."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Transparency & Accountability',
+    lines: ['Open to being', 'checked.'],
+    lede: 'Governance, policies, safeguarding commitments, financial reporting and the channels through which anyone can raise a concern about MMT Impact — including anonymously.',
+    seed: 'transparency-hero',
+    variant: 'graticule',
+    actions: [{ label: 'Report a concern', href: '#whistleblowing', style: 'accent' }],
+    facts: [
+      { label: 'Policies', value: String(policies.length) },
+      { label: 'Governance bodies', value: String(governanceBodies.length) },
+      { label: 'Safeguarding line', value: 'Direct to Board' },
+      { label: 'Anonymous reporting', value: 'Accepted' },
+    ],
+  }}
+>
+  <!-- Governance -->
+  <section class="gov surface-paper section" id="governance" aria-labelledby="gov-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Governance" />
+      <h2 class="t-h2 gov__heading" id="gov-h" data-reveal>Who decides what.</h2>
+      <NumberedGrid items={bodies} columns={2} style="panel" />
+      <a class="link-rule gov__cta" href="/who-we-are/governance" data-reveal>
+        Governance in full
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Safeguarding -->
+  <EditorialSplit
+    index="02"
+    label="Safeguarding & PSEA"
+    heading={'Zero tolerance is a\nprocedure, not a\nstatement.'}
+    ratio="lead"
+    surface="dark"
+    id="safeguarding"
+  >
+    <div class="prose-editorial">
+      <p>
+        MMT Impact applies a zero-tolerance standard to sexual exploitation, abuse and harassment,
+        and to any abuse of the power differential between our personnel and the people we work
+        with. That standard applies equally to staff, volunteers, consultants, contractors,
+        suppliers and partner organisations.
+      </p>
+
+      <h3>What that means in practice</h3>
+      <ul>
+        <li>Safeguarding and PSEA obligations are contractual for every person working on our behalf, and briefed before deployment.</li>
+        <li>Recruitment includes reference checks that ask specifically about safeguarding conduct.</li>
+        <li>Reporting duties are mandatory: a concern that is known and not reported is itself a disciplinary matter.</li>
+        <li>The Safeguarding and PSEA Focal Point reports directly to the Board, independent of executive management.</li>
+        <li>Survivor-centred response takes precedence over organisational reputation, without exception.</li>
+        <li>Partner organisations are assessed on their safeguarding capacity before an agreement is signed.</li>
+      </ul>
+
+      <h3>Child protection</h3>
+      <p>
+        Additional requirements apply where programmes involve children, covering contact standards,
+        information handling, and consent for any photography or storytelling. Our default position
+        on identifiable images of children is that they are not published unless there is a clear
+        reason they should be.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Policies -->
+  <section class="pol surface-light section" id="policies" aria-labelledby="pol-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Policies" meta={`${policies.length} in the framework`} />
+      <h2 class="t-h2 pol__heading" id="pol-h" data-reveal>The policy framework.</h2>
+      <p class="t-lead pol__note" data-reveal>{transparencyNote}</p>
+
+      <div class="pol__groups">
+        {
+          Object.entries(byCategory).map(([category, items]) => (
+            <div class="polgroup" data-reveal data-reveal-group="policies">
+              <h3 class="t-meta polgroup__heading">{category}</h3>
+              <ul class="polgroup__list">
+                {items.map((p) => (
+                  <li class="polrow">
+                    <div>
+                      <p class="polrow__name">{p.name}</p>
+                      <p class="t-small polrow__summary">{p.summary}</p>
+                    </div>
+                    {p.file ? (
+                      <a class="btn btn--ghost btn--sm" href={p.file} download>
+                        PDF
+                        <span aria-hidden="true">↓</span>
+                      </a>
+                    ) : (
+                      <span class="t-meta polrow__status">On request</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Financial -->
+  <EditorialSplit
+    index="04"
+    label="Financial information"
+    heading={'What we will publish,\nand when.'}
+    ratio="lead"
+    surface="sand"
+    id="financial"
+  >
+    <div class="prose-editorial">
+      <p>
+        MMT Impact publishes audited financial statements as each annual reporting cycle completes.
+        Our first full cycle is in progress; publishing an unaudited figure in the interim would be
+        worse than publishing nothing, so we publish nothing.
+      </p>
+      <p>Once each cycle closes we will publish:</p>
+      <ul>
+        <li>Audited financial statements, with the auditor named.</li>
+        <li>Income by source category, distinguishing restricted from unrestricted funding.</li>
+        <li>Expenditure by programme area and by cost category.</li>
+        <li>The proportion of expenditure on programme delivery against support and governance costs, with the basis of allocation stated.</li>
+        <li>An annual report covering results against the published results framework, including where targets were not met.</li>
+      </ul>
+      <p>
+        Institutional partners conducting due diligence before that point can request management
+        accounts and the financial procedures manual through
+        <a href={`mailto:${contact.finance}`}>{contact.finance}</a>.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Whistleblowing -->
+  <section class="wb surface-dark section" id="whistleblowing" aria-labelledby="wb-h">
+    <div class="wrap">
+      <SectionLabel index="05" label="Raising a concern" meta="Confidential · anonymous accepted" />
+      <div class="wb__grid">
+        <div>
+          <h2 class="t-h2 wb__heading" id="wb-h" data-reveal>
+            If something is wrong,<br />tell us.
+          </h2>
+          <p class="t-lead wb__note" data-reveal>
+            Anyone — staff, partners, suppliers, community members, or a member of the public — can
+            raise a concern about the conduct of MMT Impact or anyone acting on our behalf.
+          </p>
+        </div>
+
+        <div class="wb__body" data-reveal>
+          <div class="wb__block">
+            <h3 class="t-meta wb__block-h">What to report</h3>
+            <ul class="wb__list">
+              <li>Sexual exploitation, abuse or harassment</li>
+              <li>Harm to, or risk to, a child or adult at risk</li>
+              <li>Fraud, theft, bribery or corruption</li>
+              <li>A request for payment in connection with recruitment or procurement</li>
+              <li>Conflict of interest that has not been declared</li>
+              <li>Any breach of our Code of Conduct</li>
+            </ul>
+          </div>
+
+          <div class="wb__block">
+            <h3 class="t-meta wb__block-h">How to report</h3>
+            <p class="t-small wb__p">
+              Write to <a href={`mailto:${contact.general}`}>{contact.general}</a> marking the
+              message for the Safeguarding Focal Point, or raise it with any MMT Impact staff
+              member, who is required to escalate it.
+            </p>
+            <p class="t-small wb__p">
+              Reports can be made anonymously. You do not need proof, and you do not need to be
+              certain — a reasonable suspicion is enough. Retaliation against anyone who raises a
+              concern in good faith is itself a disciplinary matter.
+            </p>
+            <p class="t-small wb__p">
+              If your concern is about someone in the executive team, say so in the message. It will
+              be routed to the Board without passing through the person concerned.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Accountability to communities -->
+  <EditorialSplit
+    index="06"
+    label="Accountability to communities"
+    heading={'The people we work\nwith are the first\naudience, not the last.'}
+    ratio="lead"
+    surface="paper"
+    id="aap"
+  >
+    <div class="prose-editorial">
+      <p>
+        Accountability in this sector flows naturally upward, toward whoever provides the funding.
+        Making it flow downward as well takes deliberate design, because nothing in the incentive
+        structure does it automatically.
+      </p>
+      <ul>
+        <li><strong>Information.</strong> Communities are told what a programme will and will not do, who is eligible, and on what basis — before it starts, in a language they use.</li>
+        <li><strong>Participation.</strong> Targeting criteria are validated with the community, and community structures take part in design and review.</li>
+        <li><strong>Feedback.</strong> Every programme carries a feedback and complaints mechanism appropriate to the context, including a route that does not run through programme staff.</li>
+        <li><strong>Response.</strong> Feedback is logged, responded to, and reported on — including what changed as a result, and what did not and why.</li>
+      </ul>
+      <p>
+        The test is simple: can someone in a community we work in say what we promised, and tell
+        someone if we did not deliver it?
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .gov__heading,
+  .pol__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .gov__cta {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .pol__note {
+    max-width: 68ch;
+    margin-top: -1rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .pol__groups {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .pol__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .polgroup__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .polgroup__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .polrow {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .polrow__name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+    margin-bottom: 0.3rem;
+  }
+
+  .polrow__summary {
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  .polrow__status {
+    flex: none;
+    color: var(--ink-faint);
+    padding-top: 0.25rem;
+  }
+
+  /* ---- whistleblowing ---- */
+  .wb__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .wb__grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+  }
+
+  .wb__heading {
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+
+  .wb__note {
+    max-width: 46ch;
+  }
+
+  .wb__body {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .wb__body {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .wb__block-h {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.15rem;
+  }
+
+  .wb__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .wb__list li {
+    position: relative;
+    padding-left: 1.3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .wb__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.66em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .wb__p {
+    color: var(--ink-muted);
+  }
+
+  .wb__p + .wb__p {
+    margin-top: 0.85rem;
+  }
+
+  .wb__p a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--accent);
+  }
+</style>

@@ -1,0 +1,116 @@
+---
+/**
+ * Designed empty state.
+ *
+ * A new organisation has sections with nothing in them yet. The honest move is
+ * to design that state properly rather than seed the site with invented news,
+ * fictional projects or placeholder tenders. An empty section that explains
+ * itself and offers a route forward reads as discipline; a fabricated one is a
+ * due-diligence failure waiting to happen.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body: string;
+  action?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  tone?: 'default' | 'inset';
+}
+
+const { eyebrow = 'Nothing published yet', title, body, action, secondary, tone = 'default' } = Astro.props;
+---
+
+<div class={`empty empty--${tone}`} data-reveal>
+  <div class="empty__mark" aria-hidden="true">
+    <svg viewBox="0 0 64 64" fill="none">
+      <rect x="0.75" y="0.75" width="62.5" height="62.5" stroke="currentColor" stroke-opacity="0.28" />
+      <line x1="0" y1="21.3" x2="64" y2="21.3" stroke="currentColor" stroke-opacity="0.16" />
+      <line x1="0" y1="42.6" x2="64" y2="42.6" stroke="currentColor" stroke-opacity="0.16" />
+      <line x1="21.3" y1="0" x2="21.3" y2="64" stroke="currentColor" stroke-opacity="0.16" />
+      <line x1="42.6" y1="0" x2="42.6" y2="64" stroke="currentColor" stroke-opacity="0.16" />
+      <circle cx="32" cy="32" r="6" stroke="var(--accent)" stroke-width="1.5" />
+      <line x1="32" y1="14" x2="32" y2="22" stroke="var(--accent)" stroke-width="1.5" />
+      <line x1="32" y1="42" x2="32" y2="50" stroke="var(--accent)" stroke-width="1.5" />
+    </svg>
+  </div>
+
+  <p class="t-meta empty__eyebrow">{eyebrow}</p>
+  <p class="t-h3 empty__title">{title}</p>
+  <p class="t-body empty__body">{body}</p>
+
+  {
+    (action || secondary) && (
+      <div class="empty__actions">
+        {action && (
+          <a class="btn btn--ghost btn--sm" href={action.href}>
+            {action.label}
+            <span class="btn-arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        )}
+        {secondary && (
+          <a class="link-rule empty__secondary" href={secondary.href}>
+            {secondary.label}
+            <span class="btn-arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .empty {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border: 1px dashed var(--rule-strong);
+    max-width: 62ch;
+  }
+
+  .empty--inset {
+    border-style: solid;
+    background: var(--surface-raised);
+  }
+
+  .empty__mark {
+    width: 52px;
+    height: 52px;
+    color: var(--ink-faint);
+    margin-bottom: 0.75rem;
+  }
+
+  .empty__mark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .empty__eyebrow {
+    color: var(--accent);
+  }
+
+  .empty__title {
+    max-width: 24ch;
+  }
+
+  .empty__body {
+    max-width: 54ch;
+  }
+
+  .empty__actions {
+    margin-top: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+
+  .empty__secondary {
+    font-size: 0.6875rem;
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+/**
+ * Line icons.
+ *
+ * Hand-drawn on a 24px grid at 1.5 stroke, inheriting `currentColor`, with no
+ * fills. Kept deliberately small and restrained: the design system says icons
+ * support meaning rather than decorate every container, so this set only grows
+ * when a real label needs one.
+ */
+import type { IconName } from '@lib/icons';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  /** Set when the icon carries meaning no adjacent text already conveys. */
+  label?: string;
+}
+
+const { name, size = 28, class: className = '', label }: Props = Astro.props;
+---
+
+<svg
+  class={`icon ${className}`}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable={label ? undefined : 'false'}
+>
+  {
+    name === 'education' && (
+      <>
+        {/* Open book */}
+        <path d="M12 6.6C10.6 5.4 8.7 4.7 6.6 4.7H3v13h3.6c2.1 0 4 .7 5.4 1.9 1.4-1.2 3.3-1.9 5.4-1.9H21v-13h-3.6c-2.1 0-4 .7-5.4 1.9Z" />
+        <path d="M12 6.6v12.9" />
+      </>
+    )
+  }
+
+  {
+    name === 'empowerment' && (
+      <>
+        {/* Figure with raised arms */}
+        <circle cx="12" cy="5.4" r="2.4" />
+        <path d="M12 8.3v6.2" />
+        <path d="M7.6 12.6 12 9.1l4.4 3.5" />
+        <path d="M9.1 20.2 12 14.5l2.9 5.7" />
+      </>
+    )
+  }
+
+  {
+    name === 'community' && (
+      <>
+        {/* Three figures — a community, not an individual */}
+        <circle cx="7.6" cy="8" r="2.4" />
+        <circle cx="16.4" cy="8" r="2.4" />
+        <path d="M3.2 18.4c0-2.4 2-4.4 4.4-4.4s4.4 2 4.4 4.4" />
+        <path d="M12 18.4c0-2.4 2-4.4 4.4-4.4s4.4 2 4.4 4.4" />
+      </>
+    )
+  }
+
+  {
+    name === 'livelihoods' && (
+      <>
+        {/* Seedling above a ground line */}
+        <path d="M12 20.4v-7.6" />
+        <path d="M12 12.8c0-3-2.2-5.2-5.2-5.2 0 3 2.2 5.2 5.2 5.2Z" />
+        <path d="M12 12.8c0-3 2.2-5.2 5.2-5.2 0 3-2.2 5.2-5.2 5.2Z" />
+        <path d="M4.6 20.4h14.8" />
+      </>
+    )
+  }
+
+  {
+    name === 'humanitarian' && (
+      <>
+        {/* Shield with an aid cross */}
+        <path d="M12 3.2 4.4 6v6.1c0 4.3 3.2 7.8 7.6 8.7 4.4-.9 7.6-4.4 7.6-8.7V6L12 3.2Z" />
+        <path d="M12 9.1v5.6" />
+        <path d="M9.2 11.9h5.6" />
+      </>
+    )
+  }
+
+  {
+    name === 'consultancy' && (
+      <>
+        {/* Framework / structure */}
+        <path d="M3.4 20.4h17.2" />
+        <path d="M6 20.4V9.6" />
+        <path d="M12 20.4V5.2" />
+        <path d="M18 20.4v-7.2" />
+        <circle cx="12" cy="3.6" r="1.5" />
+      </>
+    )
+  }
+
+  {name === 'arrow-right' && <path d="M4 12h15m0 0-5.6-5.6M19 12l-5.6 5.6" />}
+  {name === 'arrow-left' && <path d="M20 12H5m0 0 5.6-5.6M5 12l5.6 5.6" />}
+</svg>
+
+<style>
+  .icon {
+    display: block;
+    flex: none;
+  }
+</style>

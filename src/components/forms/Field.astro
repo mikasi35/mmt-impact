@@ -1,0 +1,110 @@
+---
+interface Props {
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'tel' | 'url' | 'textarea' | 'select' | 'file';
+  required?: boolean;
+  placeholder?: string;
+  hint?: string;
+  options?: string[];
+  autocomplete?: string;
+  accept?: string;
+  span?: 1 | 2;
+  rows?: number;
+}
+
+const {
+  name,
+  label,
+  type = 'text',
+  required = false,
+  placeholder,
+  hint,
+  options = [],
+  autocomplete,
+  accept,
+  span = 1,
+  rows = 5,
+}: Props = Astro.props;
+
+const id = `f-${name}`;
+const errorId = `${id}-error`;
+const hintId = hint ? `${id}-hint` : undefined;
+const describedBy = [hintId, errorId].filter(Boolean).join(' ');
+---
+
+<div class="fld" data-span={span}>
+  <label class="field-label" for={id}>
+    {label}
+    {required ? <span class="req" aria-hidden="true"> *</span> : <span class="opt"> (optional)</span>}
+  </label>
+
+  {
+    type === 'textarea' ? (
+      <textarea
+        class="field-textarea"
+        id={id}
+        name={name}
+        rows={rows}
+        required={required}
+        placeholder={placeholder}
+        aria-describedby={describedBy || undefined}
+      />
+    ) : type === 'select' ? (
+      <select
+        class="field-select"
+        id={id}
+        name={name}
+        required={required}
+        aria-describedby={describedBy || undefined}
+      >
+        <option value="">Please select…</option>
+        {options.map((o) => (
+          <option value={o}>{o}</option>
+        ))}
+      </select>
+    ) : type === 'file' ? (
+      <input
+        class="field-file"
+        id={id}
+        name={name}
+        type="file"
+        accept={accept}
+        required={required}
+        aria-describedby={describedBy || undefined}
+      />
+    ) : (
+      <input
+        class="field-input"
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        autocomplete={autocomplete}
+        aria-describedby={describedBy || undefined}
+      />
+    )
+  }
+
+  {hint && <p class="field-hint" id={hintId}>{hint}</p>}
+  <p class="field-error" id={errorId} role="alert" hidden></p>
+</div>
+
+<style>
+  .fld {
+    min-width: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .fld[data-span='2'] {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .opt {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    opacity: 0.6;
+  }
+</style>

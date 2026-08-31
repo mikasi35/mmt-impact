@@ -1,0 +1,336 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+
+const programmes = await getCollection('programmes', ({ data }) => !data.draft);
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+
+const STATUS_ORDER = ['active', 'in-design', 'planned', 'completed'] as const;
+const STATUS_LABEL: Record<string, string> = {
+  active: 'Active',
+  'in-design': 'In design',
+  planned: 'Planned',
+  completed: 'Completed',
+};
+
+const sorted = [...projects].sort(
+  (a, b) => STATUS_ORDER.indexOf(a.data.status) - STATUS_ORDER.indexOf(b.data.status)
+);
+
+const sectors = programmes
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({ id: p.data.sector, label: p.data.shortTitle }));
+
+const statusCounts = STATUS_ORDER.map((s) => ({
+  id: s,
+  label: STATUS_LABEL[s]!,
+  count: projects.filter((p) => p.data.status === s).length,
+})).filter((s) => s.count > 0);
+
+const crumbs = [
+  { label: 'Our Impact', href: '/impact' },
+  { label: 'Projects', href: '/impact/projects' },
+];
+---
+
+<PageLayout
+  title="Projects"
+  description="The MMT Impact project record: every project with its location, sector, status, dates, objectives, activities and beneficiary reporting."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Our Impact / Projects',
+    lines: ['The project', 'record.'],
+    lede: 'Every project carries structured metadata — location, sector, status, dates, partners and beneficiary reporting — so it can be assessed rather than read.',
+    seed: 'projects-hero',
+    variant: 'strata',
+    facts: [
+      { label: 'Projects', value: String(projects.length) },
+      { label: 'Countries', value: '1' },
+      { label: 'Sectors', value: String(new Set(projects.map((p) => p.data.sector)).size) },
+      { label: 'Status states', value: 'Active · In design · Planned' },
+    ],
+  }}
+>
+  <section class="pindex surface-paper section" aria-labelledby="pi-h" data-project-index>
+    <div class="wrap">
+      <SectionLabel index="01" label="All projects" meta={`${projects.length} in the record`} />
+      <h2 class="t-h2 pindex__heading" id="pi-h" data-reveal>Filter the record.</h2>
+
+      <!-- Filters. Plain buttons operating on the DOM — no framework, and the
+           full list is present in the HTML for search engines and no-JS users. -->
+      <div class="filters" data-reveal>
+        <fieldset class="filters__set">
+          <legend class="t-meta filters__legend">Programme area</legend>
+          <div class="filters__row">
+            <button type="button" class="fchip is-on" data-filter="sector" data-value="all">
+              All
+            </button>
+            {
+              sectors.map((s) => (
+                <button type="button" class="fchip" data-filter="sector" data-value={s.id}>
+                  {s.label}
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="filters__set">
+          <legend class="t-meta filters__legend">Status</legend>
+          <div class="filters__row">
+            <button type="button" class="fchip is-on" data-filter="status" data-value="all">
+              All
+            </button>
+            {
+              statusCounts.map((s) => (
+                <button type="button" class="fchip" data-filter="status" data-value={s.id}>
+                  {s.label} <span class="fchip__count">{s.count}</span>
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <p class="t-meta filters__result" data-filter-count role="status" aria-live="polite">
+          Showing all {projects.length} projects
+        </p>
+      </div>
+
+      {
+        sorted.length > 0 ? (
+          <div class="pindex__grid" data-project-grid>
+            {sorted.map((p) => (
+              <div data-project-item data-sector={p.data.sector} data-status={p.data.status}>
+                <ProjectCard project={p} size="compact" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            eyebrow="Project record"
+            title="No projects are published yet."
+            body="Projects appear here as they are designed and funded."
+            action={{ label: 'Partner with us', href: '/get-involved/partner' }}
+          />
+        )
+      }
+
+      <div class="pindex__none" data-filter-empty hidden>
+        <EmptyState
+          eyebrow="No match"
+          title="No projects match these filters."
+          body="Try a broader combination, or clear the filters to see the full record."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="pnote surface-sand section-sm">
+    <div class="wrap">
+      <SectionLabel index="02" label="How to read this record" />
+      <div class="pnote__grid">
+        <div data-reveal>
+          <h3 class="t-h4 pnote__title">Status is not a ranking</h3>
+          <p class="t-small">
+            <strong>Active</strong> means delivery is under way. <strong>In design</strong> means the
+            programme has been scoped but not yet launched. <strong>Planned</strong> means it is
+            intended and not yet funded. All three are published, because a pipeline shown honestly
+            is more useful to a funder than a record that only shows what is already running.
+          </p>
+        </div>
+        <div data-reveal>
+          <h3 class="t-h4 pnote__title">Beneficiary figures</h3>
+          <p class="t-small">
+            Where a project shows <em>in reporting</em>, no beneficiary figure has been verified for
+            publication. That is a deliberate blank rather than a zero or an estimate.
+          </p>
+        </div>
+        <div data-reveal>
+          <h3 class="t-h4 pnote__title">Partners and donors</h3>
+          <p class="t-small">
+            Partner and donor organisations are named only where the relationship exists and
+            permission to name it has been given. An empty field means no such relationship is
+            being claimed.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .pindex__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  /* ---- filters ---- */
+  .filters {
+    display: grid;
+    gap: 1.5rem;
+    padding-block: clamp(1.5rem, 3vw, 2rem);
+    border-block: 1px solid var(--rule);
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .filters__set {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .filters__legend {
+    color: var(--ink-faint);
+    padding: 0;
+  }
+
+  .filters__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.95rem;
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: border-color 200ms var(--ease-institutional), color 200ms, background 200ms;
+  }
+
+  .fchip:hover {
+    border-color: var(--accent);
+    color: var(--ink-strong);
+  }
+
+  .fchip.is-on {
+    background: var(--ink-strong);
+    border-color: var(--ink-strong);
+    color: var(--surface);
+  }
+
+  .fchip__count {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    opacity: 0.7;
+  }
+
+  .filters__result {
+    color: var(--ink-faint);
+  }
+
+  /* ---- grid ---- */
+  .pindex__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .pindex__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .pindex__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  [data-project-item][hidden] {
+    display: none;
+  }
+
+  .pindex__none[hidden] {
+    display: none;
+  }
+
+  .pindex__none {
+    margin-top: 1rem;
+  }
+
+  /* ---- notes ---- */
+  .pnote__grid {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 56rem) {
+    .pnote__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .pnote__title {
+    margin-bottom: 0.6rem;
+  }
+</style>
+
+<script>
+  function initProjectFilters() {
+    const root = document.querySelector<HTMLElement>('[data-project-index]');
+    if (!root) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — this guard stops a second invocation from attaching a
+    // second click listener to every filter chip.
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-project-item]'));
+    const count = root.querySelector<HTMLElement>('[data-filter-count]');
+    const empty = root.querySelector<HTMLElement>('[data-filter-empty]');
+    if (!items.length) return;
+
+    const state: Record<string, string> = { sector: 'all', status: 'all' };
+
+    const apply = () => {
+      let visible = 0;
+      items.forEach((item) => {
+        const okSector = state.sector === 'all' || item.dataset.sector === state.sector;
+        const okStatus = state.status === 'all' || item.dataset.status === state.status;
+        const show = okSector && okStatus;
+        item.hidden = !show;
+        if (show) visible++;
+      });
+
+      if (empty) empty.hidden = visible > 0;
+      if (count) {
+        const filtered = state.sector !== 'all' || state.status !== 'all';
+        count.textContent = filtered
+          ? `Showing ${visible} of ${items.length} projects`
+          : `Showing all ${items.length} projects`;
+      }
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const group = chip.dataset.filter!;
+        const value = chip.dataset.value!;
+        state[group] = value;
+        chips
+          .filter((c) => c.dataset.filter === group)
+          .forEach((c) => c.classList.toggle('is-on', c === chip));
+        apply();
+      });
+    });
+  }
+
+  initProjectFilters();
+  document.addEventListener('astro:page-load', initProjectFilters);
+</script>

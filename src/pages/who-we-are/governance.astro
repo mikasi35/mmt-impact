@@ -1,0 +1,195 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { governanceBodies, policies, transparencyNote } from '@data/organisation';
+import { capacityDisclaimer } from '@data/group';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'Governance', href: '/who-we-are/governance' },
+];
+
+const bodies = governanceBodies.map((b, i) => ({
+  number: String(i + 1).padStart(2, '0'),
+  title: b.name,
+  meta: b.cadence,
+  body: b.remit,
+}));
+
+const byCategory = policies.reduce<Record<string, typeof policies>>((acc, p) => {
+  (acc[p.category] ??= []).push(p);
+  return acc;
+}, {});
+---
+
+<PageLayout
+  title="Governance"
+  description="MMT Impact governance: board structure, committee remits, delegated authority, financial controls and the twelve policies the organisation operates under."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / Governance',
+    lines: ['Governance built', 'before delivery,', 'not after audit.'],
+    lede: 'The board structure, committee remits and policy framework under which MMT Impact operates — published in full so a prospective partner can assess them before entering a relationship.',
+    seed: 'governance-hero',
+    variant: 'graticule',
+    facts: [
+      { label: 'Governing body', value: 'Board of Directors' },
+      { label: 'Standing committees', value: 'Three' },
+      { label: 'Policies', value: `${policies.length} in the framework` },
+      { label: 'Safeguarding line', value: 'Direct to Board' },
+    ],
+  }}
+>
+  <EditorialSplit
+    index="01"
+    label="Governance structure"
+    heading={'Four bodies.\nDefined remits.'}
+    ratio="body"
+    surface="paper"
+    id="structure"
+  >
+    <NumberedGrid items={bodies} columns={2} style="panel" />
+  </EditorialSplit>
+
+  <!-- Policy framework -->
+  <section class="pol surface-light section" aria-labelledby="pol-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Policy framework" meta={`${policies.length} policies`} />
+      <h2 class="t-h2 pol__heading" id="pol-h" data-reveal>
+        The policies we operate under.
+      </h2>
+      <p class="t-lead pol__note" data-reveal>{transparencyNote}</p>
+
+      <div class="pol__groups">
+        {
+          Object.entries(byCategory).map(([category, items]) => (
+            <div class="polgroup" data-reveal data-reveal-group="policies">
+              <h3 class="t-meta polgroup__heading">{category}</h3>
+              <ul class="polgroup__list">
+                {items.map((p) => (
+                  <li class="polrow">
+                    <div class="polrow__main">
+                      <p class="polrow__name">{p.name}</p>
+                      <p class="t-small polrow__summary">{p.summary}</p>
+                    </div>
+                    {p.file ? (
+                      <a class="btn btn--ghost btn--sm polrow__action" href={p.file} download>
+                        Download
+                        <span class="btn-arrow" aria-hidden="true">
+                          ↓
+                        </span>
+                      </a>
+                    ) : (
+                      <span class="t-meta polrow__status">On request</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <a class="link-rule pol__cta" href="/transparency" data-reveal>
+        Transparency & accountability
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="03"
+    label="Group relationships"
+    heading={'Related-party dealings\nare declared, registered\nand managed.'}
+    ratio="lead"
+    surface="dark"
+    id="related-party"
+  >
+    <div class="prose-editorial">
+      <p>{capacityDisclaimer}</p>
+      <p>
+        MMT Impact’s conflict of interest policy covers organisational as well as personal
+        conflicts. Any engagement between MMT Impact and another MMT Group organisation is declared,
+        entered in the conflicts register, and contracted on arm’s-length terms with the interested
+        parties excluded from the award decision.
+      </p>
+      <p>
+        This is set out here rather than left to be discovered, because a shared group name is
+        exactly the circumstance in which an institutional funder is entitled to ask how
+        procurement decisions are protected.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .pol__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .pol__note {
+    max-width: 66ch;
+  }
+
+  .pol__groups {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 64rem) {
+    .pol__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .polgroup__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .polgroup__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .polrow {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .polrow__name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink-strong);
+    margin-bottom: 0.3rem;
+  }
+
+  .polrow__summary {
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  .polrow__action {
+    flex: none;
+  }
+
+  .polrow__status {
+    flex: none;
+    color: var(--ink-faint);
+    padding-top: 0.25rem;
+  }
+
+  .pol__cta {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+</style>

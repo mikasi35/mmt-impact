@@ -1,0 +1,237 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+
+const programmes = (await getCollection('programmes', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const crumbs = [{ label: 'What We Do', href: '/what-we-do' }];
+---
+
+<PageLayout
+  title="What We Do"
+  description="MMT Impact delivers six programme areas in South Sudan: education and skills, community support, women and youth empowerment, livelihoods, humanitarian response and institutional development."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'What We Do',
+    lines: ['Six programmes.', 'One method.'],
+    lede: 'Each programme answers a specific constraint on how a community can educate, earn, recover and decide. They are designed to run together and reported on separately.',
+    seed: 'what-we-do-hero',
+    variant: 'strata',
+    facts: [
+      { label: 'Programme areas', value: 'Six' },
+      { label: 'Geographic focus', value: 'South Sudan' },
+      { label: 'Delivery method', value: 'Six stages' },
+      { label: 'Reporting', value: 'Disaggregated' },
+    ],
+  }}
+>
+  <!-- Programme register: each entry is a full editorial band, not a card. -->
+  <section class="plist surface-paper" aria-label="Programme areas">
+    {
+      programmes.map((p, i) => (
+        <article class={`pband ${i % 2 === 1 ? 'pband--alt' : ''}`} data-parallax-scope>
+          <div class="wrap pband__inner">
+            <div class="pband__media">
+              <Plate
+                seed={`wwd-${p.id}`}
+                variant={p.data.media?.variant}
+                tone={p.data.media?.tone ?? 'navy'}
+                ratio="wide"
+                parallax={6}
+                alt=""
+              />
+            </div>
+
+            <div class="pband__body">
+              <span class="t-meta pband__num">{String(i + 1).padStart(2, '0')}</span>
+              <h2 class="pband__title" data-reveal>
+                <a href={`/what-we-do/${p.id}`}>{p.data.title}</a>
+              </h2>
+              <p class="t-serif-lead pband__statement" data-reveal>{p.data.statement}</p>
+              <p class="t-body pband__summary" data-reveal>{p.data.summary}</p>
+
+              <ul class="pband__activities" data-reveal>
+                {p.data.activities.slice(0, 4).map((a) => (
+                  <li>{a}</li>
+                ))}
+              </ul>
+
+              <a class="link-rule pband__cta" href={`/what-we-do/${p.id}`} data-reveal>
+                {p.data.shortTitle} in full
+                <span class="btn-arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <EditorialSplit
+    index="07"
+    label="How they fit together"
+    heading={'A community rarely has\nonly one constraint.'}
+    ratio="lead"
+    surface="dark"
+    id="integration"
+  >
+    <div class="prose-editorial">
+      <p>
+        Programme areas exist for organisational and reporting clarity. Communities do not
+        experience them separately.
+      </p>
+      <p>
+        A young woman who completes vocational training still needs capital, a market and childcare
+        to trade. A household reached by an emergency distribution still needs a livelihood before
+        the next season. A local organisation delivering community support still needs financial
+        systems to hold a direct grant.
+      </p>
+      <p>
+        So programmes are designed to interlock. Where a participant in one programme has a need
+        that another addresses, the referral is built into the design rather than left to chance —
+        and where the need falls outside everything MMT Impact does, our obligation is a safe
+        referral to an organisation mandated to meet it.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Projects link -->
+  <section class="pfoot surface-sand section-sm">
+    <div class="wrap">
+      <SectionLabel index="08" label="Delivery" />
+      <div class="pfoot__grid">
+        <h2 class="t-h2 pfoot__heading" data-reveal>
+          Programmes describe capability.<br />Projects show delivery.
+        </h2>
+        <div class="pfoot__actions" data-reveal>
+          <a class="btn btn--ghost" href="/impact/projects">
+            View the project record
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="link-rule" href="/who-we-are/approach">
+            How we work
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .pband {
+    padding-block: clamp(3rem, 7vw, 6rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pband--alt {
+    background: var(--surface-raised);
+  }
+
+  .pband__inner {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .pband__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .pband--alt .pband__media {
+      order: 2;
+    }
+  }
+
+  .pband__num {
+    display: block;
+    color: var(--accent);
+    margin-bottom: 0.85rem;
+  }
+
+  .pband__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.4vw, 3.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+
+  .pband__title a {
+    color: var(--ink-strong);
+    text-decoration: none;
+    transition: color 220ms var(--ease-institutional);
+  }
+
+  .pband__title a:hover {
+    color: var(--accent-ink);
+  }
+
+  .pband__statement {
+    margin-bottom: 1rem;
+    max-width: 34ch;
+  }
+
+  .pband__summary {
+    max-width: 52ch;
+  }
+
+  .pband__activities {
+    list-style: none;
+    margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    border-top: 1px solid var(--rule);
+    padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .pband__activities li {
+    position: relative;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .pband__activities li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.65rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .pband__cta {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  /* ---- foot ---- */
+  .pfoot__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .pfoot__grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    }
+  }
+
+  .pfoot__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+</style>

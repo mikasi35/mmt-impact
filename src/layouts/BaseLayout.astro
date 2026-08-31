@@ -1,0 +1,124 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '@components/navigation/SiteHeader.astro';
+import SiteFooter from '@components/layout/SiteFooter.astro';
+import { buildTitle, absoluteUrl, organisationSchema, websiteSchema, type SEOProps } from '@lib/seo';
+import { seoDefaults, analytics } from '@data/site';
+import '@styles/global.css';
+
+interface Props extends SEOProps {
+  /** Suppresses the header/footer chrome — used by the printable profile. */
+  bare?: boolean;
+  bodyClass?: string;
+  /** Extra JSON-LD graph nodes for this page. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  image = seoDefaults.ogImage,
+  type = 'website',
+  noindex = false,
+  publishedTime,
+  modifiedTime,
+  bare = false,
+  bodyClass = '',
+  schema = [],
+} = Astro.props;
+
+const pageTitle = buildTitle(title);
+const canonicalUrl = canonical
+  ? absoluteUrl(canonical, Astro.site?.toString())
+  : new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site ?? Astro.url.origin).toString();
+const ogImage = absoluteUrl(image, Astro.site?.toString());
+
+const graph = [organisationSchema(), websiteSchema(), ...schema];
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow, max-image-preview:large" />}
+
+    <meta name="theme-color" content="#071827" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="MMT Impact" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_GB" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+    <!-- X / Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Typography: Instrument Serif (display), Plus Jakarta Sans (text), IBM Plex Mono (meta). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="MMT Impact — News & Stories" href="/rss.xml" />
+
+    <ClientRouter />
+
+    <script is:inline>
+      // Set before paint so the reveal system never flashes unstyled content.
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    </script>
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
+
+    {
+      analytics.src && analytics.domain && (
+        <script is:inline defer data-domain={analytics.domain} src={analytics.src} />
+      )
+    }
+  </head>
+
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {!bare && <SiteHeader />}
+
+    <main id="main">
+      <slot />
+    </main>
+
+    {!bare && <SiteFooter />}
+
+    <script>
+      import { bootAnimations } from '@lib/animations';
+      bootAnimations();
+    </script>
+  </body>
+</html>

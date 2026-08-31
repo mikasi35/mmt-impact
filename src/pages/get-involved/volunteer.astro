@@ -1,0 +1,179 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Get Involved', href: '/get-involved' },
+  { label: 'Volunteer', href: '/get-involved/volunteer' },
+];
+---
+
+<PageLayout
+  title="Volunteer"
+  description="Volunteer with MMT Impact. We are specific about where volunteering genuinely helps and honest about where it does not."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Get Involved / Volunteer',
+    lines: ['Give time where', 'it actually helps.'],
+    lede: 'Volunteering can strengthen an organisation or quietly cost it more than it contributes. We are specific about which is which.',
+    seed: 'volunteer-hero',
+    variant: 'cohort',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <EditorialSplit
+    index="01"
+    label="Being straight about this"
+    heading={'Volunteering is not\nautomatically a\ncontribution.'}
+    ratio="lead"
+    surface="paper"
+    id="honest"
+  >
+    <div class="prose-editorial">
+      <p>
+        Short international placements are popular and, for the receiving organisation, frequently
+        a net cost. Someone has to arrange accommodation, security briefing, transport, supervision
+        and duty of care. That someone is a staff member who is not doing their own job for the
+        duration.
+      </p>
+      <p>
+        There is also a displacement problem. A role performed by an international volunteer for
+        six weeks is a role not performed by a locally recruited person who needed the income and
+        would still be there in a year.
+      </p>
+      <p>
+        So we do not offer general placements, and we do not run volunteer programmes designed
+        around the volunteer’s experience. Where we do work with volunteers, it is because a
+        specific capability is genuinely needed and genuinely unavailable to us otherwise.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <section class="where surface-dark section" aria-labelledby="where-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Where volunteering helps" />
+      <h2 class="t-h2 where__heading" id="where-h" data-reveal>What we can actually use.</h2>
+      <NumberedGrid
+        columns={2}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Specialist professional skills, remotely',
+            body: 'Evaluation design, data analysis, financial systems, legal advice, translation, accessibility review, technical writing. Delivered remotely, on a defined piece of work with a deliverable and a deadline.',
+          },
+          {
+            number: '02',
+            title: 'Community volunteering in South Sudan',
+            body: 'Community members contributing time to programmes in their own communities — the largest and most valuable form of volunteering we work with, and the one most often overlooked.',
+          },
+          {
+            number: '03',
+            title: 'Governance and advisory',
+            body: 'Board, committee and advisory roles for people with relevant sector, financial or safeguarding expertise, contributing over a sustained period.',
+          },
+          {
+            number: '04',
+            title: 'Mentoring',
+            body: 'Structured mentoring for participants in enterprise and employment programmes, where a mentor commits to a full cycle rather than a single session.',
+          },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="vform surface-light section" id="enquiry" aria-labelledby="vf-h">
+    <div class="wrap vform__wrap">
+      <div class="vform__lead">
+        <SectionLabel index="03" label="Register your interest" />
+        <h2 class="t-h2 vform__heading" id="vf-h" data-reveal>Tell us what you can offer.</h2>
+        <p class="t-lead vform__body" data-reveal>
+          Be specific about the skill and the time you can commit. We will be equally specific about
+          whether we can use it, including when the answer is no.
+        </p>
+        <dl class="vform__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.careers}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Safeguarding</dt>
+            <dd>
+              Volunteers are bound by our Code of Conduct and PSEA obligations, and are subject to
+              the same reference checks as staff.
+            </dd>
+          </div>
+          <div>
+            <dt class="t-meta">Fees</dt>
+            <dd>We never charge to volunteer, and we never will.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="vform__form" data-reveal>
+        <EnquiryForm variant="volunteer" />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .where__heading {
+    color: #fff;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .vform__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .vform__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .vform__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .vform__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .vform__body {
+    max-width: 44ch;
+  }
+
+  .vform__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .vform__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .vform__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .vform__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+</style>

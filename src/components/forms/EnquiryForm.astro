@@ -1,0 +1,459 @@
+---
+import Field from '@components/forms/Field.astro';
+import { formEndpoint, contact } from '@data/site';
+import { partnershipTypes, supplierCategories, consultantDisciplines } from '@data/partnerships';
+
+interface Props {
+  variant: 'partnership' | 'supplier' | 'consultant' | 'volunteer' | 'contact' | 'application';
+  /** Where a submission is routed when no endpoint is configured. */
+  routeTo?: string;
+  title?: string;
+  intro?: string;
+  /** Prefilled subject, e.g. a job title on a careers application. */
+  subject?: string;
+}
+
+const { variant, routeTo, title, intro, subject } = Astro.props;
+
+const ROUTE: Record<string, string> = {
+  partnership: contact.partnerships,
+  supplier: contact.procurement,
+  consultant: contact.careers,
+  volunteer: contact.careers,
+  contact: contact.general,
+  application: contact.careers,
+};
+
+const to = routeTo ?? ROUTE[variant] ?? contact.general;
+
+const HEADINGS: Record<string, string> = {
+  partnership: 'Partnership enquiry',
+  supplier: 'Supplier registration',
+  consultant: 'Consultant registration',
+  volunteer: 'Volunteer enquiry',
+  contact: 'Send us a message',
+  application: 'Submit an application',
+};
+---
+
+<form
+  class="eform"
+  data-enquiry-form
+  data-variant={variant}
+  data-endpoint={formEndpoint}
+  data-mailto={to}
+  novalidate
+  method="post"
+  action={formEndpoint || undefined}
+  enctype="multipart/form-data"
+>
+  <h2 class="t-h3 eform__title">{title ?? HEADINGS[variant]}</h2>
+  {intro && <p class="t-body eform__intro">{intro}</p>}
+
+  <input type="hidden" name="_form" value={variant} />
+  {subject && <input type="hidden" name="_subject" value={subject} />}
+
+  <!-- Honeypot. Real people never fill this; bots almost always do. -->
+  <div class="hp-field" aria-hidden="true">
+    <label for={`hp-${variant}`}>Leave this field empty</label>
+    <input id={`hp-${variant}`} type="text" name="_company_website" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="eform__grid">
+    {
+      (variant === 'partnership' || variant === 'supplier' || variant === 'consultant') && (
+        <>
+          <Field
+            name="organisation"
+            label="Organisation"
+            required
+            autocomplete="organization"
+            placeholder="Registered organisation name"
+          />
+          <Field name="country" label="Country" required autocomplete="country-name" />
+        </>
+      )
+    }
+
+    <Field name="name" label="Your name" required autocomplete="name" />
+    <Field name="position" label="Position" autocomplete="organization-title" />
+    <Field name="email" label="Email" type="email" required autocomplete="email" />
+    <Field name="phone" label="Phone" type="tel" autocomplete="tel" />
+
+    {
+      variant === 'partnership' && (
+        <Field name="partnershipType" label="Partnership type" type="select" required options={[...partnershipTypes]} span={2} />
+      )
+    }
+
+    {
+      variant === 'supplier' && (
+        <>
+          <Field name="category" label="Supply category" type="select" required options={[...supplierCategories]} />
+          <Field name="registrationNumber" label="Business registration number" />
+          <Field
+            name="operatingLocations"
+            label="Operating locations"
+            hint="Countries and states where you can deliver."
+            span={2}
+          />
+        </>
+      )
+    }
+
+    {
+      variant === 'consultant' && (
+        <>
+          <Field name="discipline" label="Primary discipline" type="select" required options={[...consultantDisciplines]} />
+          <Field name="experience" label="Years of relevant experience" />
+          <Field name="availability" label="Availability" hint="Earliest start and typical notice period." span={2} />
+        </>
+      )
+    }
+
+    {
+      variant === 'volunteer' && (
+        <>
+          <Field name="skills" label="Skills you can offer" required span={2} />
+          <Field name="availability" label="Availability" hint="Days per week, and from when." span={2} />
+        </>
+      )
+    }
+
+    {
+      variant === 'contact' && (
+        <Field
+          name="topic"
+          label="Topic"
+          type="select"
+          required
+          span={2}
+          options={[
+            'General enquiry',
+            'Partnership',
+            'Programmes',
+            'Careers or consultancy',
+            'Procurement or suppliers',
+            'Media',
+            'Report a concern',
+            'Other',
+          ]}
+        />
+      )
+    }
+
+    <Field
+      name="message"
+      label={variant === 'application' ? 'Cover letter' : 'Message'}
+      type="textarea"
+      required
+      span={2}
+      rows={6}
+      placeholder={
+        variant === 'partnership'
+          ? 'What are you trying to achieve, where, and over what period?'
+          : undefined
+      }
+    />
+
+    {
+      (variant === 'partnership' || variant === 'supplier' || variant === 'consultant' || variant === 'application') && (
+        <Field
+          name="attachment"
+          label={variant === 'application' ? 'CV / résumé' : 'Capability statement or organisational profile'}
+          type="file"
+          accept=".pdf,.doc,.docx"
+          span={2}
+          hint="PDF or Word, maximum 10 MB. Documents are handled under our privacy notice and are never published."
+        />
+      )
+    }
+  </div>
+
+  <div class="eform__consent">
+    <label class="consent">
+      <input type="checkbox" name="consent" required />
+      <span>
+        I confirm the information provided is accurate, and I consent to MMT Impact processing it
+        for the purpose of this enquiry in line with the
+        <a href="/legal/privacy">privacy notice</a>.
+      </span>
+    </label>
+    <p class="field-error" data-consent-error role="alert" hidden></p>
+  </div>
+
+  <div class="eform__actions">
+    <button class="btn btn--accent" type="submit" data-submit>
+      <span data-submit-label>Submit</span>
+      <span class="btn-arrow" aria-hidden="true">→</span>
+    </button>
+    <p class="t-meta eform__route">Routed to {to}</p>
+  </div>
+
+  <!-- Status region: announced to assistive technology on every outcome. -->
+  <div class="eform__status" data-status role="status" aria-live="polite" hidden></div>
+</form>
+
+<style>
+  .eform {
+    border: 1px solid var(--rule-strong);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: var(--surface-raised);
+  }
+
+  .eform__title {
+    margin-bottom: 0.75rem;
+  }
+
+  .eform__intro {
+    max-width: 60ch;
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .eform__grid {
+    display: grid;
+    gap: clamp(1.35rem, 2.5vw, 2rem);
+  }
+
+  @media (min-width: 40rem) {
+    .eform__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .eform__consent {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    padding-top: clamp(1.25rem, 2vw, 1.75rem);
+    border-top: 1px solid var(--rule);
+  }
+
+  .consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+
+  .consent input {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.22rem;
+    accent-color: var(--color-ochre-600);
+  }
+
+  .consent a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--accent);
+  }
+
+  .eform__actions {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+
+  .eform__route {
+    color: var(--ink-faint);
+  }
+
+  .eform__status {
+    margin-top: 1.5rem;
+    padding: 1.15rem 1.35rem;
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--ink-strong);
+  }
+
+  .eform__status[data-tone='error'] {
+    border-left-color: #b8382e;
+  }
+
+  .eform__status :global(a) {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>
+
+<script>
+  /**
+   * Form handling.
+   *
+   * Validation runs client-side for immediate feedback, but the constraint
+   * attributes stay on the elements so the browser and any server endpoint
+   * enforce the same rules. `novalidate` only suppresses the native bubble.
+   *
+   * Delivery: POST to PUBLIC_FORM_ENDPOINT when configured. When it is not,
+   * we do NOT show a fake success — we compose a pre-filled mail draft and say
+   * plainly that this is what happened. A silently swallowed partnership
+   * enquiry is worse than an honest handoff.
+   */
+  const MAX_FILE_BYTES = 10 * 1024 * 1024;
+  const ALLOWED_EXT = ['pdf', 'doc', 'docx'];
+
+  function initForms() {
+    document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {
+      if (form.dataset.bound === 'true') return;
+      form.dataset.bound = 'true';
+
+      const status = form.querySelector<HTMLElement>('[data-status]');
+      const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+      const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]');
+      const endpoint = form.dataset.endpoint || '';
+      const mailto = form.dataset.mailto || '';
+
+      const setStatus = (message: string, tone: 'ok' | 'error') => {
+        if (!status) return;
+        status.hidden = false;
+        status.dataset.tone = tone;
+        status.innerHTML = message;
+      };
+
+      const fieldError = (input: HTMLElement, message: string | null) => {
+        const wrap = input.closest('.fld');
+        const err = wrap?.querySelector<HTMLElement>('.field-error');
+        if (!err) return;
+        if (message) {
+          err.textContent = message;
+          err.hidden = false;
+          input.setAttribute('aria-invalid', 'true');
+        } else {
+          err.hidden = true;
+          input.removeAttribute('aria-invalid');
+        }
+      };
+
+      const validate = (): HTMLElement | null => {
+        let firstBad: HTMLElement | null = null;
+
+        form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+          'input:not([type=hidden]):not([type=checkbox]), textarea, select'
+        ).forEach((el) => {
+          if (el.name === '_company_website') return;
+          fieldError(el, null);
+
+          if (el.hasAttribute('required') && !el.value.trim()) {
+            fieldError(el, 'This field is required');
+            firstBad ??= el;
+            return;
+          }
+          if (el instanceof HTMLInputElement && el.type === 'email' && el.value) {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value)) {
+              fieldError(el, 'Enter a valid email address');
+              firstBad ??= el;
+            }
+          }
+          if (el instanceof HTMLInputElement && el.type === 'file' && el.files?.length) {
+            const file = el.files[0]!;
+            const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+            if (!ALLOWED_EXT.includes(ext)) {
+              fieldError(el, 'Only PDF or Word documents are accepted');
+              firstBad ??= el;
+            } else if (file.size > MAX_FILE_BYTES) {
+              fieldError(el, 'File must be 10 MB or smaller');
+              firstBad ??= el;
+            }
+          }
+        });
+
+        const consent = form.querySelector<HTMLInputElement>('input[name=consent]');
+        const consentErr = form.querySelector<HTMLElement>('[data-consent-error]');
+        if (consent && consentErr) {
+          if (!consent.checked) {
+            consentErr.textContent = 'Please confirm before submitting';
+            consentErr.hidden = false;
+            firstBad ??= consent;
+          } else {
+            consentErr.hidden = true;
+          }
+        }
+
+        return firstBad;
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Honeypot: silently accept and discard.
+        const hp = form.querySelector<HTMLInputElement>('input[name=_company_website]');
+        if (hp?.value) {
+          setStatus('Thank you — your message has been received.', 'ok');
+          return;
+        }
+
+        const bad = validate();
+        if (bad) {
+          bad.focus();
+          setStatus('Please correct the highlighted fields and submit again.', 'error');
+          return;
+        }
+
+        const data = new FormData(form);
+
+        if (endpoint) {
+          submit?.setAttribute('disabled', 'true');
+          if (submitLabel) submitLabel.textContent = 'Sending…';
+          try {
+            const res = await fetch(endpoint, {
+              method: 'POST',
+              body: data,
+              headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) throw new Error(String(res.status));
+            form.reset();
+            setStatus(
+              'Thank you. Your enquiry has been received and routed to the relevant team. We aim to respond within five working days.',
+              'ok'
+            );
+          } catch {
+            setStatus(
+              `We could not submit the form just now. Please email <a href="mailto:${mailto}">${mailto}</a> and we will pick it up from there.`,
+              'error'
+            );
+          } finally {
+            submit?.removeAttribute('disabled');
+            if (submitLabel) submitLabel.textContent = 'Submit';
+          }
+          return;
+        }
+
+        // No endpoint configured: hand off honestly rather than fake a success.
+        const lines: string[] = [];
+        data.forEach((value, key) => {
+          if (key.startsWith('_') || key === 'consent') return;
+          if (value instanceof File) {
+            if (value.name) lines.push(`Attachment: ${value.name} (please attach manually)`);
+            return;
+          }
+          if (String(value).trim()) lines.push(`${key}: ${value}`);
+        });
+
+        const subject =
+          (data.get('_subject') as string) ||
+          `${form.dataset.variant ?? 'Website'} enquiry — MMT Impact`;
+        const href = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+          lines.join('\n')
+        )}`;
+        window.location.href = href;
+
+        setStatus(
+          `Online submission is not yet connected, so we have opened a pre-filled email to <a href="mailto:${mailto}">${mailto}</a> in your mail application. Please send it, attaching any document directly.`,
+          'ok'
+        );
+      });
+    });
+  }
+
+  initForms();
+  document.addEventListener('astro:page-load', initForms);
+</script>

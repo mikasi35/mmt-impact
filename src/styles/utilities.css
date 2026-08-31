@@ -1,0 +1,548 @@
+/* ==========================================================================
+   MMT IMPACT — LAYOUT & COMPONENT UTILITIES
+   Rule-based editorial grid. Hairlines, not shadows. Frames, not cards.
+   ========================================================================== */
+
+/* ---- Container / editorial grid ------------------------------------------ */
+.wrap {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+.wrap-wide {
+  width: 100%;
+  max-width: 1760px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+/* 12 / 8 / 4 editorial grid */
+.egrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--spacing-gutter);
+  row-gap: var(--spacing-stack);
+}
+@media (min-width: 48rem) {
+  .egrid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+@media (min-width: 64rem) {
+  .egrid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+.section {
+  padding-block: var(--spacing-section);
+}
+.section-sm {
+  padding-block: var(--spacing-section-sm);
+}
+
+/* ---- The rule system ------------------------------------------------------ */
+.rule-t { border-top: 1px solid var(--rule); }
+.rule-b { border-bottom: 1px solid var(--rule); }
+.rule-l { border-left: 1px solid var(--rule); }
+.rule-r { border-right: 1px solid var(--rule); }
+.rule-all { border: 1px solid var(--rule); }
+
+/* Section index marker — the "field record" spine */
+.spine {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.9rem;
+}
+.spine::before {
+  content: "";
+  display: block;
+  width: clamp(1.5rem, 4vw, 3.5rem);
+  height: 1px;
+  background: var(--accent);
+  transform: translateY(-0.35em);
+}
+
+/* Vertical rotated label */
+.vlabel {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ---- Buttons -------------------------------------------------------------- */
+.btn {
+  --btn-bg: var(--ink-strong);
+  --btn-fg: var(--surface);
+  --btn-bd: var(--ink-strong);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  border: 1px solid var(--btn-bd);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-institutional),
+    color var(--duration-fast) var(--ease-institutional),
+    border-color var(--duration-fast) var(--ease-institutional);
+}
+.btn .btn-arrow {
+  transition: transform var(--duration-base) var(--ease-out-expo);
+}
+.btn:hover .btn-arrow,
+.btn:focus-visible .btn-arrow {
+  transform: translateX(4px);
+}
+.btn:hover {
+  --btn-bg: transparent;
+  --btn-fg: var(--ink-strong);
+}
+
+.btn--accent {
+  --btn-bg: var(--color-ochre-600);
+  --btn-fg: var(--color-navy-950);
+  --btn-bd: var(--color-ochre-600);
+}
+.btn--accent:hover {
+  --btn-bg: transparent;
+  --btn-fg: var(--accent);
+  --btn-bd: var(--accent);
+}
+
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--ink-strong);
+  --btn-bd: var(--rule-strong);
+}
+.btn--ghost:hover {
+  --btn-bg: var(--ink-strong);
+  --btn-fg: var(--surface);
+  --btn-bd: var(--ink-strong);
+}
+
+.btn--sm {
+  padding: 0.7rem 1.15rem;
+  font-size: 0.6875rem;
+}
+
+/* Text link with animated underline */
+.link-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+  text-decoration: none;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--rule-strong);
+  transition: border-color var(--duration-fast) var(--ease-institutional),
+    color var(--duration-fast) var(--ease-institutional);
+}
+.link-rule .btn-arrow {
+  transition: transform var(--duration-base) var(--ease-out-expo);
+}
+.link-rule:hover,
+.link-rule:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.link-rule:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
+/* ---- Focus ---------------------------------------------------------------- */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 200;
+  background: var(--color-navy-950);
+  color: #fff;
+  padding: 0.85rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: top var(--duration-fast) var(--ease-institutional);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ---- Scroll reveal (progressive enhancement) ------------------------------ */
+[data-reveal] {
+  opacity: 1;
+}
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  will-change: opacity, transform;
+}
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: opacity 900ms var(--ease-out-expo),
+    transform 900ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.js [data-reveal="mask"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+}
+html.js [data-reveal="mask"].is-revealed {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* line-by-line text mask */
+.reveal-lines > * {
+  display: block;
+  overflow: hidden;
+}
+html.js .reveal-lines > * > span {
+  display: block;
+  transform: translateY(105%);
+}
+html.js .reveal-lines.is-revealed > * > span {
+  transform: translateY(0);
+  transition: transform 1000ms var(--ease-out-expo);
+}
+html.js .reveal-lines.is-revealed > *:nth-child(2) > span { transition-delay: 90ms; }
+html.js .reveal-lines.is-revealed > *:nth-child(3) > span { transition-delay: 180ms; }
+html.js .reveal-lines.is-revealed > *:nth-child(4) > span { transition-delay: 270ms; }
+
+/* ---- Media frames --------------------------------------------------------- */
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-navy-900);
+  border-radius: var(--radius-none);
+}
+.frame > img,
+.frame > svg,
+.frame > picture > img {
+  display: block;
+  /* Absolute + explicit 100% (not left in-flow) — a percentage-sized,
+     in-flow image contributes its own intrinsic aspect ratio to the
+     frame's auto height when the frame's height is itself dependent on
+     surrounding layout (e.g. a grid row sized by align-items:stretch),
+     a circular dependency the browser resolves by falling back to the
+     image's native size. Taking the image out of flow removes it from
+     that sizing pass entirely. Width/height are set explicitly rather
+     than left to inset:0 alone, since browsers don't consistently
+     stretch a replaced element (img) to fill inset:0 the way they do a
+     non-replaced box. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.frame-caption {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.frame-caption::before {
+  content: "";
+  flex: none;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--accent);
+  transform: translateY(-0.3em);
+}
+
+.ratio-hero { aspect-ratio: 16 / 9; }
+.ratio-wide { aspect-ratio: 3 / 2; }
+.ratio-square { aspect-ratio: 1 / 1; }
+.ratio-portrait { aspect-ratio: 4 / 5; }
+.ratio-tall { aspect-ratio: 3 / 4; }
+.ratio-band { aspect-ratio: 21 / 9; }
+
+/* ---- Grain / texture overlay ---------------------------------------------- */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("/textures/grain.svg");
+  background-size: 180px 180px;
+}
+
+/* Fine graticule — the cartographic signature used across dark sections */
+.graticule {
+  position: relative;
+}
+.graticule::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--ink) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ink) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: clamp(48px, 7vw, 96px) clamp(48px, 7vw, 96px);
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+}
+
+/* ---- Number counter ------------------------------------------------------- */
+.counter {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Definition data list ------------------------------------------------- */
+.data-list {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+.data-list > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 26%) 1fr;
+  gap: var(--spacing-gutter);
+  padding-block: 1.05rem;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.data-list dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.data-list dd {
+  font-size: var(--text-body);
+  color: var(--ink-strong);
+  margin: 0;
+}
+
+/* ---- Status indicators (semantic, restrained) ----------------------------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  flex: none;
+}
+.status[data-status="active"]::before { background: var(--color-green-600); }
+.status[data-status="in-design"]::before { background: var(--color-ochre-500); }
+.status[data-status="planned"]::before { background: var(--color-navy-600); }
+.status[data-status="completed"]::before { background: var(--ink-faint); }
+.surface-dark .status[data-status="active"]::before { background: var(--color-green-400); }
+
+/* ---- Forms ---------------------------------------------------------------- */
+.field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+}
+.field-label .req {
+  color: var(--accent);
+}
+.field-input,
+.field-select,
+.field-textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule-strong);
+  padding: 0.7rem 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--ink-strong);
+  border-radius: 0;
+  transition: border-color var(--duration-fast) var(--ease-institutional);
+}
+.field-textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.field-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 12px) calc(50% + 1px),
+    calc(100% - 7px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
+}
+.field-select option {
+  color: #0b2235;
+  background: #fff;
+}
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+.field-input:focus-visible,
+.field-select:focus-visible,
+.field-textarea:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: var(--ink-faint);
+  opacity: 0.7;
+}
+.field-hint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+.field-error {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b8382e;
+}
+.surface-dark .field-error,
+.surface-forest .field-error {
+  color: #f0a49c;
+}
+[aria-invalid="true"] {
+  border-bottom-color: #b8382e !important;
+}
+.field-file {
+  border: 1px dashed var(--rule-strong);
+  padding: 1.1rem;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  width: 100%;
+  cursor: pointer;
+}
+.hp-field {
+  position: absolute !important;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---- Horizontal rails ------------------------------------------------------ */
+.rail {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.rail > * {
+  scroll-snap-align: start;
+  flex: none;
+}
+
+/* Shared prev/next control for any `.rail` carousel — the News & Stories rail
+   and the "How We Work" carousel both use this, unmodified. */
+.rail-btn {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  color: var(--ink-strong);
+  cursor: pointer;
+  transition: border-color 200ms var(--ease-institutional),
+    background 200ms var(--ease-institutional), color 200ms;
+}
+.rail-btn:hover {
+  border-color: var(--accent);
+  background: var(--ink-strong);
+  color: var(--surface);
+}
+.rail-btn:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+.rail-btn:disabled:hover {
+  border-color: var(--rule-strong);
+  background: transparent;
+  color: var(--ink-strong);
+}
+
+/* ---- Reduced motion ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal],
+  html.js [data-reveal="mask"] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  html.js .reveal-lines > * > span {
+    transform: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,316 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { jobPostingSchema } from '@lib/seo';
+import { formatDate } from '@lib/utils';
+import { contact } from '@data/site';
+
+export async function getStaticPaths() {
+  const jobs = await getCollection('jobs', ({ data }) => !data.draft);
+  return jobs.map((job) => ({ params: { slug: job.id }, props: { job } }));
+}
+
+interface Props {
+  job: CollectionEntry<'jobs'>;
+}
+
+const { job } = Astro.props;
+const d = job.data;
+const { Content } = await render(job);
+
+const TYPE_LABEL: Record<string, string> = {
+  vacancy: 'Vacancy',
+  consultancy: 'Consultancy',
+  internship: 'Internship',
+  volunteer: 'Volunteer',
+};
+
+const crumbs = [
+  { label: 'Careers', href: '/careers' },
+  { label: d.title, href: `/careers/${job.id}` },
+];
+---
+
+<PageLayout
+  title={d.title}
+  description={d.seoDescription ?? d.summary}
+  crumbs={crumbs}
+  hero={{
+    eyebrow: `Careers / ${TYPE_LABEL[d.type] ?? d.type}`,
+    lines: [d.title],
+    lede: d.summary,
+    seed: `job-${job.id}`,
+    variant: 'cohort',
+    facts: [
+      { label: 'Location', value: d.location },
+      { label: 'Department', value: d.department },
+      { label: 'Contract', value: d.contract },
+      { label: 'Closing date', value: d.closes ? formatDate(d.closes) : 'Rolling' },
+    ],
+  }}
+  cta={false}
+  schema={[
+    jobPostingSchema({
+      title: d.title,
+      description: d.summary,
+      posted: d.posted,
+      closes: d.closes ?? undefined,
+      location: d.location,
+      employmentType: d.contract,
+    }),
+  ]}
+>
+  <section class="jd surface-paper section" aria-labelledby="jd-h">
+    <div class="wrap jd__wrap">
+      <aside class="jd__rail">
+        <div class="jd__rail-inner">
+          <SectionLabel index="01" label="Role details" />
+          <dl class="data-list jd__list">
+            <div><dt>Position</dt><dd>{d.title}</dd></div>
+            <div><dt>Type</dt><dd>{TYPE_LABEL[d.type] ?? d.type}</dd></div>
+            <div><dt>Department</dt><dd>{d.department}</dd></div>
+            <div><dt>Location</dt><dd>{d.location}</dd></div>
+            <div><dt>Contract</dt><dd>{d.contract}</dd></div>
+            {d.reportsTo && <div><dt>Reports to</dt><dd>{d.reportsTo}</dd></div>}
+            <div><dt>Posted</dt><dd>{formatDate(d.posted)}</dd></div>
+            <div><dt>Closing date</dt><dd>{d.closes ? formatDate(d.closes) : 'Rolling'}</dd></div>
+          </dl>
+
+          {
+            d.descriptionFile && (
+              <a class="btn btn--ghost jd__doc" href={d.descriptionFile} download>
+                Full job description
+                <span aria-hidden="true">↓</span>
+              </a>
+            )
+          }
+
+          <a class="btn btn--accent jd__apply" href="#apply">
+            Apply for this role
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="jd__body">
+        <h2 class="t-h2 jd__heading" id="jd-h" data-reveal>About the role</h2>
+
+        <div class="prose-editorial" data-reveal>
+          <Content />
+        </div>
+
+        {
+          d.responsibilities.length > 0 && (
+            <div class="jd__block" data-reveal>
+              <h3 class="t-meta jd__block-h">Responsibilities</h3>
+              <ul class="jd__ul">
+                {d.responsibilities.map((r) => (
+                  <li>{r}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          d.requirements.length > 0 && (
+            <div class="jd__block" data-reveal>
+              <h3 class="t-meta jd__block-h">Requirements</h3>
+              <ul class="jd__ul">
+                {d.requirements.map((r) => (
+                  <li>{r}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <div class="jd__safeguard" data-reveal>
+          <p class="t-meta jd__safeguard-label">Safeguarding</p>
+          <p class="t-small">
+            This appointment is subject to reference checks that ask specifically about safeguarding
+            conduct, and to acceptance of our Code of Conduct and PSEA obligations. MMT Impact never
+            charges a fee at any stage of recruitment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="apply surface-light section" id="apply" aria-labelledby="apply-h">
+    <div class="wrap apply__wrap">
+      <div class="apply__lead">
+        <SectionLabel index="02" label="Apply" />
+        <h2 class="t-h2 apply__heading" id="apply-h" data-reveal>Submit your application.</h2>
+        <p class="t-lead apply__body" data-reveal>
+          Attach your CV and include a cover letter addressing the requirements above. Applications
+          are assessed against the published criteria by a panel.
+        </p>
+        <dl class="apply__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Closing date</dt>
+            <dd>{d.closes ? formatDate(d.closes) : 'Rolling — assessed as received'}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.careers}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Your data</dt>
+            <dd>
+              Held under our <a href="/legal/privacy">privacy notice</a>, never published, and
+              deleted on request.
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="apply__form" data-reveal>
+        <EnquiryForm
+          variant="application"
+          title={`Application — ${d.title}`}
+          subject={`Application: ${d.title} — MMT Impact`}
+        />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .jd__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .jd__wrap {
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    }
+    .jd__rail-inner {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .jd__list {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .jd__doc,
+  .jd__apply {
+    margin-top: 1.25rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .jd__heading {
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .jd__block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .jd__block-h {
+    color: var(--accent-ink);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 1.15rem;
+  }
+
+  .jd__ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .jd__ul li {
+    position: relative;
+    padding-left: 1.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  .jd__ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.68em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .jd__safeguard {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+  }
+
+  .jd__safeguard-label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ---- apply ---- */
+  .apply__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .apply__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .apply__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .apply__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .apply__body {
+    max-width: 44ch;
+  }
+
+  .apply__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .apply__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .apply__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .apply__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+
+  .apply__facts a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

@@ -1,0 +1,831 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/layout/Breadcrumbs.astro';
+import Logo from '@components/ui/Logo.astro';
+import { breadcrumbSchema } from '@lib/seo';
+import { site, headquarters, contact, contactDirectory } from '@data/site';
+import { mission, vision, values, governanceBodies, executiveRoles, policies } from '@data/organisation';
+import { groupEntities, capacityDisclaimer, capacityPillars } from '@data/group';
+import { approachSteps } from '@data/approach';
+import { headlineMetrics, impactBasis, impactAsAt, formatMetric, programmePhasing } from '@data/impact';
+import { expertiseAreas } from '@data/partnerships';
+
+const programmes = (await getCollection('programmes', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+
+const crumbs = [
+  { label: 'Resources', href: '/resources' },
+  { label: 'Organisational Profile', href: '/resources/organisational-profile' },
+];
+
+const issued = 'Version 1.0';
+const STATUS_LABEL: Record<string, string> = {
+  active: 'Active',
+  'in-design': 'In design',
+  planned: 'Planned',
+  completed: 'Completed',
+};
+---
+
+<BaseLayout
+  title="Organisational Profile"
+  description="The MMT Impact organisational profile: mandate, governance, programme areas, delivery method, institutional capacity, reporting commitments and contact points."
+  schema={[breadcrumbSchema(crumbs)]}
+  bodyClass="profile-page"
+>
+  <Breadcrumbs crumbs={crumbs} />
+
+  <!-- Screen-only toolbar -->
+  <div class="ptool no-print surface-dark">
+    <div class="wrap ptool__inner">
+      <div>
+        <p class="t-meta ptool__label">Organisational Profile · {issued}</p>
+        <p class="t-small ptool__note">
+          This page is formatted for print. Use your browser’s print dialogue and choose
+          “Save as PDF” to produce a clean A4 document for submission.
+        </p>
+      </div>
+      <button class="btn btn--accent" type="button" data-print>
+        Save as PDF
+        <span class="btn-arrow" aria-hidden="true">↓</span>
+      </button>
+    </div>
+  </div>
+
+  <article class="profile surface-paper">
+    <div class="wrap profile__wrap">
+      <!-- ------------------------------------------------------ COVER -->
+      <header class="pcover">
+        <div class="pcover__brand">
+          <Logo strapline size={54} />
+        </div>
+
+        <div class="pcover__title">
+          <p class="t-meta pcover__eyebrow">Organisational Profile · {issued}</p>
+          <h1 class="t-display pcover__h1">
+            MMT Impact
+          </h1>
+          <p class="t-serif-lead pcover__tag">{site.tagline}</p>
+        </div>
+
+        <dl class="pcover__facts">
+          <div>
+            <dt class="t-meta">Organisation type</dt>
+            <dd>Development and humanitarian organisation</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Country of operation</dt>
+            <dd>South Sudan</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Country office</dt>
+            <dd>{headquarters.city}, {headquarters.country} — {headquarters.coordinateLabel}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Group</dt>
+            <dd>Member of the wider MMT Group</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Programme areas</dt>
+            <dd>{programmes.length}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">General enquiries</dt>
+            <dd>{contact.general}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Partnerships</dt>
+            <dd>{contact.partnerships}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Website</dt>
+            <dd>{site.url.replace(/^https?:\/\//, '')}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <!-- ---------------------------------------------------- SECTION 1 -->
+      <section class="psec page-break" aria-labelledby="p1">
+        <p class="t-meta psec__index">01</p>
+        <h2 class="t-h2 psec__h" id="p1">Who we are</h2>
+
+        <div class="psec__body prose-editorial">
+          <p>{site.shortDescription}</p>
+          <p>
+            MMT Impact operates from a country office in Juba, South Sudan. Programmes are designed
+            in-country, delivered through teams recruited from the communities they serve, and
+            reported against indicators defined before delivery begins.
+          </p>
+        </div>
+
+        <div class="pgrid pgrid--2">
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Mission</h3>
+            <p class="t-serif-lead">{mission}</p>
+          </div>
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Vision</h3>
+            <p class="t-serif-lead">{vision}</p>
+          </div>
+        </div>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Values</h3>
+          <dl class="pvalues">
+            {
+              values.map((v) => (
+                <div>
+                  <dt>{v.name}</dt>
+                  <dd>{v.statement}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 2 -->
+      <section class="psec" aria-labelledby="p2">
+        <p class="t-meta psec__index">02</p>
+        <h2 class="t-h2 psec__h" id="p2">Programme areas</h2>
+
+        <ol class="pprogs">
+          {
+            programmes.map((p, i) => (
+              <li class="pprog avoid-break">
+                <span class="t-meta pprog__num">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3 class="pprog__title">{p.data.title}</h3>
+                  <p class="pprog__summary">{p.data.summary}</p>
+                  <p class="t-small pprog__serve">
+                    <strong>Who we serve:</strong> {p.data.whoWeServe.slice(0, 4).join('; ')}.
+                  </p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 3 -->
+      <section class="psec page-break" aria-labelledby="p3">
+        <p class="t-meta psec__index">03</p>
+        <h2 class="t-h2 psec__h" id="p3">How we work</h2>
+        <p class="psec__lede">
+          A defined six-stage delivery method applied to every programme, published so that a
+          partner can see how a programme moves from a community conversation to a documented
+          result.
+        </p>
+
+        <ol class="psteps">
+          {
+            approachSteps.map((s) => (
+              <li class="pstep avoid-break">
+                <span class="t-meta pstep__num">{s.number}</span>
+                <h3 class="pstep__title">{s.title}</h3>
+                <p class="t-small pstep__body">{s.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 4 -->
+      <section class="psec" aria-labelledby="p4">
+        <p class="t-meta psec__index">04</p>
+        <h2 class="t-h2 psec__h" id="p4">Governance and accountability</h2>
+
+        <div class="pgrid pgrid--2">
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Governance bodies</h3>
+            <dl class="pdefs">
+              {
+                governanceBodies.map((b) => (
+                  <div class="avoid-break">
+                    <dt>{b.name}</dt>
+                    <dd>
+                      {b.remit} <em>{b.cadence}.</em>
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Accountable roles</h3>
+            <dl class="pdefs">
+              {
+                executiveRoles.map((r) => (
+                  <div class="avoid-break">
+                    <dt>{r.role}</dt>
+                    <dd>
+                      {r.remit} <em>Reports to {r.reportsTo}.</em>
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Policy framework — {policies.length} policies</h3>
+          <ul class="pcols">
+            {policies.map((p) => <li>{p.name}</li>)}
+          </ul>
+          <p class="t-small pnote">
+            Signed policy documents are available to institutional partners on request during due
+            diligence, and are published as each is formally adopted.
+          </p>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 5 -->
+      <section class="psec page-break" aria-labelledby="p5">
+        <p class="t-meta psec__index">05</p>
+        <h2 class="t-h2 psec__h" id="p5">Institutional capacity</h2>
+        <p class="psec__lede">
+          MMT Impact combines local presence and community mandate with access to wider expertise
+          across the MMT Group. Each pillar below is attributed to where the capability actually
+          sits.
+        </p>
+
+        <dl class="pdefs">
+          {
+            capacityPillars.map((c) => (
+              <div class="avoid-break">
+                <dt>
+                  {c.number} — {c.title} <span class="pdefs__owner">{c.owner}</span>
+                </dt>
+                <dd>{c.body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">The MMT Group</h3>
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Organisation</th>
+                <th>Geography</th>
+                <th>Focus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                groupEntities.map((e) => (
+                  <tr>
+                    <td><strong>{e.name}</strong></td>
+                    <td>{e.geography}</td>
+                    <td>{e.descriptor}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          <p class="pdisclaimer">{capacityDisclaimer}</p>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 6 -->
+      <section class="psec" aria-labelledby="p6">
+        <p class="t-meta psec__index">06</p>
+        <h2 class="t-h2 psec__h" id="p6">Impact and reporting</h2>
+
+        <dl class="pmetrics">
+          {
+            headlineMetrics.map((m) => (
+              <div>
+                <dt class="pmetrics__value">{formatMetric(m)}</dt>
+                <dd>{m.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <p class="t-small pnote"><strong>Basis of reporting.</strong> {impactBasis} {impactAsAt}.</p>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Programme phasing — a plan, not a record of results</h3>
+          <dl class="pdefs">
+            {
+              programmePhasing.map((p) => (
+                <div class="avoid-break">
+                  <dt>{p.period} — {p.title}</dt>
+                  <dd>{p.body}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Project record — {projects.length} projects</h3>
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Sector</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Beneficiaries</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                projects.map((p) => (
+                  <tr>
+                    <td><strong>{p.data.title}</strong></td>
+                    <td>{programmes.find((pr) => pr.data.sector === p.data.sector)?.data.shortTitle ?? p.data.sector}</td>
+                    <td>{p.data.location}</td>
+                    <td>{STATUS_LABEL[p.data.status]}</td>
+                    <td>{p.data.beneficiaries === null ? 'In reporting' : p.data.beneficiaries.toLocaleString('en-GB')}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 7 -->
+      <section class="psec page-break" aria-labelledby="p7">
+        <p class="t-meta psec__index">07</p>
+        <h2 class="t-h2 psec__h" id="p7">Areas of expertise and partnership</h2>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Areas of expertise</h3>
+          <dl class="pdefs">
+            {
+              expertiseAreas.map((e) => (
+                <div class="avoid-break">
+                  <dt>{e.title}</dt>
+                  <dd>{e.body}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+
+        <div class="pblock">
+          <h3 class="t-meta pblock__h">Available for institutional due diligence</h3>
+          <ul class="pcols">
+            <li>Certificate of registration and constitutional documents</li>
+            <li>Governance and accountability framework</li>
+            <li>Signed policy suite</li>
+            <li>Organisational structure and named post-holders</li>
+            <li>Financial procedures manual and delegated authority schedule</li>
+            <li>Audited financial statements, as each cycle completes</li>
+            <li>Monitoring, evaluation and learning framework</li>
+            <li>Insurance and duty-of-care arrangements</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- SECTION 8 -->
+      <section class="psec" aria-labelledby="p8">
+        <p class="t-meta psec__index">08</p>
+        <h2 class="t-h2 psec__h" id="p8">Contact</h2>
+
+        <div class="pgrid pgrid--2">
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Country office</h3>
+            <p class="t-serif-lead">
+              {headquarters.label}<br />
+              {headquarters.city}, {headquarters.country}
+            </p>
+            <p class="t-meta pcoord">{headquarters.coordinateLabel}</p>
+          </div>
+
+          <div class="pblock">
+            <h3 class="t-meta pblock__h">Contact points</h3>
+            <dl class="pcontacts">
+              {
+                contactDirectory.map((c) => (
+                  <div>
+                    <dt>{c.label}</dt>
+                    <dd>{c.email}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <footer class="pfoot">
+        <p class="t-meta">
+          {site.legalName} · Organisational Profile · {issued} · {site.url.replace(/^https?:\/\//, '')}
+        </p>
+        <p class="t-small pfoot__note">
+          All organisational claims in this profile are limited to MMT Impact. Nothing in it
+          attributes the turnover, workforce, contracts, certifications or delivery history of any
+          other MMT Group organisation to MMT Impact.
+        </p>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  /* ---- screen toolbar ---- */
+  .ptool {
+    padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .ptool__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+  }
+
+  .ptool__label {
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .ptool__note {
+    color: var(--ink-muted);
+    max-width: 62ch;
+  }
+
+  /* ---- document ---- */
+  .profile {
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+  }
+
+  .profile__wrap {
+    max-width: 62rem;
+  }
+
+  /* ---- cover ---- */
+  .pcover {
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+    border-bottom: 2px solid var(--ink-strong);
+  }
+
+  .pcover__brand {
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .pcover__eyebrow {
+    color: var(--accent-ink);
+    margin-bottom: 0.85rem;
+  }
+
+  .pcover__h1 {
+    margin-bottom: 0.75rem;
+  }
+
+  .pcover__tag {
+    color: var(--ink-muted);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .pcover__facts {
+    display: grid;
+    gap: 1.15rem clamp(1.5rem, 3vw, 3rem);
+    margin: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .pcover__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .pcover__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .pcover__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .pcover__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+
+  /* ---- sections ---- */
+  .psec {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .psec__index {
+    color: var(--accent-ink);
+    margin-bottom: 0.85rem;
+  }
+
+  .psec__h {
+    margin-bottom: 1.5rem;
+  }
+
+  .psec__lede {
+    font-size: var(--text-lead);
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 66ch;
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .psec__body {
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .pblock {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .pblock__h {
+    color: var(--accent-ink);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 1.15rem;
+  }
+
+  .pgrid {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .pgrid--2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- definition lists ---- */
+  .pdefs,
+  .pvalues,
+  .pcontacts {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .pdefs > div,
+  .pvalues > div,
+  .pcontacts > div {
+    display: grid;
+    gap: 0.3rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pdefs dt,
+  .pvalues dt,
+  .pcontacts dt {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink-strong);
+  }
+
+  .pdefs dd,
+  .pvalues dd,
+  .pcontacts dd {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  .pdefs__owner {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-left: 0.5rem;
+  }
+
+  /* ---- programmes ---- */
+  .pprogs,
+  .psteps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .pprog {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1rem;
+    padding-bottom: 1.35rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pprog__num,
+  .pstep__num {
+    color: var(--accent-ink);
+  }
+
+  .pprog__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    margin-bottom: 0.5rem;
+  }
+
+  .pprog__summary {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .pprog__serve {
+    color: var(--ink-faint);
+  }
+
+  /* ---- steps ---- */
+  @media (min-width: 48rem) {
+    .psteps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .pstep {
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pstep__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .pstep__body {
+    color: var(--ink-muted);
+  }
+
+  /* ---- columns list ---- */
+  .pcols {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .pcols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .pcols li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .pcols li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ---- metrics ---- */
+  .pmetrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: 1.5rem;
+    margin: 0 0 1.5rem;
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--rule-strong);
+  }
+
+  .pmetrics > div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .pmetrics__value {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+  }
+
+  .pmetrics dd {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+
+  /* ---- table ---- */
+  .ptable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .ptable th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .ptable td {
+    padding: 0.75rem 0.75rem 0.75rem 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-muted);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+
+  .ptable td strong {
+    color: var(--ink-strong);
+  }
+
+  .pdisclaimer {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+
+  .pnote {
+    margin-top: 1rem;
+    color: var(--ink-faint);
+    max-width: 76ch;
+  }
+
+  .pcoord {
+    margin-top: 0.75rem;
+    color: var(--ink-faint);
+  }
+
+  /* ---- footer ---- */
+  .pfoot {
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .pfoot p:first-child {
+    color: var(--ink-faint);
+  }
+
+  .pfoot__note {
+    color: var(--ink-faint);
+    max-width: 80ch;
+  }
+
+  /* ---- print refinements ---- */
+  @media print {
+    .profile__wrap {
+      max-width: none;
+    }
+    .pcover {
+      min-height: 0;
+    }
+    .psec {
+      padding-block: 6mm 4mm;
+    }
+    .pmetrics__value {
+      font-size: 20pt !important;
+    }
+  }
+</style>

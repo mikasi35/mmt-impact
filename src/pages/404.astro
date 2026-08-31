@@ -1,0 +1,193 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Plate from '@components/media/Plate.astro';
+import { headquarters } from '@data/site';
+
+const routes = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'What We Do', href: '/what-we-do' },
+  { label: 'Where We Work', href: '/where-we-work' },
+  { label: 'Our Impact', href: '/impact' },
+  { label: 'Partners & Opportunities', href: '/partnerships' },
+  { label: 'Contact', href: '/contact' },
+];
+---
+
+<BaseLayout
+  title="Page not found"
+  description="This page does not exist. Return to MMT Impact or explore our work in South Sudan."
+  noindex
+>
+  <section class="nf surface-dark">
+    <div class="nf__media">
+      <Plate seed="404-plate" variant="graticule" tone="navy" ratio="fill" priority alt="" />
+      <div class="nf__scrim" aria-hidden="true"></div>
+    </div>
+
+    <div class="wrap nf__inner">
+      <p class="t-meta nf__code">
+        <span class="nf__rule" aria-hidden="true"></span>
+        Error 404 — no record at this path
+      </p>
+
+      <h1 class="t-display nf__heading">
+        This path<br />doesn’t exist.
+      </h1>
+
+      <p class="t-lead nf__body">
+        But the work continues. The page you were looking for may have moved, or the link that
+        brought you here may be out of date.
+      </p>
+
+      <div class="nf__actions">
+        <a class="btn btn--accent" href="/">
+          Back to MMT Impact
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost" href="/what-we-do">
+          Explore our work
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <nav class="nf__routes" aria-label="Main sections">
+        <p class="t-meta nf__routes-label">Or start from a section</p>
+        <ul>
+          {
+            routes.map((r, i) => (
+              <li>
+                <a href={r.href}>
+                  <span class="t-meta nf__routes-num">{String(i + 1).padStart(2, '0')}</span>
+                  {r.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <p class="t-meta nf__coord">
+        {headquarters.city} · {headquarters.coordinateLabel}
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 78svh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+
+  .nf__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .nf__media :global(.plate),
+  .nf__media :global(.frame) {
+    height: 100%;
+  }
+
+  .nf__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, rgb(7 24 39 / 0.95) 32%, rgb(7 24 39 / 0.7) 100%);
+  }
+
+  .nf__inner {
+    width: 100%;
+  }
+
+  .nf__code {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ochre-400);
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .nf__rule {
+    width: clamp(1.5rem, 4vw, 3rem);
+    height: 1px;
+    background: currentColor;
+  }
+
+  .nf__heading {
+    color: #fff;
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .nf__body {
+    max-width: 48ch;
+    color: #b9c8d2;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .nf__routes {
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  }
+
+  .nf__routes-label {
+    color: #7a8f9d;
+    margin-bottom: 1.15rem;
+  }
+
+  .nf__routes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem 2rem;
+  }
+
+  @media (min-width: 40rem) {
+    .nf__routes ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .nf__routes ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .nf__routes a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    font-size: 0.9375rem;
+    color: #cfdae0;
+    text-decoration: none;
+    padding-block: 0.35rem;
+    transition: color 200ms var(--ease-institutional);
+  }
+
+  .nf__routes a:hover {
+    color: #fff;
+  }
+
+  .nf__routes-num {
+    color: var(--color-ochre-400);
+  }
+
+  .nf__coord {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    color: #5f7482;
+  }
+</style>

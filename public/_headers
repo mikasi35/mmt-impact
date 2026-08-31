@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------------------
+# Security headers — Netlify / Cloudflare Pages format.
+# The equivalent for Vercel is in vercel.json at the repo root.
+#
+# CSP NOTE: script-src currently allows 'unsafe-inline' for ONE inline script —
+# the no-JS class flip in <head>, which must run before first paint to prevent
+# a flash of hidden content. To tighten this, compute the SHA-256 of that
+# script's exact contents and swap 'unsafe-inline' for 'sha256-<hash>'.
+# Verify in a browser before deploying the stricter policy.
+#
+# If you configure PUBLIC_FORM_ENDPOINT on an external host, add that origin to
+# BOTH form-action and connect-src or submissions will be blocked.
+# ---------------------------------------------------------------------------
+
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; worker-src 'self' blob:; child-src 'self' blob:; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+
+# Immutable build assets
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/og/*
+  Cache-Control: public, max-age=604800
+
+/textures/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/geo/*
+  Cache-Control: public, max-age=604800

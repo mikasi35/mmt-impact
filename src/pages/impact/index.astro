@@ -1,0 +1,519 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import ImpactMetric from '@components/impact/ImpactMetric.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import {
+  headlineMetrics,
+  structuralFacts,
+  impactBySector,
+  impactByCountry,
+  programmePhasing,
+  impactBasis,
+  impactAsAt,
+  formatMetric,
+} from '@data/impact';
+
+const programmes = await getCollection('programmes', ({ data }) => !data.draft);
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const stories = await getCollection('stories', ({ data }) => !data.draft);
+const featuredProjects = projects.slice(0, 3);
+
+const sectorTitle = (scope?: string) =>
+  programmes.find((p) => p.data.sector === scope)?.data.shortTitle ?? scope ?? '';
+
+const crumbs = [{ label: 'Our Impact', href: '/impact' }];
+---
+
+<PageLayout
+  title="Our Impact"
+  description="MMT Impact publishes reach, sector and geographic results alongside the basis on which each figure is reported, and states plainly where a figure is not yet verified."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Our Impact',
+    lines: ['Numbers that can', 'be checked.'],
+    lede: 'We publish figures that can be defined, disaggregated and evidenced. Where a figure has not yet been verified for publication, this dashboard says so rather than estimating it.',
+    seed: 'impact-hero',
+    variant: 'cohort',
+    facts: [
+      { label: 'Reporting position', value: impactAsAt },
+      { label: 'Programme areas', value: 'Six' },
+      { label: 'Countries', value: 'One' },
+      { label: 'Projects in record', value: String(projects.length) },
+    ],
+  }}
+>
+  <!-- Headline -->
+  <section class="dash surface-dark section" aria-labelledby="dash-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Impact overview" meta={impactAsAt} />
+      <h2 class="t-h2 dash__heading" id="dash-h" data-reveal>Headline reach.</h2>
+
+      <div class="dash__grid">
+        {headlineMetrics.map((m, i) => <ImpactMetric metric={m} index={i + 1} />)}
+      </div>
+
+      <div class="dash__basis" data-reveal>
+        <p class="t-meta dash__basis-label">Basis of reporting</p>
+        <p class="t-small">{impactBasis}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Structural facts -->
+  <section class="struct surface-paper section-sm" aria-labelledby="struct-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Organisational scale" meta="Structural, not performance" />
+      <h2 class="t-h3 struct__heading" id="struct-h" data-reveal>
+        Facts about the organisation, not claims about results.
+      </h2>
+      <div class="struct__grid">
+        {structuralFacts.map((m) => <ImpactMetric metric={m} size="md" />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- By sector -->
+  <section class="sector surface-light section" aria-labelledby="sector-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Impact by sector" />
+      <h2 class="t-h2 sector__heading" id="sector-h" data-reveal>Reach by programme area.</h2>
+      <p class="t-lead sector__note" data-reveal>
+        Sector-level disaggregation is published as each programme completes a reporting cycle.
+        Areas marked <em>in reporting</em> have not yet produced a figure we are prepared to stand
+        behind, and are shown as such rather than left off the dashboard.
+      </p>
+
+      <div class="sector__table">
+        <div class="srow srow--head" aria-hidden="true">
+          <span class="t-meta">Programme area</span>
+          <span class="t-meta">People reached</span>
+          <span class="t-meta">Status</span>
+        </div>
+        {
+          impactBySector.map((m) => (
+            <div class="srow" data-reveal data-reveal-group="sector">
+              <a class="srow__name" href={`/what-we-do/${m.scope}`}>
+                {sectorTitle(m.scope)}
+              </a>
+              <span class="srow__value">{formatMetric(m)}</span>
+              <span class="srow__status">
+                <span class="status" data-status={m.value === null ? 'in-design' : 'active'}>
+                  {m.value === null ? 'In reporting' : 'Reported'}
+                </span>
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- By country -->
+  <section class="country surface-sand section" aria-labelledby="country-h">
+    <div class="wrap">
+      <SectionLabel index="04" label="Impact by country" />
+      <h2 class="t-h2 country__heading" id="country-h" data-reveal>Reach by geography.</h2>
+
+      <div class="country__list">
+        {
+          impactByCountry.map((c) => (
+            <article class="ccard" data-reveal>
+              <div class="ccard__head">
+                <p class="t-meta ccard__status">
+                  {c.status === 'operational' ? 'MMT Impact operational' : 'Group presence'}
+                </p>
+                <h3 class="ccard__name">{c.country}</h3>
+              </div>
+              <dl class="ccard__stats">
+                <div>
+                  <dt class="t-meta">People reached</dt>
+                  <dd>{c.peopleReached === null ? '—' : c.peopleReached.toLocaleString('en-GB') + '+'}</dd>
+                </div>
+                <div>
+                  <dt class="t-meta">Communities</dt>
+                  <dd>{c.communities === null ? '—' : c.communities.toLocaleString('en-GB') + '+'}</dd>
+                </div>
+              </dl>
+              <p class="t-small ccard__note">{c.note}</p>
+              <a class="link-rule ccard__link" href="/where-we-work/south-sudan">
+                Country programme
+                <span class="btn-arrow" aria-hidden="true">→</span>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Phasing -->
+  <section class="phase surface-dark section" aria-labelledby="phase-h">
+    <div class="wrap">
+      <SectionLabel index="05" label="Programme phasing" meta="A plan, not a result" />
+      <h2 class="t-h2 phase__heading" id="phase-h" data-reveal>Where the work is going.</h2>
+      <p class="t-lead phase__note" data-reveal>
+        This is a plan. It is published so partners can see the intended trajectory, and it must not
+        be read as a record of delivered results.
+      </p>
+
+      <ol class="phase__list">
+        {
+          programmePhasing.map((p) => (
+            <li class="phitem" data-reveal data-reveal-group="phase">
+              <span class="t-meta phitem__period">{p.period}</span>
+              <h3 class="phitem__title">{p.title}</h3>
+              <p class="t-small phitem__body">{p.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="fproj surface-paper section" aria-labelledby="fp-h">
+    <div class="wrap">
+      <SectionLabel index="06" label="Projects" meta={`${projects.length} in the record`} />
+      <div class="fproj__head">
+        <h2 class="t-h2" id="fp-h" data-reveal>The project record.</h2>
+        <a class="link-rule" href="/impact/projects" data-reveal>
+          All projects
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="fproj__grid">
+        {featuredProjects.map((p) => <ProjectCard project={p} size="compact" />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stories -->
+  <section class="istories surface-light section" aria-labelledby="is-h">
+    <div class="wrap">
+      <SectionLabel index="07" label="Impact stories" />
+      <h2 class="t-h2 istories__heading" id="is-h" data-reveal>Outcomes, told properly.</h2>
+      {
+        stories.length === 0 && (
+          <div class="istories__empty">
+            <EmptyState
+              eyebrow="Impact stories"
+              title="Stories are published once outcomes can be evidenced."
+              body="An impact story on this site carries a named outcome, a location, the programme it belongs to, and a recorded consent status for anyone identifiable in it. We publish none before those exist."
+              action={{ label: 'Our programmes', href: '/what-we-do' }}
+              secondary={{ label: 'Reports & publications', href: '/resources' }}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="08"
+    label="Methodology"
+    heading={'How we count,\nand what we\nrefuse to count.'}
+    ratio="lead"
+    surface="sand"
+    id="methodology"
+  >
+    <div class="prose-editorial">
+      <h3>What counts as reached</h3>
+      <p>
+        A person is counted once, in the programme that served them, whether or not they appear in
+        more than one activity. Where a figure includes indirect reach — household members of a
+        direct participant, for example — that is stated rather than folded silently into the
+        headline.
+      </p>
+
+      <h3>What we do not count</h3>
+      <p>
+        Attendance at an awareness session is not a person trained. A distribution is not a
+        livelihood. A workshop for which no participant list exists is not a figure. Where the only
+        available evidence is a photograph and a recollection, it does not enter the dashboard.
+      </p>
+
+      <h3>Disaggregation</h3>
+      <p>
+        Reach is disaggregated by sex, age and vulnerability. A programme reporting strong overall
+        numbers with weak reach among the group it exists to serve has not succeeded, and
+        disaggregation is what makes that visible.
+      </p>
+
+      <h3>Where we are wrong</h3>
+      <p>
+        Figures are restated when better data becomes available, including downward. A dashboard
+        whose numbers only ever rise is not measuring, it is marketing. Restatements are noted with
+        the date and the reason.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  /* ---- headline ---- */
+  .dash__heading {
+    color: #fff;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .dash__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 3rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .dash__basis {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: color-mix(in srgb, #fff 4%, transparent);
+    max-width: 78ch;
+  }
+
+  .dash__basis-label {
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ---- structural ---- */
+  .struct__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: 40ch;
+  }
+
+  .struct__grid {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+
+  /* ---- sector table ---- */
+  .sector__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .sector__note {
+    max-width: 66ch;
+  }
+
+  .sector__table {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .srow {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.7fr) minmax(0, 0.7fr);
+    gap: 0.5rem clamp(1rem, 3vw, 2.5rem);
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  @media (max-width: 40rem) {
+    .srow {
+      grid-template-columns: 1fr auto;
+    }
+    .srow__status {
+      grid-column: 1 / -1;
+    }
+    .srow--head {
+      display: none;
+    }
+  }
+
+  .srow--head {
+    padding-block: 0.75rem;
+  }
+
+  .srow--head span {
+    color: var(--ink-faint);
+  }
+
+  .srow__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    text-decoration: none;
+  }
+
+  .srow__name:hover {
+    color: var(--accent-ink);
+  }
+
+  .srow__value {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    color: var(--ink-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- country ---- */
+  .country__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .country__list {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  @media (min-width: 56rem) {
+    .country__list {
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    }
+  }
+
+  .ccard {
+    border: 1px solid var(--rule-strong);
+    background: var(--surface-raised);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    display: grid;
+    gap: 1.15rem;
+    align-content: start;
+  }
+
+  .ccard__status {
+    color: var(--accent-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .ccard__name {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+  }
+
+  .ccard__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding-block: 1.15rem;
+    border-block: 1px solid var(--rule);
+  }
+
+  .ccard__stats > div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ccard__stats dt {
+    color: var(--ink-faint);
+  }
+
+  .ccard__stats dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--ink-strong);
+  }
+
+  .ccard__note {
+    color: var(--ink-muted);
+  }
+
+  .ccard__link {
+    justify-self: start;
+    font-size: 0.6875rem;
+  }
+
+  /* ---- phasing ---- */
+  .phase__heading {
+    color: #fff;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .phase__note {
+    max-width: 58ch;
+  }
+
+  .phase__list {
+    list-style: none;
+    margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  @media (min-width: 56rem) {
+    .phase__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .phitem {
+    background: var(--surface);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+
+  .phitem__period {
+    color: var(--accent);
+  }
+
+  .phitem__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .phitem__body {
+    color: var(--ink-muted);
+  }
+
+  /* ---- projects ---- */
+  .fproj__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .fproj__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .fproj__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .fproj__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- stories ---- */
+  .istories__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+</style>

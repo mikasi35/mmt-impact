@@ -1,0 +1,306 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import GroupEcosystem from '@components/sections/GroupEcosystem.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { groupEntities, capacityDisclaimer } from '@data/group';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'MMT Group', href: '/who-we-are/mmt-group' },
+];
+---
+
+<PageLayout
+  title="MMT Group"
+  description="MMT Impact is a member of the wider MMT Group alongside MMT Care and MMT Alliance. Each organisation is separately constituted with its own mandate, governance and legal identity."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / MMT Group',
+    lines: ['Three organisations.', 'One name.', 'Separate identities.'],
+    lede: 'MMT Impact is a member of the wider MMT Group. Understanding what that does and does not mean is important enough to have its own page.',
+    seed: 'group-hero',
+    variant: 'network',
+    facts: [
+      { label: 'MMT Care', value: 'Australia — care & support' },
+      { label: 'MMT Alliance', value: 'Kenya HQ — procurement & supply' },
+      { label: 'MMT Impact', value: 'South Sudan — development' },
+      { label: 'Relationship', value: 'Members of a group' },
+    ],
+  }}
+>
+  <!-- The distinction, stated first. -->
+  <section class="dist surface-dark section-sm" aria-labelledby="dist-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="The distinction" />
+      <div class="dist__grid">
+        <div data-reveal>
+          <h2 class="t-meta dist__label dist__label--yes" id="dist-h">What the relationship is</h2>
+          <ul class="dist__list">
+            <li>Three separately constituted organisations sharing a group identity.</li>
+            <li>Access to expertise across procurement, supply chain, finance, governance and regulated service delivery.</li>
+            <li>Shared standards of conduct and a common expectation of transparency.</li>
+            <li>The ability to draw on Group capability for a specific engagement, set out in that engagement’s contract.</li>
+          </ul>
+        </div>
+
+        <div data-reveal>
+          <h2 class="t-meta dist__label dist__label--no">What it is not</h2>
+          <ul class="dist__list dist__list--no">
+            <li>MMT Impact does not own, control or consolidate MMT Care or MMT Alliance.</li>
+            <li>MMT Impact does not claim their turnover, headcount, contracts or certifications.</li>
+            <li>MMT Impact does not hold an office wherever another Group member operates.</li>
+            <li>MMT Impact does not present another organisation’s delivery history as its own experience.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <GroupEcosystem detail="full" index="02" />
+
+  <!-- Entity profiles -->
+  <section class="ents surface-paper section" aria-labelledby="ents-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Organisation profiles" />
+      <h2 class="t-h2 ents__heading" id="ents-h" data-reveal>Each organisation, in its own terms.</h2>
+
+      <div class="ents__list">
+        {
+          groupEntities.map((e, i) => (
+            <article class="ent" data-reveal data-reveal-group="entities">
+              <div class="ent__head">
+                <span class="t-meta ent__num">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="ent__name">{e.name}</h3>
+                <p class="t-meta ent__geo">{e.geography}</p>
+              </div>
+
+              <div class="ent__body">
+                <p class="t-serif-lead ent__descriptor">{e.descriptor}</p>
+                <p class="t-body ent__summary">{e.summary}</p>
+
+                <div class="ent__cols">
+                  <div>
+                    <h4 class="t-meta ent__sub">Capabilities</h4>
+                    <ul class="ent__caps">
+                      {e.capabilities.map((c) => (
+                        <li>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="t-meta ent__sub">Locations</h4>
+                    <ul class="ent__caps">
+                      {e.locations.map((l) => (
+                        <li>{l}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <p class="ent__attribution">{e.attribution}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="04"
+    label="Why this matters"
+    heading={'Because a shared name\nis exactly where\ndue diligence should\nask a question.'}
+    ratio="lead"
+    surface="sand"
+    id="why-it-matters"
+  >
+    <div class="prose-editorial">
+      <p>
+        Group structures are common and entirely legitimate. They are also a recognised route to
+        overstating capability: an organisation with no delivery history presents a sister
+        company’s contracts, turnover or certifications as evidence of its own capacity, and a
+        funder discovers the distinction after award.
+      </p>
+      <p>
+        MMT Impact takes the opposite approach. The Group relationship is a genuine advantage — it
+        gives a new organisation access to procurement, supply chain and compliance expertise it
+        could not otherwise assemble — and it is described as exactly that, no more.
+      </p>
+      <p>{capacityDisclaimer}</p>
+      <p>
+        Where a proposal from MMT Impact relies on Group capability, the arrangement is set out in
+        that proposal: which entity provides what, under what contractual basis, and who carries the
+        risk.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  /* ---- distinction ---- */
+  .dist__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 56rem) {
+    .dist__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .dist__label {
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 1.25rem;
+  }
+
+  .dist__label--yes {
+    color: var(--color-green-400);
+  }
+
+  .dist__label--no {
+    color: var(--color-ochre-400);
+  }
+
+  .dist__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .dist__list li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  .dist__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.8rem;
+    height: 1px;
+    background: var(--color-green-400);
+  }
+
+  .dist__list--no li::before {
+    background: var(--color-ochre-400);
+  }
+
+  /* ---- entity profiles ---- */
+  .ents__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .ents__list {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--rule);
+  }
+
+  .ent {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    padding-block: clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .ent {
+      grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+    }
+  }
+
+  .ent__head {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .ent__num {
+    color: var(--accent);
+  }
+
+  .ent__name {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+  }
+
+  .ent__geo {
+    color: var(--accent-ink);
+  }
+
+  .ent__descriptor {
+    margin-bottom: 1rem;
+  }
+
+  .ent__summary {
+    max-width: 62ch;
+  }
+
+  .ent__cols {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  @media (min-width: 40rem) {
+    .ent__cols {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+    }
+  }
+
+  .ent__sub {
+    color: var(--ink-faint);
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.85rem;
+  }
+
+  .ent__caps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .ent__caps li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .ent__caps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .ent__attribution {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    padding: 1rem 1.25rem;
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 72ch;
+  }
+</style>

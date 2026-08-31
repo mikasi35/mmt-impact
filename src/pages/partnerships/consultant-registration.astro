@@ -1,0 +1,149 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import { consultantDisciplines } from '@data/partnerships';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Partners & Opportunities', href: '/partnerships' },
+  { label: 'Consultant Registration', href: '/partnerships/consultant-registration' },
+];
+
+const disciplines = consultantDisciplines
+  .filter((d) => d !== 'Other')
+  .map((d, i) => ({ number: String(i + 1).padStart(2, '0'), title: d }));
+---
+
+<PageLayout
+  title="Consultant Registration"
+  description="Register as a consultant with MMT Impact. We commission evaluation, research, programme design, safeguarding, finance and organisational development assignments in South Sudan."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Partners & Opportunities / Consultants',
+    lines: ['Consultant', 'registration.'],
+    lede: 'MMT Impact commissions individual consultants and firms for evaluation, research, programme design, safeguarding, finance and organisational development assignments.',
+    seed: 'consultant-hero',
+    variant: 'graticule',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <section class="disc surface-paper section-sm" aria-labelledby="disc-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Disciplines we commission" />
+      <h2 class="t-h2 disc__heading" id="disc-h" data-reveal>Where we bring people in.</h2>
+      <NumberedGrid items={disciplines} columns={3} style="rule" />
+
+      <div class="disc__note" data-reveal>
+        <p class="t-meta disc__note-label">On independence</p>
+        <p class="t-small">
+          Evaluation assignments are commissioned on the explicit basis that findings are the
+          consultant’s own. MMT Impact does not review evaluation conclusions for favourability, and
+          a consultant who reports that a programme underperformed has done the job we
+          commissioned. That expectation is written into the terms of reference.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cform surface-light section" aria-labelledby="cf-h">
+    <div class="wrap cform__wrap">
+      <div class="cform__lead">
+        <SectionLabel index="02" label="Register" />
+        <h2 class="t-h2 cform__heading" id="cf-h" data-reveal>Consultant details.</h2>
+        <p class="t-lead cform__body" data-reveal>
+          Register your discipline, experience and availability, and attach a CV or capability
+          statement. We will contact you when an assignment matches your profile.
+        </p>
+        <dl class="cform__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.careers}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Fee</dt>
+            <dd>None. Registration is always free.</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Safeguarding</dt>
+            <dd>All consultants are bound by our Code of Conduct and PSEA obligations.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="cform__form" data-reveal>
+        <EnquiryForm variant="consultant" />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .disc__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .disc__note {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    max-width: 76ch;
+  }
+
+  .disc__note-label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .cform__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .cform__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .cform__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .cform__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .cform__body {
+    max-width: 44ch;
+  }
+
+  .cform__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .cform__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .cform__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .cform__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+</style>

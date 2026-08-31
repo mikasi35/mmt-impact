@@ -1,0 +1,329 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import Plate from '@components/media/Plate.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import { impactBySector, impactBasis } from '@data/impact';
+import { contact } from '@data/site';
+
+export async function getStaticPaths() {
+  const programmes = await getCollection('programmes', ({ data }) => !data.draft);
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+
+  return programmes.map((programme) => ({
+    params: { slug: programme.id },
+    props: {
+      programme,
+      related: projects.filter((p) => p.data.sector === programme.data.sector),
+    },
+  }));
+}
+
+interface Props {
+  programme: CollectionEntry<'programmes'>;
+  related: CollectionEntry<'projects'>[];
+}
+
+const { programme, related } = Astro.props;
+const d = programme.data;
+const { Content } = await render(programme);
+
+const sectorMetric = impactBySector.find((m) => m.scope === d.sector);
+
+const crumbs = [
+  { label: 'What We Do', href: '/what-we-do' },
+  { label: d.shortTitle, href: `/what-we-do/${programme.id}` },
+];
+---
+
+<PageLayout
+  title={d.title}
+  description={d.seoDescription}
+  crumbs={crumbs}
+  hero={{
+    eyebrow: `What We Do / ${d.shortTitle}`,
+    lines: d.title.split(' & ').length > 1 ? d.title.split(' & ').map((s, i, a) => (i < a.length - 1 ? `${s} &` : s)) : [d.title],
+    lede: d.summary,
+    seed: `programme-hero-${programme.id}`,
+    variant: d.media?.variant,
+    tone: d.media?.tone,
+    surface: d.sector === 'livelihoods' ? 'forest' : 'dark',
+    facts: [
+      { label: 'Programme area', value: d.shortTitle },
+      { label: 'Geographic focus', value: d.geographicFocus[0] ?? 'South Sudan' },
+      { label: 'Projects', value: related.length > 0 ? String(related.length) : 'In design' },
+      {
+        label: 'Reach',
+        value: sectorMetric?.value === null || sectorMetric === undefined ? 'In reporting' : String(sectorMetric.value),
+      },
+    ],
+  }}
+  ctaProps={{
+    eyebrow: 'Partnership',
+    lines: ['Work with us on', d.shortTitle.toLowerCase() + '.'],
+    body: `If your organisation is funding, commissioning or delivering ${d.shortTitle.toLowerCase()} work in South Sudan, we would welcome the conversation.`,
+    seed: `cta-${programme.id}`,
+  }}
+>
+  <!-- The problem -->
+  <EditorialSplit
+    index="01"
+    label="The problem"
+    heading={'What this programme\nis answering.'}
+    ratio="body"
+    surface="paper"
+    id="problem"
+  >
+    <p class="t-lead problem__text" data-reveal>{d.problem}</p>
+  </EditorialSplit>
+
+  <!-- Our approach -->
+  <EditorialSplit
+    index="02"
+    label="Our approach"
+    heading={'How we work\non it.'}
+    ratio="body"
+    surface="light"
+    id="approach"
+  >
+    <p class="t-lead" data-reveal>{d.approach}</p>
+  </EditorialSplit>
+
+  <!-- What we do / who we serve -->
+  <section class="detail surface-dark section" aria-label="Programme detail">
+    <div class="wrap">
+      <SectionLabel index="03" label="Delivery detail" />
+      <div class="detail__grid">
+        <div class="detail__col" data-reveal>
+          <h2 class="t-meta detail__heading">What we do</h2>
+          <ul class="detail__list">
+            {d.activities.map((a) => <li>{a}</li>)}
+          </ul>
+        </div>
+
+        <div class="detail__col" data-reveal>
+          <h2 class="t-meta detail__heading">Who we serve</h2>
+          <ul class="detail__list">
+            {d.whoWeServe.map((w) => <li>{w}</li>)}
+          </ul>
+        </div>
+
+        <div class="detail__col" data-reveal>
+          <h2 class="t-meta detail__heading">Geographic focus</h2>
+          <ul class="detail__list">
+            {d.geographicFocus.map((g) => <li>{g}</li>)}
+          </ul>
+
+          <h2 class="t-meta detail__heading detail__heading--spaced">Expected outcomes</h2>
+          <ul class="detail__list">
+            {d.outcomes.map((o) => <li>{o}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Long-form body -->
+  <section class="body surface-paper section" aria-label="Programme narrative">
+    <div class="wrap body__wrap">
+      <div class="body__rail">
+        <SectionLabel index="04" label="In depth" />
+        <div class="body__media">
+          <Plate
+            seed={`programme-body-${programme.id}`}
+            variant={d.media?.variant}
+            tone={d.media?.tone ?? 'navy'}
+            ratio="portrait"
+            caption={d.media?.caption}
+            alt=""
+          />
+        </div>
+      </div>
+
+      <div class="prose-editorial body__prose">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="projs surface-light section" aria-labelledby="projs-h">
+    <div class="wrap">
+      <SectionLabel index="05" label="Projects" meta={`${related.length} in this programme area`} />
+      <h2 class="t-h2 projs__heading" id="projs-h" data-reveal>Delivery under this programme.</h2>
+
+      {
+        related.length > 0 ? (
+          <div class="projs__grid">
+            {related.map((p) => (
+              <ProjectCard project={p} size="compact" />
+            ))}
+          </div>
+        ) : (
+          <div class="projs__empty">
+            <EmptyState
+              eyebrow="Project record"
+              title="No projects are published under this programme yet."
+              body="Projects appear here once designed and funded. Every project carries its location, sector, status, dates and beneficiary reporting."
+              action={{ label: 'All projects', href: '/impact/projects' }}
+              secondary={{ label: 'Partner with us', href: '/get-involved/partner' }}
+            />
+          </div>
+        )
+      }
+
+      <p class="t-small projs__basis" data-reveal>{impactBasis}</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="pcontact surface-sand section-sm">
+    <div class="wrap pcontact__inner">
+      <div>
+        <p class="t-meta pcontact__label">Programme enquiries</p>
+        <p class="t-h3 pcontact__text">
+          Questions about this programme go to the programmes team directly.
+        </p>
+      </div>
+      <a class="btn btn--ghost" href={`mailto:${contact.programmes}`}>
+        {contact.programmes}
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .problem__text {
+    max-width: 62ch;
+  }
+
+  /* ---- delivery detail ---- */
+  .detail__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 56rem) {
+    .detail__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .detail__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .detail__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 1.15rem;
+  }
+
+  .detail__heading--spaced {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .detail__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .detail__list li {
+    position: relative;
+    padding-left: 1.3rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .detail__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.66em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ---- narrative ---- */
+  .body__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .body__wrap {
+      grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
+    }
+    .body__rail {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .body__media {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  /* ---- projects ---- */
+  .projs__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .projs__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .projs__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .projs__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .projs__basis {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    max-width: 72ch;
+  }
+
+  /* ---- contact ---- */
+  .pcontact__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .pcontact__label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .pcontact__text {
+    max-width: 34ch;
+  }
+</style>

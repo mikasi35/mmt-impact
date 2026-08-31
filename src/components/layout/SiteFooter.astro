@@ -1,0 +1,378 @@
+---
+import Logo from '@components/ui/Logo.astro';
+import { footerNav, legalNav } from '@data/navigation';
+import { site, contact, headquarters, activeSocials } from '@data/site';
+import { groupEntities } from '@data/group';
+
+const year = new Date().getFullYear();
+const others = groupEntities.filter((e) => e.id !== 'impact');
+---
+
+<footer class="site-footer surface-dark">
+  <div class="wrap-wide">
+    <!-- Masthead -->
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="/" class="foot-logo" aria-label="MMT Impact — home">
+          <Logo strapline size={44} />
+        </a>
+        <p class="t-serif-lead foot-statement">
+          Building stronger communities through education, empowerment, livelihoods and
+          humanitarian action.
+        </p>
+        <a class="btn btn--accent foot-cta" href="/get-involved/partner">
+          Partner With Us
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="foot-office">
+        <p class="t-meta foot-office__label">{headquarters.label}</p>
+        <p class="foot-office__place">
+          {headquarters.city}<br />{headquarters.country}
+        </p>
+        <p class="t-meta foot-office__coord">{headquarters.coordinateLabel}</p>
+        <ul class="foot-office__contacts">
+          <li>
+            <span class="t-meta">General</span>
+            <a href={`mailto:${contact.general}`}>{contact.general}</a>
+          </li>
+          <li>
+            <span class="t-meta">Partnerships</span>
+            <a href={`mailto:${contact.partnerships}`}>{contact.partnerships}</a>
+          </li>
+          <li>
+            <span class="t-meta">Careers</span>
+            <a href={`mailto:${contact.careers}`}>{contact.careers}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sitemap -->
+    <nav class="foot-nav" aria-label="Footer">
+      {
+        footerNav.map((col) => (
+          <div class="foot-col">
+            <h2 class="t-meta foot-col__heading">{col.heading}</h2>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+
+    <!-- Group relationship. Legally load-bearing; kept precise. -->
+    <section class="foot-group" aria-labelledby="foot-group-heading">
+      <div class="foot-group__lead">
+        <h2 class="t-meta foot-group__eyebrow" id="foot-group-heading">Part of the wider MMT Group</h2>
+        <p class="t-small foot-group__body">
+          MMT Impact is a member of the wider MMT Group. Each organisation in the Group is
+          separately constituted, with its own mandate, governance and legal identity.
+        </p>
+      </div>
+      <ul class="foot-group__list">
+        {
+          others.map((e) => (
+            <li>
+              <span class="foot-group__name">{e.name}</span>
+              <span class="t-meta foot-group__geo">{e.geography}</span>
+              <span class="t-small foot-group__desc">{e.descriptor}</span>
+            </li>
+          ))
+        }
+        <li class="is-self">
+          <span class="foot-group__name">MMT Impact</span>
+          <span class="t-meta foot-group__geo">South Sudan</span>
+          <span class="t-small foot-group__desc">Development · Humanitarian · Community Impact</span>
+        </li>
+      </ul>
+      <a class="link-rule foot-group__link" href="/who-we-are/mmt-group">
+        About the MMT Group
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <!-- Legal -->
+    <div class="foot-legal">
+      <p class="t-meta foot-legal__copy">
+        © {year} {site.legalName}. All rights reserved.
+      </p>
+
+      <ul class="foot-legal__links">
+        {
+          legalNav.map((l) => (
+            <li>
+              <a class="t-meta" href={l.href}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        activeSocials.length > 0 && (
+          <ul class="foot-legal__social">
+            {activeSocials.map((s) => (
+              <li>
+                <a class="t-meta" href={s.url} rel="noopener noreferrer" target="_blank">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    --logo-accent: var(--color-ochre-400);
+    padding-block: clamp(3.5rem, 7vw, 6.5rem) clamp(2rem, 3vw, 3rem);
+    position: relative;
+  }
+
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-ochre-500) 0%,
+      var(--color-ochre-500) 18%,
+      color-mix(in srgb, #fff 12%, transparent) 18%
+    );
+  }
+
+  /* ---- masthead ---- */
+  .foot-top {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  @media (min-width: 56rem) {
+    .foot-top {
+      grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
+      align-items: start;
+    }
+  }
+
+  .foot-logo {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  /* The logo image is navy-on-transparent, which disappears against this
+     dark footer — invert it to a clean white silhouette rather than a
+     literal colour-invert (which would turn navy/gold into an odd
+     orange/teal pair, not a usable brand mark). */
+  .foot-logo :global(.logo__img) {
+    filter: brightness(0) invert(1);
+  }
+
+  .foot-statement {
+    margin-block: 1.75rem 2rem;
+    max-width: 24ch;
+    color: #fff;
+  }
+
+  .foot-office__label {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.1rem;
+  }
+
+  .foot-office__place {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1.12;
+    color: #fff;
+  }
+
+  .foot-office__coord {
+    margin-top: 0.5rem;
+    color: var(--ink-faint);
+  }
+
+  .foot-office__contacts {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .foot-office__contacts li {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .foot-office__contacts a {
+    font-size: 0.875rem;
+    color: #cfdae0;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    justify-self: start;
+    transition: border-color 200ms, color 200ms;
+  }
+
+  .foot-office__contacts a:hover {
+    color: #fff;
+    border-bottom-color: var(--accent);
+  }
+
+  /* ---- sitemap ---- */
+  .foot-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .foot-col__heading {
+    color: var(--accent);
+    margin-bottom: 1.1rem;
+  }
+
+  .foot-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .foot-col a {
+    font-size: 0.875rem;
+    color: #a9bcc7;
+    text-decoration: none;
+    transition: color 180ms var(--ease-institutional);
+  }
+
+  .foot-col a:hover {
+    color: #fff;
+  }
+
+  /* ---- group ---- */
+  .foot-group {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .foot-group {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 2fr);
+      align-items: start;
+    }
+    .foot-group__link {
+      grid-column: 2;
+    }
+  }
+
+  .foot-group__eyebrow {
+    color: var(--accent);
+    margin-bottom: 0.85rem;
+  }
+
+  .foot-group__body {
+    color: var(--ink-muted);
+    max-width: 40ch;
+  }
+
+  .foot-group__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  @media (min-width: 48rem) {
+    .foot-group__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .foot-group__list li {
+    background: var(--surface);
+    padding: 1.25rem;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+
+  .foot-group__list li.is-self {
+    background: color-mix(in srgb, var(--color-ochre-400) 9%, var(--surface));
+  }
+
+  .foot-group__name {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #fff;
+  }
+
+  .foot-group__geo {
+    color: var(--accent);
+  }
+
+  .foot-group__desc {
+    color: var(--ink-muted);
+  }
+
+  /* ---- legal ---- */
+  .foot-legal {
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+
+  .foot-legal__copy {
+    color: var(--ink-faint);
+  }
+
+  .foot-legal__links,
+  .foot-legal__social {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.5rem;
+  }
+
+  .foot-legal__social {
+    margin-left: auto;
+  }
+
+  .foot-legal a {
+    color: var(--ink-faint);
+    text-decoration: none;
+    transition: color 180ms var(--ease-institutional);
+  }
+
+  .foot-legal a:hover {
+    color: var(--accent);
+  }
+</style>

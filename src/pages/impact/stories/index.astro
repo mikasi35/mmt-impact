@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import StoryCard from '@components/sections/StoryCard.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import { byDateDesc } from '@lib/utils';
+
+const stories = (await getCollection('stories', ({ data }) => !data.draft)).sort(byDateDesc);
+
+const crumbs = [
+  { label: 'Our Impact', href: '/impact' },
+  { label: 'Impact Stories', href: '/impact/stories' },
+];
+---
+
+<PageLayout
+  title="Impact Stories"
+  description="Documented outcomes from MMT Impact programmes in South Sudan, each carrying a named outcome, location, programme and recorded consent status."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Our Impact / Impact Stories',
+    lines: ['What changed,', 'and for whom.'],
+    lede: 'An impact story on this site carries a named outcome, a location, the programme it belongs to, and a recorded consent status for anyone identifiable in it.',
+    seed: 'stories-hero',
+    variant: 'cohort',
+    size: 'compact',
+  }}
+>
+  <section class="slist surface-paper section" aria-labelledby="sl-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Impact stories" meta={`${stories.length} published`} />
+      <h2 class="t-h2 slist__heading" id="sl-h" data-reveal>Outcomes from the field.</h2>
+
+      {
+        stories.length > 0 ? (
+          <div class="slist__grid">
+            {stories.map((s, i) => (
+              <StoryCard
+                href={`/impact/stories/${s.id}`}
+                title={s.data.title}
+                summary={s.data.summary}
+                date={s.data.date}
+                category="Impact Story"
+                location={s.data.location}
+                seed={`story-${s.id}`}
+                variant={s.data.media?.variant}
+                tone={s.data.media?.tone ?? 'navy'}
+                feature={i === 0}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="slist__empty">
+            <EmptyState
+              eyebrow="Impact stories"
+              title="No stories are published yet — deliberately."
+              body="Our first programmes are moving into delivery. A story appears here when the outcome it describes can be evidenced and every person in it has given informed consent. We would rather this page stay empty than fill it with material that would not survive scrutiny."
+              action={{ label: 'Our programmes', href: '/what-we-do' }}
+              secondary={{ label: 'The project record', href: '/impact/projects' }}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="02"
+    label="Our standard"
+    heading={'Consent is not a\nformality at the end\nof the process.'}
+    ratio="lead"
+    surface="dark"
+    id="consent"
+  >
+    <div class="prose-editorial">
+      <p>
+        The development sector has a long and uncomfortable history with imagery and storytelling.
+        People in difficult circumstances have been photographed and described in ways that raised
+        funds effectively and left the subject with no say in how they appeared, or whether they
+        appeared at all.
+      </p>
+
+      <h3>What we require before publication</h3>
+      <ul>
+        <li>Informed consent from any identifiable adult, given in a language they use fluently, with the intended use explained.</li>
+        <li>Consent from a parent or guardian, plus the child’s own assent, for any identifiable child — and a higher bar for whether the image is needed at all.</li>
+        <li>The right to withdraw consent later, and a process that actually removes the material when someone does.</li>
+        <li>Anonymisation as the default wherever a story concerns protection, safeguarding or any circumstance that could expose someone to risk.</li>
+      </ul>
+
+      <h3>What we will not do</h3>
+      <ul>
+        <li>Photograph or describe people in ways that trade their dignity for a stronger appeal.</li>
+        <li>Publish an outcome we cannot attribute or evidence.</li>
+        <li>Present a composite or illustrative case as though it were a real person.</li>
+      </ul>
+
+      <p>
+        Every story carries its consent status in our content record. It is a required field, not a
+        note, and a story cannot be published without it.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .slist__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .slist__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .slist__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .slist__grid > :global(.scard--feature) {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

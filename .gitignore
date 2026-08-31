@@ -1,0 +1,29 @@
+# build
+dist/
+.astro/
+node_modules/
+.output/
+.vercel/
+.netlify/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# uploads / private
+private/
+uploads/
+
+# ad-hoc screen recordings dropped at the repo root for review
+/*.mp4
+/*.mov

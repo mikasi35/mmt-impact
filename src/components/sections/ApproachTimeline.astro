@@ -1,0 +1,322 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { approachSteps } from '@data/approach';
+
+interface Props {
+  index?: string;
+  /** `full` renders the detail bullets for each stage. */
+  detail?: 'short' | 'full';
+}
+
+const { index = '05', detail = 'short' } = Astro.props;
+
+/**
+ * "How We Work" — the six-stage delivery method.
+ *
+ * A plain horizontal carousel: the same scroll-snap `.rail` pattern used for
+ * the News & Stories carousel, not a scroll-jacked pin. The section's own
+ * page-scroll position never drives anything here — the carousel has its own
+ * independent scroll container, controlled by drag/swipe/wheel or the
+ * prev/next buttons. That trade deliberately gives up the "pinned while
+ * scrubbing" effect in exchange for a mechanism with no scroll-timing
+ * dependency on fonts, images or page layout to get wrong.
+ */
+---
+
+<section class="approach surface-dark" aria-labelledby="approach-heading" data-approach>
+  <div class="approach__head wrap section-sm">
+    <SectionLabel index={index} label="How We Work" meta="Six stages" />
+    <div class="approach__intro-grid">
+      <h2 class="t-display approach__heading" id="approach-heading" data-reveal>
+        Listen. Partner.<br />Design. Deliver.<br />Measure. Sustain.
+      </h2>
+      <p class="t-lead approach__intro" data-reveal>
+        A defined method, so a partner can see how a programme moves from a community conversation
+        to a documented result — and who is accountable at each stage.
+      </p>
+    </div>
+  </div>
+
+  <!-- Progress rail: reflects which card is in view, plus prev/next controls. -->
+  <div class="approach__rail wrap" data-reveal>
+    <span class="approach__rail-readout t-meta" data-approach-readout aria-hidden="true">01</span>
+    <span class="approach__rail-track" aria-hidden="true">
+      <span class="approach__rail-fill" data-approach-progress></span>
+    </span>
+    <span class="approach__rail-total t-meta" aria-hidden="true">{String(approachSteps.length).padStart(2, '0')}</span>
+
+    <span class="approach__rail-nav">
+      <button type="button" class="rail-btn" data-approach-prev aria-label="Previous stage">
+        <span class="btn-arrow" aria-hidden="true">←</span>
+      </button>
+      <button type="button" class="rail-btn" data-approach-next aria-label="Next stage">
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+    </span>
+  </div>
+
+  <ol class="rail approach__track" data-approach-rail aria-label="The six stages of our method">
+    {
+      approachSteps.map((step, i) => (
+        <li class="astep" data-approach-step={i}>
+          <span class="t-meta astep__num">{step.number}</span>
+          <h3 class="astep__title">{step.title}</h3>
+          <p class="astep__short">{step.short}</p>
+          <p class="t-small astep__body">{step.body}</p>
+
+          {detail === 'full' && (
+            <ul class="astep__detail">
+              {step.detail.map((d) => (
+                <li>{d}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="wrap approach__foot">
+    <a class="link-rule approach__cta" href="/who-we-are/approach">
+      Our approach in full
+      <span class="btn-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .approach {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2.25rem, 4vw, 3.5rem);
+  }
+
+  .approach__head {
+    padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .approach__intro-grid {
+    display: grid;
+    gap: clamp(1.25rem, 2.5vw, 2.25rem);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  @media (min-width: 64rem) {
+    .approach__intro-grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: end;
+    }
+  }
+
+  .approach__heading {
+    color: #fff;
+  }
+
+  .approach__intro {
+    max-width: 46ch;
+  }
+
+  /* ---- progress rail + nav ---- */
+  .approach__rail {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .approach__rail-readout {
+    color: var(--accent);
+    min-width: 2ch;
+  }
+
+  .approach__rail-total {
+    color: var(--ink-faint);
+  }
+
+  .approach__rail-track {
+    flex: 1;
+    height: 1px;
+    background: color-mix(in srgb, #fff 20%, transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .approach__rail-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms var(--ease-institutional);
+  }
+
+  .approach__rail-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex: none;
+  }
+
+  /* ---- carousel ---- */
+  .approach__track {
+    gap: clamp(1px, 0.15vw, 1px);
+    padding-inline: var(--spacing-gutter);
+    margin-inline: calc(-1 * var(--spacing-gutter));
+    scroll-padding-inline: var(--spacing-gutter);
+    align-items: stretch;
+  }
+
+  .astep {
+    background: var(--surface);
+    width: clamp(17rem, 40vw, 21rem);
+    padding: clamp(1.5rem, 2.25vw, 2rem);
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    border-right: 1px solid color-mix(in srgb, #fff 14%, transparent);
+    transition: background 320ms var(--ease-institutional);
+  }
+
+  .astep:first-child {
+    border-left: 1px solid color-mix(in srgb, #fff 14%, transparent);
+  }
+
+  .astep.is-active {
+    background: var(--surface-raised);
+  }
+
+  .astep__num {
+    color: var(--ink-faint);
+    transition: color 320ms var(--ease-institutional);
+  }
+
+  .astep.is-active .astep__num {
+    color: var(--accent);
+  }
+
+  .astep__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.625rem, 3vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .astep__short {
+    font-size: 0.9375rem;
+    color: #c3d2da;
+    max-width: 34ch;
+  }
+
+  .astep__body {
+    color: var(--ink-muted);
+    max-width: 40ch;
+  }
+
+  .astep__detail {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .astep__detail li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+
+  .astep__detail li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.55rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .approach__foot {
+    padding-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>
+
+<script>
+  function initApproachCarousel() {
+    const sections = document.querySelectorAll<HTMLElement>('[data-approach]');
+
+    sections.forEach((section) => {
+      if (section.dataset.bound === 'true') return;
+      section.dataset.bound = 'true';
+
+      const rail = section.querySelector<HTMLElement>('[data-approach-rail]');
+      const prev = section.querySelector<HTMLButtonElement>('[data-approach-prev]');
+      const next = section.querySelector<HTMLButtonElement>('[data-approach-next]');
+      const readout = section.querySelector<HTMLElement>('[data-approach-readout]');
+      const fill = section.querySelector<HTMLElement>('[data-approach-progress]');
+      const steps = Array.from(section.querySelectorAll<HTMLElement>('[data-approach-step]'));
+      if (!rail || steps.length === 0) return;
+
+      const setActive = (i: number) => {
+        steps.forEach((s, si) => s.classList.toggle('is-active', si === i));
+        if (readout) readout.textContent = String(i + 1).padStart(2, '0');
+        if (fill) fill.style.transform = `scaleX(${(i + 1) / steps.length})`;
+      };
+
+      // Which card is most visible drives the readout/progress — works
+      // whether the visitor drags, swipes, uses a wheel, or clicks the
+      // buttons, without this section caring which.
+      let active = 0;
+      const io = new IntersectionObserver(
+        (entries) => {
+          // Written as a reduce rather than a forEach-mutates-outer-let: TS's
+          // control-flow narrowing doesn't reliably track a `let` reassigned
+          // only inside a nested callback, which turns `best.ratio` below
+          // into a false "does not exist on type never" error. A pure
+          // reduce sidesteps that entirely.
+          const best = entries.reduce<{ i: number; ratio: number } | null>((acc, entry) => {
+            const i = steps.indexOf(entry.target as HTMLElement);
+            if (i === -1) return acc;
+            if (!acc || entry.intersectionRatio > acc.ratio) {
+              return { i, ratio: entry.intersectionRatio };
+            }
+            return acc;
+          }, null);
+
+          if (best && best.ratio > 0.15 && best.i !== active) {
+            active = best.i;
+            setActive(active);
+          }
+        },
+        { root: rail, threshold: [0.15, 0.4, 0.6, 0.8, 1] }
+      );
+      steps.forEach((s) => io.observe(s));
+
+      const cardStep = () => (steps[0]?.getBoundingClientRect().width ?? 300) + 1;
+
+      const updateNav = () => {
+        const max = rail.scrollWidth - rail.clientWidth - 1;
+        if (prev) prev.disabled = rail.scrollLeft <= 0;
+        if (next) next.disabled = rail.scrollLeft >= max;
+      };
+
+      prev?.addEventListener('click', () => {
+        rail.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+      });
+      next?.addEventListener('click', () => {
+        rail.scrollBy({ left: cardStep(), behavior: 'smooth' });
+      });
+
+      rail.addEventListener('scroll', updateNav, { passive: true });
+      window.addEventListener('resize', updateNav);
+
+      setActive(0);
+      updateNav();
+    });
+  }
+
+  initApproachCarousel();
+  document.addEventListener('astro:page-load', initApproachCarousel);
+</script>

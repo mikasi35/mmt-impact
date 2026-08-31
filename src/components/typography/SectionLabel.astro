@@ -1,0 +1,63 @@
+---
+/**
+ * The section index device.
+ *
+ * Every major section on the site is numbered and named, the way a country
+ * report or a survey document is. It is the single strongest signal that this
+ * is an institutional document rather than a marketing page — and it gives the
+ * reader a sense of position without a progress bar.
+ */
+interface Props {
+  index?: string;
+  label: string;
+  /** Optional right-hand metadata, e.g. a coordinate or a date range. */
+  meta?: string;
+  class?: string;
+  as?: 'div' | 'header';
+}
+
+const { index, label, meta, class: className = '', as: Tag = 'div' }: Props = Astro.props;
+---
+
+<Tag class={`section-label ${className}`} data-reveal>
+  <span class="section-label__rule" aria-hidden="true"></span>
+  {index && <span class="t-meta section-label__index">{index}</span>}
+  <span class="t-meta section-label__text">{label}</span>
+  {meta && <span class="t-meta section-label__meta">{meta}</span>}
+</Tag>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .section-label__rule {
+    width: clamp(1.75rem, 4vw, 3.5rem);
+    height: 1px;
+    background: var(--accent);
+    flex: none;
+  }
+
+  .section-label__index {
+    color: var(--accent);
+  }
+
+  .section-label__text {
+    color: var(--ink-muted);
+  }
+
+  .section-label__meta {
+    margin-left: auto;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 40rem) {
+    .section-label__meta {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
+  }
+</style>

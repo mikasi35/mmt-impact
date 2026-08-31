@@ -1,0 +1,183 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import { values } from '@data/organisation';
+
+const crumbs = [
+  { label: 'Who We Are', href: '/who-we-are' },
+  { label: 'Our Values', href: '/who-we-are/values' },
+];
+
+// Positional — the values array order (Integrity, Impact, Inclusion,
+// Partnership, Sustainability) matches the supplied filenames exactly.
+const VALUE_IMAGE = [
+  '/images/who-we-are-values-page/01-Integrity.jpg',
+  '/images/who-we-are-values-page/02-impact.jpg',
+  '/images/who-we-are-values-page/03-inclusion.jpg',
+  '/images/who-we-are-values-page/04-partnership.jpg',
+  '/images/who-we-are-values-page/05-sustainabilty.jpg',
+];
+---
+
+<PageLayout
+  title="Our Values"
+  description="Integrity, Impact, Inclusion, Partnership and Sustainability — the five commitments MMT Impact operates under, each with a test attached."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Who We Are / Our Values',
+    lines: ['Five commitments.', 'Five tests.'],
+    lede: 'A value that cannot be failed is not a value, it is decoration. Each of ours is written so that it is possible to say whether we met it.',
+    seed: 'values-hero',
+    src: '/images/who-we-are-values-page/hero.jpg',
+    variant: 'strata',
+    size: 'compact',
+  }}
+>
+  <section class="vdetail surface-paper section" aria-label="Our values in detail">
+    <div class="wrap">
+      <SectionLabel index="01" label="Our Values" meta="Integrity · Impact · Inclusion · Partnership · Sustainability" />
+
+      <ol class="vdetail__list">
+        {
+          values.map((v, i) => (
+            <li class="vitem" data-reveal>
+              <div class="vitem__index">
+                <span class="t-meta">{v.number}</span>
+              </div>
+
+              <div class="vitem__main">
+                <h2 class="vitem__name">{v.name}</h2>
+                <p class="t-serif-lead vitem__statement">{v.statement}</p>
+                <p class="t-body vitem__body">{v.body}</p>
+              </div>
+
+              <div class="vitem__media">
+                <Plate
+                  seed={`value-${v.name.toLowerCase()}`}
+                  src={VALUE_IMAGE[i]}
+                  tone={i % 2 === 0 ? 'navy' : 'green'}
+                  ratio="square"
+                  alt={v.name}
+                />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="vfoot surface-dark section-sm" aria-labelledby="vfoot-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Holding us to them" />
+      <div class="vfoot__grid">
+        <h2 class="t-h2 vfoot__heading" id="vfoot-h" data-reveal>
+          If we fail one of these,<br />we would like to hear it.
+        </h2>
+        <div class="vfoot__body" data-reveal>
+          <p class="t-lead">
+            MMT Impact operates confidential reporting channels open to staff, partners, suppliers
+            and community members. Concerns can be raised without going through line management, and
+            protection against retaliation is a policy commitment rather than an assurance.
+          </p>
+          <div class="vfoot__actions">
+            <a class="btn btn--accent" href="/transparency#whistleblowing">
+              Report a concern
+              <span class="btn-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="link-rule vfoot__link" href="/transparency">
+              Transparency & accountability
+              <span class="btn-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .vdetail__list {
+    list-style: none;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .vitem {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    padding-block: clamp(2rem, 4vw, 3.5rem);
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .vitem {
+      grid-template-columns: 4rem minmax(0, 1.6fr) minmax(0, 0.6fr);
+    }
+    /* Alternate the media column side so the register never reads as a table. */
+    .vitem:nth-child(even) .vitem__media {
+      order: -1;
+    }
+    .vitem:nth-child(even) {
+      grid-template-columns: 4rem minmax(0, 0.6fr) minmax(0, 1.6fr);
+    }
+    .vitem:nth-child(even) .vitem__index {
+      order: -2;
+    }
+  }
+
+  .vitem__name {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+    margin-bottom: 1rem;
+  }
+
+  .vitem__statement {
+    max-width: 34ch;
+    margin-bottom: 1.15rem;
+  }
+
+  .vitem__body {
+    max-width: 58ch;
+  }
+
+  .vitem__index .t-meta {
+    color: var(--accent);
+  }
+
+  /* ---- foot ---- */
+  .vfoot__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 64rem) {
+    .vfoot__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .vfoot__heading {
+    color: #fff;
+  }
+
+  .vfoot__actions {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .vfoot__link {
+    color: #fff;
+  }
+</style>

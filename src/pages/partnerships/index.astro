@@ -1,0 +1,287 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { partnershipIntro, partnerCategories, expertiseAreas } from '@data/partnerships';
+import { contact } from '@data/site';
+
+const crumbs = [{ label: 'Partners & Opportunities', href: '/partnerships' }];
+
+const categories = partnerCategories.map((c) => ({
+  number: c.number,
+  title: c.title,
+  body: c.body,
+  bullets: c.modes,
+}));
+
+const expertise = expertiseAreas.map((e, i) => ({
+  number: String(i + 1).padStart(2, '0'),
+  title: e.title,
+  body: e.body,
+}));
+---
+
+<PageLayout
+  title="Partners & Opportunities"
+  description="MMT Impact partners with UN agencies, governments, NGOs, foundations and the private sector in South Sudan — as an implementing partner, within consortia, or under service contracts."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Partners & Opportunities',
+    lines: ['Partnership, on', 'terms both sides', 'can defend.'],
+    lede: partnershipIntro,
+    seed: 'partnerships-hero',
+    variant: 'network',
+    actions: [
+      { label: 'Partnership enquiry', href: '#enquiry', style: 'accent' },
+      { label: 'Register as a supplier', href: '/partnerships/supplier-registration', style: 'ghost' },
+    ],
+    facts: [
+      { label: 'Partner types', value: 'Six categories' },
+      { label: 'Areas of expertise', value: String(expertiseAreas.length) },
+      { label: 'Registration', value: 'Open · no fee' },
+      { label: 'Contact', value: contact.partnerships },
+    ],
+  }}
+  cta={false}
+>
+  <!-- UN & development partnerships -->
+  <EditorialSplit
+    index="01"
+    label="UN & development partnerships"
+    heading={'What we bring,\nstated without\ninflation.'}
+    ratio="lead"
+    surface="paper"
+    id="un-development"
+  >
+    <div class="prose-editorial">
+      <p>
+        MMT Impact is a young organisation with a country office in Juba, a governance framework
+        adopted before delivery began, and access through the wider MMT Group to procurement,
+        supply chain and compliance expertise that a new organisation would otherwise take years to
+        assemble.
+      </p>
+      <p>
+        What that makes us useful for is specific: local delivery with institutional discipline, in
+        a context where both are needed and rarely combined. What it does not make us is a
+        substitute for an organisation with fifteen years of comparable delivery history, and we do
+        not bid as though it does.
+      </p>
+      <p>
+        If a call requires experience we do not hold, we will say so and, where it is useful,
+        propose a consortium arrangement in which we carry the part we can actually deliver.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Partner categories -->
+  <section class="cats surface-light section" aria-labelledby="cats-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Who we partner with" meta={`${partnerCategories.length} categories`} />
+      <h2 class="t-h2 cats__heading" id="cats-h" data-reveal>
+        Six kinds of partnership,<br />each with a defined shape.
+      </h2>
+      <NumberedGrid items={categories} columns={2} style="panel" class="cats__grid" />
+    </div>
+  </section>
+
+  <!-- Expertise -->
+  <section class="exp surface-dark section" id="expertise" aria-labelledby="exp-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Areas of expertise" />
+      <h2 class="t-h2 exp__heading" id="exp-h" data-reveal>Where we can contribute.</h2>
+      <NumberedGrid items={expertise} columns={3} style="rule" />
+    </div>
+  </section>
+
+  <!-- What partnership involves -->
+  <EditorialSplit
+    index="04"
+    label="What partnership involves"
+    heading={'Due diligence\nruns both ways.'}
+    ratio="lead"
+    surface="sand"
+    id="diligence"
+  >
+    <div class="prose-editorial">
+      <p>
+        We conduct due diligence on partners, suppliers and contractors — safeguarding standards,
+        financial standing, beneficial ownership, and sanctions screening where applicable.
+      </p>
+      <p>
+        We also publish enough about ourselves for a prospective partner to do the same before
+        entering a relationship: the governance framework, the policy suite, the delivery method,
+        the basis on which every impact figure is reported, and the precise nature of the MMT Group
+        relationship.
+      </p>
+      <p>
+        Documents typically requested during institutional due diligence — registration, governance
+        framework, signed policies, financial statements as each reporting cycle completes, and the
+        organisational profile — are available on request through
+        <a href={`mailto:${contact.partnerships}`}>{contact.partnerships}</a>.
+      </p>
+    </div>
+    <div slot="after" class="diligence__actions">
+      <a class="btn btn--ghost" href="/resources/organisational-profile">
+        Organisational profile
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="btn btn--ghost" href="/transparency">
+        Transparency & accountability
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="btn btn--ghost" href="/institutional-capacity">
+        Institutional capacity
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </EditorialSplit>
+
+  <!-- Registration routes -->
+  <section class="routes surface-paper section" aria-labelledby="routes-h">
+    <div class="wrap">
+      <SectionLabel index="05" label="Registration routes" />
+      <h2 class="t-h2 routes__heading" id="routes-h" data-reveal>Three ways to register.</h2>
+      <NumberedGrid
+        columns={3}
+        style="panel"
+        items={[
+          {
+            number: '01',
+            title: 'Partnership enquiry',
+            body: 'For UN agencies, governments, NGOs, foundations and private sector organisations exploring a programme or funding relationship.',
+            href: '#enquiry',
+          },
+          {
+            number: '02',
+            title: 'Supplier registration',
+            body: 'For organisations supplying goods or services. Registration places you on our roster and notifies you when a relevant opportunity opens.',
+            href: '/partnerships/supplier-registration',
+          },
+          {
+            number: '03',
+            title: 'Consultant registration',
+            body: 'For individuals and firms offering technical expertise in evaluation, research, programme design, safeguarding, finance and related disciplines.',
+            href: '/partnerships/consultant-registration',
+          },
+        ]}
+      />
+
+      <div class="routes__opps" data-reveal>
+        <a class="link-rule" href="/partnerships/current-opportunities">
+          Current opportunities
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enquiry form -->
+  <section class="enq surface-light section" id="enquiry" aria-labelledby="enq-h">
+    <div class="wrap enq__wrap">
+      <div class="enq__lead">
+        <SectionLabel index="06" label="Partnership enquiry" />
+        <h2 class="t-h2 enq__heading" id="enq-h" data-reveal>Start the conversation.</h2>
+        <p class="t-lead enq__body" data-reveal>
+          Tell us what you are trying to achieve, where, and over what period. We will tell you
+          honestly whether we are the right partner for it — including when the answer is no.
+        </p>
+        <dl class="enq__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Response time</dt>
+            <dd>Within five working days</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.partnerships}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Registration fee</dt>
+            <dd>None. We never charge to register.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="enq__form" data-reveal>
+        <EnquiryForm
+          variant="partnership"
+          intro="All fields marked required must be completed. Documents are handled under our privacy notice and are never published."
+        />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .cats__heading,
+  .exp__heading,
+  .routes__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .exp__heading {
+    color: #fff;
+  }
+
+  .diligence__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .routes__opps {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- enquiry ---- */
+  .enq__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .enq__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .enq__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .enq__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .enq__body {
+    max-width: 44ch;
+  }
+
+  .enq__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .enq__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .enq__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .enq__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+</style>

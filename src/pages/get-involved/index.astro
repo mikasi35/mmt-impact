@@ -1,0 +1,91 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+
+const crumbs = [{ label: 'Get Involved', href: '/get-involved' }];
+
+const pathways = [
+  {
+    number: '01',
+    title: 'Partner',
+    body: 'For UN agencies, governments, international and national NGOs, foundations and the private sector. Implementation partnerships, funding, consortia and service contracts.',
+    href: '/get-involved/partner',
+  },
+  {
+    number: '02',
+    title: 'Support our work',
+    body: 'For organisations and individuals who want to fund a programme. We will tell you what your contribution buys and report back on what it achieved.',
+    href: '/get-involved/support',
+  },
+  {
+    number: '03',
+    title: 'Work with us',
+    body: 'Vacancies, consultancies and internships. We recruit locally by default and build capability rather than importing it.',
+    href: '/careers',
+  },
+  {
+    number: '04',
+    title: 'Volunteer',
+    body: 'For people who can give time and expertise. We are honest about when volunteering helps and when it does not.',
+    href: '/get-involved/volunteer',
+  },
+];
+---
+
+<PageLayout
+  title="Get Involved"
+  description="Four ways to work with MMT Impact: partner with us, support our work, work with us, or volunteer."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Get Involved',
+    lines: ['Four ways in.'],
+    lede: 'Partnership is the primary route. If you represent an institution, that is almost certainly the page you want.',
+    seed: 'involved-hero',
+    variant: 'network',
+    size: 'compact',
+  }}
+>
+  <section class="paths surface-paper section" aria-labelledby="paths-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Pathways" />
+      <h2 class="t-h2 paths__heading" id="paths-h" data-reveal>Choose a route.</h2>
+      <NumberedGrid items={pathways} columns={2} style="panel" size="lg" />
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="02"
+    label="Our positioning"
+    heading={'Partner. Collaborate.\nImplement. Impact.'}
+    ratio="lead"
+    surface="dark"
+    id="positioning"
+  >
+    <div class="prose-editorial">
+      <p>
+        Many organisations in this sector put “Donate Now” at the centre of everything. We have
+        deliberately not done that.
+      </p>
+      <p>
+        MMT Impact is built to work with institutions — UN agencies, ministries, international
+        NGOs, development finance institutions and foundations — as an implementing partner, a
+        consortium member or a contracted service provider. That is where our systems, our
+        governance framework and our local presence are most useful.
+      </p>
+      <p>
+        Individual giving is welcome and it matters. It is simply not the primary case we are
+        making, and presenting it as though it were would misrepresent what this organisation is
+        for.
+      </p>
+    </div>
+  </EditorialSplit>
+</PageLayout>
+
+<style>
+  .paths__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+</style>

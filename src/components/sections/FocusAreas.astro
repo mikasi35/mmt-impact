@@ -1,0 +1,183 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Icon from '@components/ui/Icon.astro';
+import type { IconName } from '@lib/icons';
+import { renderPlate } from '@lib/plates';
+
+/**
+ * Homepage — the five focus areas.
+ *
+ * A compact icon-card register over a genuinely FIXED background (CSS
+ * `background-attachment: fixed`, not a parallax simulation): the content
+ * scrolls past a background image that stays put, which is what reads as
+ * "pinned" rather than merely drifting slower than the foreground.
+ *
+ * The background is the same deterministic plate system used everywhere else
+ * on the site, rendered to a self-contained data URI so this still ships with
+ * zero external image requests. Swap it for a real photograph later by
+ * replacing `bgDataUri` with a `background-image: url(/images/…)` rule — the
+ * card layer and its readability treatment do not change.
+ *
+ * The card grid is identical in mobile and desktop — the ask was consistency,
+ * not a device-specific alternate layout.
+ */
+const focus: { title: string; body: string; icon: IconName }[] = [
+  {
+    title: 'Education',
+    body: 'Access, vocational training and digital skills that lead somewhere.',
+    icon: 'education',
+  },
+  {
+    title: 'Empowerment',
+    body: 'Income, enterprise and decision-making — measured, not assumed.',
+    icon: 'empowerment',
+  },
+  {
+    title: 'Community Support',
+    body: 'Reaching the people every other programme tends to miss.',
+    icon: 'community',
+  },
+  {
+    title: 'Livelihoods',
+    body: 'Agriculture, market access and enterprise that outlasts a project.',
+    icon: 'livelihoods',
+  },
+  {
+    title: 'Humanitarian Action',
+    body: 'Response, recovery and preparedness, coordinated — not solo.',
+    icon: 'humanitarian',
+  },
+];
+
+const bgSvg = renderPlate({ seed: 'focus-areas-bg', variant: 'graticule', tone: 'navy' });
+const bgDataUri = `data:image/svg+xml;base64,${Buffer.from(bgSvg).toString('base64')}`;
+---
+
+<section
+  class="focusband surface-dark section-sm"
+  aria-labelledby="focusband-heading"
+  style={`--bg-image:url("${bgDataUri}")`}
+>
+  <div class="focusband__scrim" aria-hidden="true"></div>
+
+  <div class="wrap focusband__inner">
+    <SectionLabel index="02" label="Our Focus" meta="Five areas" />
+
+    <h2 class="t-h3 focusband__heading" id="focusband-heading" data-reveal>
+      Where the work concentrates.
+    </h2>
+
+    <ul class="focusband__grid">
+      {
+        focus.map((f, i) => (
+          <li class="fcard" data-reveal data-reveal-group="focusband">
+            <span class="fcard__icon">
+              <Icon name={f.icon} size={26} />
+            </span>
+            <span class="t-meta fcard__num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="fcard__title">{f.title}</span>
+            <span class="t-small fcard__body">{f.body}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .focusband {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* True fixed background on devices that can render it smoothly. iOS Safari
+     and touch devices generally ignore `fixed` and fall back to `scroll`,
+     which is also the cheaper choice for scroll performance there. */
+  @media (hover: hover) and (pointer: fine) {
+    .focusband {
+      background-attachment: fixed;
+    }
+  }
+
+  .focusband__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(7 24 39 / 0.86), rgb(7 24 39 / 0.93));
+  }
+
+  .focusband__heading {
+    color: #fff;
+    margin-top: clamp(1.25rem, 2.5vw, 2rem);
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 24ch;
+  }
+
+  .focusband__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: color-mix(in srgb, #fff 14%, transparent);
+    border: 1px solid color-mix(in srgb, #fff 14%, transparent);
+  }
+
+  @media (min-width: 34rem) {
+    .focusband__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .focusband__grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .fcard {
+    position: relative;
+    background: color-mix(in srgb, var(--color-navy-950) 55%, transparent);
+    padding: clamp(1.15rem, 2vw, 1.5rem) clamp(1rem, 1.8vw, 1.35rem);
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    transition: background 260ms var(--ease-institutional);
+  }
+
+  .fcard:hover {
+    background: color-mix(in srgb, var(--color-navy-900) 72%, transparent);
+  }
+
+  .fcard__icon {
+    color: var(--color-ochre-400);
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  .fcard__num {
+    position: absolute;
+    top: clamp(1.15rem, 2vw, 1.5rem);
+    right: clamp(1rem, 1.8vw, 1.35rem);
+    color: color-mix(in srgb, #fff 40%, transparent);
+  }
+
+  .fcard__title {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: #fff;
+  }
+
+  .fcard__body {
+    color: #a9bcc7;
+    line-height: 1.45;
+  }
+</style>

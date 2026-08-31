@@ -1,0 +1,350 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/layout/Breadcrumbs.astro';
+import PartnerCTA from '@components/sections/PartnerCTA.astro';
+import Plate from '@components/media/Plate.astro';
+import StoryCard from '@components/sections/StoryCard.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { articleSchema, breadcrumbSchema } from '@lib/seo';
+import { formatDate, byDateDesc, readingTime } from '@lib/utils';
+import { NEWS_IMAGE } from '@lib/media-overrides';
+import { contact } from '@data/site';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('news', ({ data }) => !data.draft)).sort(byDateDesc);
+  const programmes = await getCollection('programmes');
+
+  return all.map((article, i) => ({
+    params: { slug: article.id },
+    props: {
+      article,
+      programme: programmes.find((p) => p.data.sector === article.data.relatedProgramme),
+      more: all.filter((_, j) => j !== i).slice(0, 3),
+    },
+  }));
+}
+
+interface Props {
+  article: CollectionEntry<'news'>;
+  programme?: CollectionEntry<'programmes'>;
+  more: CollectionEntry<'news'>[];
+}
+
+const { article, programme, more } = Astro.props;
+const d = article.data;
+const { Content } = await render(article);
+
+const CATEGORY_LABEL: Record<string, string> = {
+  news: 'News',
+  'field-story': 'Field Story',
+  event: 'Event',
+};
+
+const crumbs = [
+  { label: 'News & Stories', href: '/news' },
+  { label: d.title, href: `/news/${article.id}` },
+];
+
+const mins = readingTime(article.body ?? '');
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.seoDescription}
+  type="article"
+  publishedTime={d.date.toISOString()}
+  modifiedTime={(d.updated ?? d.date).toISOString()}
+  schema={[
+    breadcrumbSchema(crumbs),
+    articleSchema({
+      title: d.title,
+      description: d.seoDescription,
+      url: `/news/${article.id}`,
+      published: d.date,
+      updated: d.updated,
+      section: CATEGORY_LABEL[d.category],
+    }),
+  ]}
+>
+  <!-- Article head -->
+  <header class="ahead surface-dark" data-parallax-scope>
+    <div class="ahead__media">
+      <Plate
+        seed={`news-hero-${article.id}`}
+        src={NEWS_IMAGE[article.id]}
+        variant={d.media?.variant}
+        tone={d.media?.tone ?? 'navy'}
+        ratio="fill"
+        priority
+        parallax={6}
+        alt=""
+      />
+      <div class="ahead__scrim" aria-hidden="true"></div>
+    </div>
+
+    <div class="wrap ahead__inner">
+      <p class="t-meta ahead__eyebrow" data-reveal>
+        <span class="ahead__rule" aria-hidden="true"></span>
+        {CATEGORY_LABEL[d.category] ?? d.category}
+      </p>
+
+      <h1 class="t-h1 ahead__title" data-reveal>{d.title}</h1>
+      <p class="t-lead ahead__summary" data-reveal>{d.summary}</p>
+
+      <dl class="ahead__meta" data-reveal>
+        <div>
+          <dt class="t-meta">Published</dt>
+          <dd><time datetime={d.date.toISOString().slice(0, 10)}>{formatDate(d.date)}</time></dd>
+        </div>
+        {
+          d.location && (
+            <div>
+              <dt class="t-meta">Location</dt>
+              <dd>{d.location}</dd>
+            </div>
+          )
+        }
+        {
+          programme && (
+            <div>
+              <dt class="t-meta">Programme</dt>
+              <dd>
+                <a href={`/what-we-do/${programme.id}`}>{programme.data.shortTitle}</a>
+              </dd>
+            </div>
+          )
+        }
+        <div>
+          <dt class="t-meta">Reading time</dt>
+          <dd>{mins} min</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <Breadcrumbs crumbs={crumbs} />
+
+  <!-- Body -->
+  <article class="abody surface-paper section">
+    <div class="wrap abody__wrap">
+      <aside class="abody__rail">
+        <div class="abody__rail-inner">
+          <p class="t-meta abody__rail-label">Author</p>
+          <p class="abody__author">{d.author}</p>
+
+          {
+            d.eventDate && (
+              <>
+                <p class="t-meta abody__rail-label abody__rail-label--sp">Event date</p>
+                <p class="abody__author">{formatDate(d.eventDate)}</p>
+              </>
+            )
+          }
+          {
+            d.eventLocation && (
+              <>
+                <p class="t-meta abody__rail-label abody__rail-label--sp">Venue</p>
+                <p class="abody__author">{d.eventLocation}</p>
+              </>
+            )
+          }
+
+          <p class="t-meta abody__rail-label abody__rail-label--sp">Media enquiries</p>
+          <a class="abody__mail" href={`mailto:${contact.media}`}>{contact.media}</a>
+        </div>
+      </aside>
+
+      <div class="prose-editorial abody__prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <!-- More -->
+  {
+    more.length > 0 && (
+      <section class="amore surface-light section" aria-labelledby="am-h">
+        <div class="wrap">
+          <SectionLabel index="—" label="More from the newsroom" />
+          <h2 class="t-h2 amore__heading" id="am-h" data-reveal>
+            Also published.
+          </h2>
+          <div class="amore__grid">
+            {more.map((n) => (
+              <StoryCard
+                href={`/news/${n.id}`}
+                title={n.data.title}
+                summary={n.data.summary}
+                date={n.data.date}
+                category={CATEGORY_LABEL[n.data.category] ?? n.data.category}
+                location={n.data.location}
+                seed={`news-${n.id}`}
+                src={NEWS_IMAGE[n.id]}
+                variant={n.data.media?.variant}
+                tone={n.data.media?.tone ?? 'navy'}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <PartnerCTA seed={`cta-news-${article.id}`} />
+</BaseLayout>
+
+<style>
+  /* ---- head ---- */
+  .ahead {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: clamp(3.5rem, 9vw, 7rem) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .ahead__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .ahead__media :global(.plate),
+  .ahead__media :global(.frame) {
+    height: 100%;
+  }
+
+  .ahead__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(105deg, rgb(7 24 39 / 0.95) 30%, rgb(7 24 39 / 0.72) 100%),
+      linear-gradient(to top, rgb(7 24 39 / 0.9), rgb(7 24 39 / 0.1) 60%);
+  }
+
+  .ahead__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ochre-400);
+    margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .ahead__rule {
+    width: clamp(1.5rem, 4vw, 3rem);
+    height: 1px;
+    background: currentColor;
+  }
+
+  .ahead__title {
+    color: #fff;
+    max-width: 22ch;
+  }
+
+  .ahead__summary {
+    margin-top: clamp(1.25rem, 2.5vw, 2rem);
+    max-width: 58ch;
+    color: #b9c8d2;
+  }
+
+  .ahead__meta {
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding-top: clamp(1.25rem, 2.5vw, 2rem);
+    border-top: 1px solid color-mix(in srgb, #fff 18%, transparent);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .ahead__meta > div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ahead__meta dt {
+    color: color-mix(in srgb, #fff 48%, transparent);
+  }
+
+  .ahead__meta dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: #e2e9ed;
+  }
+
+  .ahead__meta a {
+    color: var(--color-ochre-400);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .ahead__meta a:hover {
+    border-bottom-color: currentColor;
+  }
+
+  /* ---- body ---- */
+  .abody__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .abody__wrap {
+      grid-template-columns: minmax(0, 0.4fr) minmax(0, 1.6fr);
+    }
+    .abody__rail-inner {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .abody__rail-label {
+    color: var(--accent-ink);
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.75rem;
+  }
+
+  .abody__rail-label--sp {
+    margin-top: 1.75rem;
+  }
+
+  .abody__author {
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+
+  .abody__mail {
+    font-size: 0.875rem;
+    color: var(--ink-strong);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .abody__mail:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  /* ---- more ---- */
+  .amore__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .amore__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .amore__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .amore__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

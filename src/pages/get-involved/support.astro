@@ -1,0 +1,234 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Get Involved', href: '/get-involved' },
+  { label: 'Support Our Work', href: '/get-involved/support' },
+];
+---
+
+<PageLayout
+  title="Support Our Work"
+  description="Fund an MMT Impact programme in South Sudan. We tell you what a contribution buys and report back on what it achieved."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Get Involved / Support',
+    lines: ['Fund work that', 'reports back.'],
+    lede: 'We do not run an online donation appeal. What we do is agree with a funder what a contribution will pay for, and report on what it achieved against that.',
+    seed: 'support-hero',
+    variant: 'horizon',
+    surface: 'forest',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <EditorialSplit
+    index="01"
+    label="Why there is no donate button"
+    heading={'Because we would\nrather tell you what\nyour money bought.'}
+    ratio="lead"
+    surface="paper"
+    id="why"
+  >
+    <div class="prose-editorial">
+      <p>
+        A one-click donation is a good fit for an emergency appeal. It is a poor fit for the work
+        MMT Impact actually does, which is multi-year programme delivery where a contribution needs
+        to be matched to a defined component, budgeted properly, and reported on.
+      </p>
+      <p>
+        So instead of a payment form, we ask you to tell us what you are interested in supporting.
+        We come back with what that would cost, what it would deliver, how it would be measured,
+        and when you would receive a report.
+      </p>
+      <p>
+        A donation platform will be added when we can pair it with the reporting that makes it
+        meaningful. Adding it earlier would mean taking money without being able to account for it
+        properly, and that is not a trade we are willing to make.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <section class="what surface-dark section" aria-labelledby="what-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="What funding supports" />
+      <h2 class="t-h2 what__heading" id="what-h" data-reveal>Where a contribution goes.</h2>
+      <NumberedGrid
+        columns={3}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Programme delivery',
+            body: 'Direct costs of training, enterprise support, community programming and humanitarian response — the activity itself.',
+          },
+          {
+            number: '02',
+            title: 'Local capability',
+            body: 'Recruitment, training and retention of local staff and trainers, so delivery capacity stays in the country after a programme closes.',
+          },
+          {
+            number: '03',
+            title: 'Measurement',
+            body: 'Baselines, monitoring, participant tracking and evaluation. Unglamorous, routinely underfunded, and the only reason we can tell you whether anything worked.',
+          },
+          {
+            number: '04',
+            title: 'Unrestricted funding',
+            body: 'The most useful money an organisation like ours can receive, because it can be moved to where the constraint actually is rather than where a budget line said it would be.',
+          },
+          {
+            number: '05',
+            title: 'Governance and controls',
+            body: 'The audit, safeguarding and financial control functions that make everything else defensible. Funders who cover these make the rest possible.',
+          },
+          {
+            number: '06',
+            title: 'What it does not go to',
+            body: 'We do not spend donor funds on paid acquisition, commissioned fundraising, or imagery of participants intended to generate more donations.',
+          },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="commit surface-sand section" aria-labelledby="commit-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Our commitment to funders" />
+      <h2 class="t-h2 commit__heading" id="commit-h" data-reveal>What you get back.</h2>
+      <ul class="commit__list">
+        <li data-reveal data-reveal-group="commit">
+          A written agreement setting out what the contribution funds, over what period, and what it
+          is expected to achieve.
+        </li>
+        <li data-reveal data-reveal-group="commit">
+          Reporting against agreed indicators, disaggregated by sex, age and vulnerability.
+        </li>
+        <li data-reveal data-reveal-group="commit">
+          Notification if the programme is not going to plan — at the point we know, not at the
+          report deadline.
+        </li>
+        <li data-reveal data-reveal-group="commit">
+          Full financial accounting for the funds, available on request at any time.
+        </li>
+        <li data-reveal data-reveal-group="commit">
+          No use of your name or logo without your written permission.
+        </li>
+        <li data-reveal data-reveal-group="commit">
+          Your contact details are never sold, shared or traded.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sform surface-light section" id="enquiry" aria-labelledby="sf-h">
+    <div class="wrap sform__wrap">
+      <div class="sform__lead">
+        <SectionLabel index="04" label="Discuss funding" />
+        <h2 class="t-h2 sform__heading" id="sf-h" data-reveal>Start a conversation.</h2>
+        <p class="t-lead sform__body" data-reveal>
+          Tell us what you are interested in supporting and at roughly what scale. We will come back
+          with what it would fund and how it would be reported.
+        </p>
+        <div class="sform__alt" data-reveal>
+          <p class="t-meta sform__alt-label">Prefer email?</p>
+          <a class="link-rule" href={`mailto:${contact.partnerships}`}>
+            {contact.partnerships}
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sform__form" data-reveal>
+        <EnquiryForm
+          variant="partnership"
+          title="Funding enquiry"
+          intro="Select “Funding or grant” as the partnership type, and tell us what you would like to support."
+        />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .what__heading,
+  .commit__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .what__heading {
+    color: #fff;
+  }
+
+  .commit__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule-strong);
+    counter-reset: cl;
+  }
+
+  .commit__list li {
+    position: relative;
+    padding: 1.25rem 0 1.25rem 3rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--text-lead);
+    line-height: 1.5;
+    color: var(--ink-strong);
+    counter-increment: cl;
+    max-width: 72ch;
+  }
+
+  .commit__list li::before {
+    content: counter(cl, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 1.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .sform__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .sform__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .sform__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .sform__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .sform__body {
+    max-width: 44ch;
+  }
+
+  .sform__alt {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .sform__alt-label {
+    color: var(--ink-faint);
+    margin-bottom: 0.85rem;
+  }
+</style>

@@ -1,0 +1,153 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { contact, analytics } from '@data/site';
+
+const crumbs = [{ label: 'Cookies', href: '/legal/cookies' }];
+const updated = '17 February 2026';
+---
+
+<PageLayout
+  title="Cookies"
+  description="MMT Impact sets no tracking cookies and runs no advertising or profiling scripts on this website."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Legal / Cookies',
+    lines: ['We do not', 'track you.'],
+    lede: 'This site sets no advertising cookies, runs no third-party trackers, and does not build a profile of anyone who visits it.',
+    seed: 'cookies-hero',
+    variant: 'cohort',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <section class="legal surface-paper section">
+    <div class="wrap legal__wrap">
+      <aside class="legal__rail">
+        <div class="legal__rail-inner">
+          <SectionLabel index="—" label="Cookie notice" />
+          <p class="t-meta legal__updated">Last updated {updated}</p>
+          <div class="legal__badge">
+            <p class="t-meta legal__badge-label">Cookies set by this site</p>
+            <p class="legal__badge-value">None</p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="prose-editorial legal__body">
+        <h2>Why there is no cookie banner</h2>
+        <p>
+          Cookie banners exist because sites set cookies that require consent. This one does not set
+          any, so there is nothing to consent to and no banner to dismiss.
+        </p>
+        <p>
+          That is a design decision. An institutional website whose audience includes UN agencies,
+          ministries and community organisations has no business running behavioural advertising
+          infrastructure, and we have not built any into it.
+        </p>
+
+        <h2>What this site does not do</h2>
+        <ul>
+          <li>No advertising or retargeting pixels.</li>
+          <li>No social media tracking widgets.</li>
+          <li>No cross-site tracking or device fingerprinting.</li>
+          <li>No profiling, and no sale or sharing of visitor data.</li>
+          <li>No third-party scripts other than those named below.</li>
+        </ul>
+
+        <h2>Third-party requests</h2>
+        <p>The only external requests this site makes are:</p>
+        <ul>
+          <li>
+            <strong>Google Fonts</strong> — for the typefaces. This causes your browser to request
+            font files from <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>,
+            which discloses your IP address to that service. No cookie is set.
+          </li>
+          {
+            analytics.domain && (
+              <li>
+                <strong>Privacy-conscious analytics</strong> — aggregate page views, referrer and
+                country. No cookies, no persistent identifier, and no individual is tracked across
+                sites or sessions.
+              </li>
+            )
+          }
+        </ul>
+        <p>
+          The interactive presence map is served entirely from this site. It uses no tile provider
+          and makes no third-party request, so viewing it discloses nothing to anyone but us.
+        </p>
+
+        <h2>Browser storage</h2>
+        <p>
+          This site does not write to <code>localStorage</code>, <code>sessionStorage</code> or
+          IndexedDB. Your browser may cache pages, styles and fonts for performance; that is normal
+          browser behaviour and you can clear it at any time from your browser settings.
+        </p>
+
+        <h2>If this changes</h2>
+        <p>
+          If we ever introduce a cookie that requires consent, we will ask for it properly — before
+          the cookie is set, with a genuine option to decline that is as easy as accepting — and we
+          will update this page with the date.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions: <a href={`mailto:${contact.general}`}>{contact.general}</a>. See also our{' '}
+          <a href="/legal/privacy">privacy notice</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .legal__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .legal__wrap {
+      grid-template-columns: minmax(0, 0.45fr) minmax(0, 1.55fr);
+    }
+    .legal__rail-inner {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .legal__updated {
+    margin-top: 1.25rem;
+    color: var(--ink-faint);
+  }
+
+  .legal__badge {
+    margin-top: 1.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--surface-raised);
+  }
+
+  .legal__badge-label {
+    color: var(--ink-faint);
+    margin-bottom: 0.6rem;
+  }
+
+  .legal__badge-value {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-green-700);
+  }
+
+  .legal__body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--surface-sunken);
+    padding: 0.1em 0.35em;
+  }
+</style>

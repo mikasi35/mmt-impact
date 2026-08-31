@@ -1,0 +1,199 @@
+---
+/**
+ * The repeated "numbered entry" pattern — values, partner categories, capacity
+ * pillars, expertise areas, governance bodies.
+ *
+ * Rendered as a ruled register rather than a grid of shadowed cards, and
+ * available in two densities so consecutive sections never look identical.
+ */
+interface Item {
+  number?: string;
+  title: string;
+  body?: string;
+  meta?: string;
+  bullets?: string[];
+  href?: string;
+}
+
+interface Props {
+  items: Item[];
+  columns?: 1 | 2 | 3;
+  /** `rule` = hairline register. `panel` = filled cells divided by hairlines. */
+  style?: 'rule' | 'panel';
+  size?: 'md' | 'lg';
+  class?: string;
+}
+
+const { items, columns = 2, style = 'rule', size = 'md', class: className = '' } = Astro.props;
+---
+
+<ul class={`ngrid ngrid--${style} ngrid--c${columns} ngrid--${size} ${className}`}>
+  {
+    items.map((item, i) => {
+      const Tag = item.href ? 'a' : 'div';
+      return (
+        <li class="ngrid__item" data-reveal data-reveal-group="ngrid">
+          <Tag class="ngrid__inner" href={item.href}>
+            {(item.number ?? true) && (
+              <span class="t-meta ngrid__num">{item.number ?? String(i + 1).padStart(2, '0')}</span>
+            )}
+            <h3 class="ngrid__title">{item.title}</h3>
+            {item.meta && <p class="t-meta ngrid__meta">{item.meta}</p>}
+            {item.body && <p class="ngrid__body">{item.body}</p>}
+            {item.bullets && item.bullets.length > 0 && (
+              <ul class="ngrid__bullets">
+                {item.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            )}
+            {item.href && (
+              <span class="ngrid__arrow" aria-hidden="true">
+                →
+              </span>
+            )}
+          </Tag>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .ngrid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  /* ---- rule style: an open register ---- */
+  .ngrid--rule {
+    border-top: 1px solid var(--rule);
+    column-gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .ngrid--rule .ngrid__item {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .ngrid--rule .ngrid__inner {
+    display: grid;
+    gap: 0.6rem;
+    padding-block: clamp(1.25rem, 2.5vw, 2rem);
+    align-content: start;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+  }
+
+  /* ---- panel style: filled cells, hairline dividers ---- */
+  .ngrid--panel {
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .ngrid--panel .ngrid__inner {
+    display: grid;
+    gap: 0.6rem;
+    background: var(--surface-raised);
+    padding: clamp(1.35rem, 2.5vw, 2.25rem);
+    align-content: start;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: background 220ms var(--ease-institutional);
+  }
+
+  .ngrid--panel a.ngrid__inner:hover {
+    background: var(--surface);
+  }
+
+  /* ---- columns ---- */
+  @media (min-width: 48rem) {
+    .ngrid--c2,
+    .ngrid--c3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .ngrid--c3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- content ---- */
+  .ngrid__num {
+    color: var(--accent);
+  }
+
+  .ngrid__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .ngrid--lg .ngrid__title {
+    font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  }
+
+  .ngrid__meta {
+    color: var(--ink-faint);
+  }
+
+  .ngrid__body {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  .ngrid__bullets {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .ngrid__bullets li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .ngrid__bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .ngrid__arrow {
+    position: absolute;
+    top: clamp(1.25rem, 2.5vw, 2rem);
+    right: 0;
+    color: var(--ink-faint);
+    transition: transform 380ms var(--ease-out-expo), color 220ms;
+  }
+
+  .ngrid--panel .ngrid__arrow {
+    right: clamp(1.35rem, 2.5vw, 2.25rem);
+  }
+
+  a.ngrid__inner:hover .ngrid__arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+</style>

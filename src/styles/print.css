@@ -1,0 +1,122 @@
+/* ==========================================================================
+   MMT IMPACT — PRINT
+   The Organisational Profile page is designed to be saved as a PDF and
+   attached to institutional submissions. Print output must be clean A4.
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 14mm 18mm;
+  }
+
+  :root,
+  .surface-light,
+  .surface-paper,
+  .surface-sand,
+  .surface-dark,
+  .surface-forest {
+    --ink: #10171c;
+    --ink-strong: #071827;
+    --ink-muted: #33403f;
+    --ink-faint: #6a7477;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --surface-sunken: #ffffff;
+    --rule: #c9cfd2;
+    --rule-strong: #8d979b;
+    --accent: #9a7128;
+    --accent-ink: #9a7128;
+    background: #fff !important;
+    color: #10171c !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  /* Chrome that never belongs in a printed profile */
+  .site-header,
+  .site-footer,
+  .no-print,
+  .mobile-nav,
+  .map-shell,
+  form,
+  video,
+  .scroll-cue {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .section,
+  .section-sm {
+    padding-block: 0 !important;
+    margin-block: 0 0 8mm !important;
+  }
+
+  .wrap,
+  .wrap-wide {
+    max-width: none !important;
+    padding-inline: 0 !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #071827 !important;
+  }
+
+  /* Expose destinations for external links only */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: 7.5pt;
+    color: #6a7477;
+    word-break: break-all;
+  }
+
+  .t-mega { font-size: 34pt !important; line-height: 1 !important; }
+  .t-display { font-size: 26pt !important; line-height: 1.02 !important; }
+  .t-h1 { font-size: 20pt !important; line-height: 1.05 !important; }
+  .t-h2 { font-size: 16pt !important; line-height: 1.1 !important; }
+  .t-h3 { font-size: 12.5pt !important; }
+  .t-lead { font-size: 11pt !important; }
+  .t-num { font-size: 24pt !important; }
+
+  .frame,
+  .plate {
+    border: 1px solid #c9cfd2 !important;
+    break-inside: avoid;
+  }
+
+  .page-break {
+    break-before: page;
+  }
+
+  .avoid-break,
+  .data-list > div,
+  figure,
+  blockquote {
+    break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    break-after: avoid;
+  }
+
+  [data-reveal],
+  .reveal-lines > * > span {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+.print-only {
+  display: none;
+}

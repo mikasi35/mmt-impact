@@ -1,0 +1,403 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import { formatDate } from '@lib/utils';
+import { policies } from '@data/organisation';
+import { contact } from '@data/site';
+
+const reports = (await getCollection('reports', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const CATEGORY_LABEL: Record<string, string> = {
+  'annual-report': 'Annual Reports',
+  'programme-report': 'Programme Reports',
+  policy: 'Policy Documents',
+  research: 'Research',
+  'capability-statement': 'Capability Statements',
+  'strategic-plan': 'Strategic Plans',
+  'financial-report': 'Financial Reports',
+  publication: 'Publications',
+};
+
+const CATEGORY_ORDER = [
+  'capability-statement',
+  'strategic-plan',
+  'policy',
+  'annual-report',
+  'financial-report',
+  'programme-report',
+  'research',
+  'publication',
+];
+
+const grouped = CATEGORY_ORDER.map((cat) => ({
+  id: cat,
+  label: CATEGORY_LABEL[cat]!,
+  items: reports.filter((r) => r.data.category === cat),
+})).filter((g) => g.items.length > 0);
+
+const emptyCategories = CATEGORY_ORDER.filter(
+  (cat) => !reports.some((r) => r.data.category === cat)
+).map((cat) => CATEGORY_LABEL[cat]!);
+
+const crumbs = [{ label: 'Resources', href: '/resources' }];
+---
+
+<PageLayout
+  title="Resources"
+  description="The MMT Impact documentation room: organisational profile, strategy, policies, programme reports, research and publications."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Resources',
+    lines: ['The documentation', 'room.'],
+    lede: 'Everything an institutional partner is likely to ask for during due diligence, in one place. Documents not yet published here are available on request.',
+    seed: 'resources-hero',
+    variant: 'strata',
+    facts: [
+      { label: 'Documents listed', value: String(reports.length) },
+      { label: 'Policies in framework', value: String(policies.length) },
+      { label: 'Profile', value: 'Published' },
+      { label: 'Requests', value: contact.general },
+    ],
+  }}
+>
+  <!-- Featured: the profile -->
+  <section class="feat surface-dark section-sm" aria-labelledby="feat-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Start here" />
+      <div class="feat__grid">
+        <div>
+          <h2 class="t-h2 feat__heading" id="feat-h" data-reveal>Organisational Profile</h2>
+          <p class="t-lead feat__body" data-reveal>
+            The full institutional profile — mandate, governance, programme areas, delivery method,
+            institutional capacity, impact reporting basis and contact points. Formatted to print
+            or save directly as an A4 PDF, so the version you receive is always current.
+          </p>
+        </div>
+        <div class="feat__actions" data-reveal>
+          <a class="btn btn--accent" href="/resources/organisational-profile">
+            Open the profile
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="link-rule feat__link" href="/institutional-capacity">
+            Institutional capacity
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Document register -->
+  <section class="docs surface-paper section" aria-labelledby="docs-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Document register" meta={`${reports.length} listed`} />
+      <h2 class="t-h2 docs__heading" id="docs-h" data-reveal>Documents.</h2>
+
+      {
+        grouped.length > 0 ? (
+          <div class="docs__groups">
+            {grouped.map((g) => (
+              <div class="dgroup" data-reveal data-reveal-group="docs">
+                <h3 class="t-meta dgroup__heading">{g.label}</h3>
+                <ul class="dgroup__list">
+                  {g.items.map((r) => (
+                    <li class="drow">
+                      <div class="drow__main">
+                        <p class="drow__title">{r.data.title}</p>
+                        <p class="t-small drow__summary">{r.data.summary}</p>
+                        <p class="t-meta drow__meta">
+                          {formatDate(r.data.date)}
+                          {r.data.version && <> · Version {r.data.version}</>}
+                          {r.data.owner && <> · {r.data.owner}</>}
+                        </p>
+                      </div>
+                      <div class="drow__action">
+                        {r.data.file ? (
+                          <a class="btn btn--ghost btn--sm" href={r.data.file} download>
+                            Download
+                            <span aria-hidden="true">↓</span>
+                          </a>
+                        ) : r.id === 'organisational-profile-2026' ? (
+                          <a class="btn btn--ghost btn--sm" href="/resources/organisational-profile">
+                            Read
+                            <span class="btn-arrow" aria-hidden="true">→</span>
+                          </a>
+                        ) : (
+                          <span class="t-meta drow__status">On request</span>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            eyebrow="Document register"
+            title="No documents are published yet."
+            body="Documents appear here as they are formally adopted."
+            action={{ label: 'Request documents', href: '/contact' }}
+          />
+        )
+      }
+
+      {
+        emptyCategories.length > 0 && (
+          <div class="docs__pending" data-reveal>
+            <p class="t-meta docs__pending-label">Not yet published</p>
+            <p class="t-small">
+              The following categories will be populated as each reporting cycle completes:{' '}
+              {emptyCategories.join(', ')}. We publish these when they exist and are audited or
+              formally adopted — not before.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Policies -->
+  <section class="pols surface-light section-sm" aria-labelledby="pols-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Policies" meta={`${policies.length} in the framework`} />
+      <div class="pols__grid">
+        <div>
+          <h2 class="t-h2 pols__heading" id="pols-h" data-reveal>The policy framework.</h2>
+          <p class="t-lead pols__note" data-reveal>
+            Summaries of all {policies.length} policies are published on the transparency page.
+            Signed documents are provided to institutional partners on request during due
+            diligence.
+          </p>
+          <a class="btn btn--ghost pols__cta" href="/transparency#policies" data-reveal>
+            View the policy framework
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+        <ul class="pols__list" data-reveal>
+          {policies.map((p) => <li>{p.name}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request -->
+  <section class="req surface-sand section-sm">
+    <div class="wrap req__inner">
+      <div>
+        <p class="t-meta req__label">Requesting documents</p>
+        <p class="t-h3 req__text">
+          Anything listed as “on request” is provided within five working days.
+        </p>
+      </div>
+      <div class="req__actions">
+        <a class="btn btn--accent" href={`mailto:${contact.general}`}>
+          {contact.general}
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-rule" href="/contact">
+          Contact page
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  /* ---- featured ---- */
+  .feat__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .feat__grid {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    }
+  }
+
+  .feat__heading {
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+
+  .feat__body {
+    max-width: 58ch;
+  }
+
+  .feat__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .feat__link {
+    color: #fff;
+  }
+
+  /* ---- documents ---- */
+  .docs__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .docs__groups {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .dgroup__heading {
+    color: var(--accent);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .dgroup__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .drow {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .drow__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 1.625rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    margin-bottom: 0.4rem;
+  }
+
+  .drow__summary {
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin-bottom: 0.5rem;
+  }
+
+  .drow__meta {
+    color: var(--ink-faint);
+  }
+
+  .drow__action {
+    flex: none;
+    padding-top: 0.25rem;
+  }
+
+  .drow__status {
+    color: var(--ink-faint);
+  }
+
+  .docs__pending {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    max-width: 78ch;
+  }
+
+  .docs__pending-label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ---- policies ---- */
+  .pols__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .pols__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+
+  .pols__heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .pols__note {
+    max-width: 46ch;
+  }
+
+  .pols__cta {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .pols__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .pols__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2rem;
+    }
+  }
+
+  .pols__list li {
+    position: relative;
+    padding-left: 1.2rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .pols__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ---- request ---- */
+  .req__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .req__label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .req__text {
+    max-width: 36ch;
+  }
+
+  .req__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+</style>

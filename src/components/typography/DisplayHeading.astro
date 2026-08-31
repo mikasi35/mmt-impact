@@ -1,0 +1,42 @@
+---
+/**
+ * Multi-line display heading with a per-line mask reveal.
+ *
+ * Lines are authored explicitly rather than wrapped automatically, because the
+ * line break is a compositional decision on a page built around typography.
+ */
+interface Props {
+  lines: string[];
+  size?: 'mega' | 'display' | 'h1' | 'h2';
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'div';
+  class?: string;
+  /** Renders the final line in the accent colour. */
+  accentLast?: boolean;
+  id?: string;
+}
+
+const {
+  lines,
+  size = 'display',
+  as: Tag = 'h2',
+  class: className = '',
+  accentLast = false,
+  id,
+}: Props = Astro.props;
+---
+
+<Tag class={`t-${size} reveal-lines ${className}`} data-reveal="lines" id={id}>
+  {
+    lines.map((line, i) => (
+      <span class={accentLast && i === lines.length - 1 ? 'is-accent' : undefined}>
+        <span>{line}</span>
+      </span>
+    ))
+  }
+</Tag>
+
+<style>
+  .is-accent > span {
+    color: var(--accent);
+  }
+</style>

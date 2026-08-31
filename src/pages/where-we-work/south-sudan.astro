@@ -1,0 +1,409 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import ImpactMetric from '@components/impact/ImpactMetric.astro';
+import Plate from '@components/media/Plate.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import { headlineMetrics, impactBasis, impactAsAt } from '@data/impact';
+import { headquarters, contact } from '@data/site';
+
+const programmes = (await getCollection('programmes', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).filter(
+  (p) => p.data.country === 'South Sudan'
+);
+
+const crumbs = [
+  { label: 'Where We Work', href: '/where-we-work' },
+  { label: 'South Sudan', href: '/where-we-work/south-sudan' },
+];
+---
+
+<PageLayout
+  title="South Sudan"
+  description="MMT Impact in South Sudan: education, community support, livelihoods, women and youth empowerment, humanitarian action and institutional capacity building, delivered from a country office in Juba."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Where We Work / South Sudan',
+    lines: ['Building Stronger', 'Communities in', 'South Sudan.'],
+    lede: 'Our South Sudan work focuses on education, community support, livelihoods, youth and women empowerment, skills development, humanitarian action and institutional capacity building.',
+    seed: 'south-sudan-hero',
+    variant: 'terrain',
+    size: 'tall',
+    facts: [
+      { label: 'Country office', value: `${headquarters.city}` },
+      { label: 'Position', value: headquarters.coordinateLabel },
+      { label: 'Programme areas', value: 'All six' },
+      { label: 'Projects', value: String(projects.length) },
+    ],
+  }}
+  ctaProps={{
+    eyebrow: 'South Sudan',
+    lines: ['Work with our', 'country team.'],
+    body: 'Our country office in Juba handles programme partnerships, government and coordination relationships, and local procurement.',
+    primary: { label: 'Contact the country office', href: '/contact' },
+    secondary: { label: 'Partner with us', href: '/get-involved/partner' },
+    seed: 'south-sudan-cta',
+  }}
+>
+  <!-- Our presence -->
+  <section class="pres surface-dark section" aria-labelledby="pres-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Our presence" meta={headquarters.coordinateLabel} />
+      <div class="pres__grid">
+        <div class="pres__marker" data-reveal>
+          <p class="pres__city">{headquarters.city}</p>
+          <p class="t-meta pres__coord">{headquarters.coordinateLabel}</p>
+          <p class="t-meta pres__office">{headquarters.label}</p>
+        </div>
+
+        <div class="pres__body" data-reveal>
+          <h2 class="t-h2 pres__heading" id="pres-h">Designed in Juba. Delivered locally.</h2>
+          <div class="prose-editorial pres__prose">
+            <p>
+              MMT Impact’s country office in Juba is where programmes are designed, budgets are
+              controlled and partnerships are held. It is not a liaison office reporting to a
+              headquarters elsewhere — it is the operating centre of the organisation.
+            </p>
+            <p>
+              Delivery runs through teams recruited from and based in the communities served. That
+              is a quality decision before it is a localisation one: access, trust, language and
+              the ability to keep working when an international presence would have to withdraw
+              are not marginal advantages in this operating environment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programmes -->
+  <section class="progs surface-paper section" aria-labelledby="progs-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Our programmes" meta="Six areas" />
+      <h2 class="t-h2 progs__heading" id="progs-h" data-reveal>
+        All six programme areas<br />run in South Sudan.
+      </h2>
+
+      <ol class="progs__list">
+        {
+          programmes.map((p, i) => (
+            <li data-reveal data-reveal-group="progs">
+              <a class="prow" href={`/what-we-do/${p.id}`}>
+                <span class="t-meta prow__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="prow__main">
+                  <span class="prow__title">{p.data.shortTitle}</span>
+                  <span class="t-small prow__statement">{p.data.statement}</span>
+                </span>
+                <span class="prow__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section class="ssimpact surface-light section" aria-labelledby="ssi-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="Impact in South Sudan" meta={impactAsAt} />
+      <h2 class="t-h2 ssimpact__heading" id="ssi-h" data-reveal>What the work has reached.</h2>
+      <div class="ssimpact__grid">
+        {headlineMetrics.map((m, i) => <ImpactMetric metric={m} size="md" index={i + 1} />)}
+      </div>
+      <p class="t-small ssimpact__basis" data-reveal>{impactBasis}</p>
+      <a class="link-rule ssimpact__cta" href="/impact" data-reveal>
+        Full impact dashboard
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Plate break -->
+  <section class="break surface-sand section-sm" data-parallax-scope>
+    <div class="wrap-wide">
+      <Plate
+        seed="south-sudan-break"
+        variant="horizon"
+        tone="navy"
+        ratio="band"
+        parallax={8}
+        caption="Central Equatoria, South Sudan"
+      />
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="ssproj surface-paper section" aria-labelledby="ssp-h">
+    <div class="wrap">
+      <SectionLabel index="04" label="Current projects" meta={`${projects.length} in the record`} />
+      <h2 class="t-h2 ssproj__heading" id="ssp-h" data-reveal>Projects in South Sudan.</h2>
+
+      {
+        projects.length > 0 ? (
+          <div class="ssproj__grid">
+            {projects.map((p) => (
+              <ProjectCard project={p} size="compact" />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            eyebrow="Project record"
+            title="No projects are published yet."
+            body="Projects appear here as they are designed and funded."
+            action={{ label: 'Partner with us', href: '/get-involved/partner' }}
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <EditorialSplit
+    index="05"
+    label="Coordination"
+    heading={'We work inside the\ncoordination system,\nnot alongside it.'}
+    ratio="lead"
+    surface="dark"
+    id="coordination"
+  >
+    <div class="prose-editorial">
+      <p>
+        Humanitarian and development response in South Sudan is coordinated through established
+        architecture — cluster coordination, government authorities at national and state level, and
+        NGO forums. An organisation that operates outside it duplicates coverage in accessible areas
+        and leaves gaps everywhere else.
+      </p>
+      <p>
+        MMT Impact participates in that coordination: sharing assessment data, aligning programme
+        design with national and state priorities, and accepting tasking rather than selecting
+        locations by visibility.
+      </p>
+      <p>
+        We also coordinate with the organisations already delivering in a community before we
+        design anything. Duplication is not neutral — it wastes the funding of one organisation and
+        the time of a community that has been assessed three times for the same thing.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Country team contact -->
+  <section class="ssc surface-sand section-sm">
+    <div class="wrap ssc__inner">
+      <div>
+        <p class="t-meta ssc__label">Contact our South Sudan team</p>
+        <p class="t-h3 ssc__text">
+          {headquarters.label}<br />{headquarters.city}, {headquarters.country}
+        </p>
+      </div>
+      <div class="ssc__actions">
+        <a class="btn btn--accent" href={`mailto:${contact.southSudan}`}>
+          {contact.southSudan}
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-rule" href="/contact">
+          All contact details
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  /* ---- presence ---- */
+  .pres__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .pres__grid {
+      grid-template-columns: minmax(0, 0.5fr) minmax(0, 1.5fr);
+    }
+  }
+
+  .pres__marker {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .pres__marker::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .pres__city {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    color: #fff;
+  }
+
+  .pres__coord {
+    margin-top: 0.9rem;
+    color: var(--ink-faint);
+  }
+
+  .pres__office {
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+
+  .pres__heading {
+    color: #fff;
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  /* ---- programmes ---- */
+  .progs__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .progs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .progs__list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .prow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2rem);
+    padding: clamp(1rem, 2vw, 1.5rem) 0;
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 380ms var(--ease-out-expo);
+  }
+
+  .prow:hover {
+    padding-left: clamp(0.5rem, 1.5vw, 1rem);
+  }
+
+  .prow__num {
+    color: var(--ink-faint);
+  }
+
+  .prow:hover .prow__num {
+    color: var(--accent);
+  }
+
+  .prow__main {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .prow__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.6vw, 2.125rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .prow__statement {
+    color: var(--ink-muted);
+  }
+
+  .prow__arrow {
+    color: var(--ink-faint);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 220ms, transform 380ms var(--ease-out-expo);
+  }
+
+  .prow:hover .prow__arrow {
+    opacity: 1;
+    transform: none;
+    color: var(--accent);
+  }
+
+  /* ---- impact ---- */
+  .ssimpact__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .ssimpact__grid {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+
+  .ssimpact__basis {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    max-width: 72ch;
+  }
+
+  .ssimpact__cta {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  /* ---- projects ---- */
+  .ssproj__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .ssproj__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 48rem) {
+    .ssproj__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .ssproj__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- contact ---- */
+  .ssc__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .ssc__label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .ssc__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+</style>

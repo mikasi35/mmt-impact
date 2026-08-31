@@ -1,0 +1,208 @@
+---
+import Plate from '@components/media/Plate.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { contact } from '@data/site';
+
+interface Props {
+  eyebrow?: string;
+  lines?: string[];
+  body?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  seed?: string;
+  /** Fills the otherwise-empty right column with a compact enquiry form. */
+  form?: boolean;
+}
+
+const {
+  eyebrow = 'Partnership',
+  lines = ['Let’s build', 'what comes next.'],
+  body = 'MMT Impact works with UN agencies, governments, international and national NGOs, foundations and the private sector. Tell us what you are trying to achieve and we will tell you honestly whether we are the right partner for it.',
+  primary = { label: 'Partner With Us', href: '/get-involved/partner' },
+  secondary = { label: 'Explore Our Work', href: '/what-we-do' },
+  seed = 'partner-cta',
+  form = false,
+}: Props = Astro.props;
+---
+
+<section class="cta surface-dark" data-parallax-scope aria-labelledby="cta-heading">
+  <div class="cta__media">
+    <Plate seed={seed} variant="network" tone="navy" ratio="fill" parallax={8} alt="" />
+    <div class="cta__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class={`wrap cta__inner ${form ? 'cta__inner--split' : ''}`}>
+    <div class="cta__content">
+      <p class="t-meta cta__eyebrow" data-reveal>
+        <span class="cta__eyebrow-rule" aria-hidden="true"></span>
+        {eyebrow}
+      </p>
+
+      <h2 class="t-display cta__heading reveal-lines" id="cta-heading" data-reveal="lines">
+        {
+          lines.map((l, i) => (
+            <span class={i === lines.length - 1 ? 'is-accent' : undefined}>
+              <span>{l}</span>
+            </span>
+          ))
+        }
+      </h2>
+
+      <p class="t-lead cta__body" data-reveal>{body}</p>
+
+      <div class="cta__actions" data-reveal>
+        <a class="btn btn--accent" href={primary.href}>
+          {primary.label}
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost" href={secondary.href}>
+          {secondary.label}
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <p class="t-meta cta__direct" data-reveal>
+        Or write directly —
+        <a href={`mailto:${contact.partnerships}`}>{contact.partnerships}</a>
+      </p>
+    </div>
+
+    {
+      form && (
+        <div class="cta__form" data-reveal>
+          <EnquiryForm
+            variant="partnership"
+            title="Start now"
+            intro="A short version of the partnership form — tell us what you’re trying to achieve and we’ll reply within five working days."
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    isolation: isolate;
+    padding-block: clamp(4.5rem, 11vw, 10rem);
+  }
+
+  .cta__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    /* Clipping lives here, not on .cta — .cta__content below is
+       position:sticky, and an overflow:hidden ancestor would become its
+       scrolling container, breaking the sticky behaviour entirely. */
+    overflow: hidden;
+  }
+
+  .cta__media :global(.plate),
+  .cta__media :global(.frame) {
+    height: 100%;
+  }
+
+  .cta__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgb(7 24 39 / 0.95) 30%, rgb(7 24 39 / 0.66) 100%);
+  }
+
+  .cta__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* Top-aligned, not centred — the heading should sit level with where the
+     form panel begins, not floated to the pair's vertical midpoint. */
+  .cta__inner--split {
+    align-items: start;
+  }
+
+  @media (min-width: 68rem) {
+    .cta__inner--split {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+
+    /* Pinned while the (taller) form scrolls past it, so the statement
+       stays legible for as long as the visitor is filling the form in. */
+    .cta__content {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2.5rem);
+    }
+  }
+
+  .cta__form {
+    max-width: 32rem;
+  }
+
+  @media (min-width: 68rem) {
+    .cta__form {
+      max-width: none;
+      justify-self: end;
+      width: 100%;
+    }
+  }
+
+  /* The form ships with generous padding for a standalone page; tighten it
+     here so it reads as a compact panel beside the heading, not a full form. */
+  .cta__form :global(.eform) {
+    padding: clamp(1.5rem, 2.75vw, 2.25rem);
+  }
+
+  .cta__form :global(.eform__title) {
+    font-size: 1.25rem;
+  }
+
+  .cta__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ochre-400);
+    margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .cta__eyebrow-rule {
+    width: clamp(1.5rem, 4vw, 3rem);
+    height: 1px;
+    background: currentColor;
+  }
+
+  .cta__heading {
+    color: #fff;
+    max-width: 16ch;
+  }
+
+  .cta__heading :global(.is-accent) > span {
+    color: var(--color-ochre-400);
+  }
+
+  .cta__body {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: 56ch;
+    color: #b9c8d2;
+  }
+
+  .cta__actions {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .cta__direct {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    color: #7a8f9d;
+  }
+
+  .cta__direct a {
+    color: var(--color-ochre-400);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ochre-400) 45%, transparent);
+  }
+
+  .cta__direct a:hover {
+    border-bottom-color: var(--color-ochre-400);
+  }
+</style>

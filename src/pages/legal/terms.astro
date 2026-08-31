@@ -1,0 +1,147 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { contact, site } from '@data/site';
+
+const crumbs = [{ label: 'Terms of Use', href: '/legal/terms' }];
+const updated = '17 February 2026';
+---
+
+<PageLayout
+  title="Terms of Use"
+  description="Terms governing use of the MMT Impact website, including accuracy of published information, intellectual property and reporting fraudulent use of our identity."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Legal / Terms',
+    lines: ['Terms of use.'],
+    lede: 'The terms on which this website is provided, and what our published information does and does not constitute.',
+    seed: 'terms-hero',
+    variant: 'graticule',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <section class="legal surface-paper section">
+    <div class="wrap legal__wrap">
+      <aside class="legal__rail">
+        <div class="legal__rail-inner">
+          <SectionLabel index="—" label="Terms of use" />
+          <p class="t-meta legal__updated">Last updated {updated}</p>
+        </div>
+      </aside>
+
+      <div class="prose-editorial legal__body">
+        <h2>Accuracy of information</h2>
+        <p>
+          We take care that information published on this site is accurate at the time of
+          publication. Programme information, impact figures, opportunities and vacancies change,
+          and we correct or restate published figures when better data becomes available —
+          including downward.
+        </p>
+        <p>
+          Where a figure carries a stated basis of reporting, that basis is part of the figure.
+          Quoting the number without it misrepresents what we published.
+        </p>
+
+        <h2>Not an offer or commitment</h2>
+        <p>
+          Nothing on this site constitutes an offer, a commitment to fund, to award a contract, or
+          to enter a partnership. Registration as a supplier or consultant places an organisation on
+          our roster; it does not create an entitlement to be invited to bid or to be awarded work.
+        </p>
+        <p>
+          Programme and project descriptions include work that is in design or planned. Where a
+          project is not yet delivering, it is labelled as such, and it should not be read as a
+          record of completed delivery.
+        </p>
+
+        <h2>The MMT Group</h2>
+        <p>
+          {site.legalName} is a member of the wider MMT Group. MMT Care, MMT Alliance and MMT Impact
+          are separate legal entities. Nothing on this site should be read as MMT Impact holding,
+          controlling or being entitled to the assets, turnover, workforce, contracts,
+          certifications or delivery history of another Group organisation.
+        </p>
+
+        <h2>Intellectual property</h2>
+        <p>
+          Content on this site is owned by MMT Impact or used with permission. You may quote from it
+          with attribution for non-commercial purposes such as research, journalism or academic
+          work. Reproducing substantial parts, or using our name, logo or branding, requires written
+          permission from <a href={`mailto:${contact.media}`}>{contact.media}</a>.
+        </p>
+        <p>
+          Photographs of identifiable people are published under specific consent and may not be
+          reused, cropped, recaptioned or redistributed under any circumstances.
+        </p>
+
+        <h2>Fraudulent use of our identity</h2>
+        <p>
+          MMT Impact never charges a fee to apply for a role, to register as a supplier or
+          consultant, to bid, or to be awarded work. No member of our staff is authorised to request
+          a payment or personal benefit in connection with recruitment or procurement.
+        </p>
+        <p>
+          Legitimate correspondence comes from an <strong>mmtimpact.org</strong> address. If you
+          receive a request for payment, or contact from a similar-looking domain, do not respond
+          and do not send documents or money. Report it to{' '}
+          <a href={`mailto:${contact.general}`}>{contact.general}</a> or through our{' '}
+          <a href="/transparency#whistleblowing">confidential reporting channel</a>.
+        </p>
+
+        <h2>External links</h2>
+        <p>
+          We link to external sites where they are useful. We are not responsible for their content
+          or their privacy practices.
+        </p>
+
+        <h2>Availability</h2>
+        <p>
+          We aim to keep this site available and secure but do not guarantee uninterrupted access.
+          We may change or withdraw content at any time.
+        </p>
+
+        <h2>Accessibility</h2>
+        <p>
+          This site targets WCAG 2.2 AA. If you encounter a barrier to using it, tell us at{' '}
+          <a href={`mailto:${contact.general}`}>{contact.general}</a> and we will fix it and, where
+          you need the information sooner, provide it in another format.
+        </p>
+
+        <h2>Governing law</h2>
+        <p>
+          These terms are governed by the laws of the Republic of South Sudan. Nothing in them
+          limits any right you have that cannot be limited by law.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms: <a href={`mailto:${contact.general}`}>{contact.general}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .legal__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .legal__wrap {
+      grid-template-columns: minmax(0, 0.45fr) minmax(0, 1.55fr);
+    }
+    .legal__rail-inner {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .legal__updated {
+    margin-top: 1.25rem;
+    color: var(--ink-faint);
+  }
+</style>

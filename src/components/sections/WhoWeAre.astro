@@ -1,0 +1,114 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import DisplayHeading from '@components/typography/DisplayHeading.astro';
+import Plate from '@components/media/Plate.astro';
+
+/**
+ * Homepage 02 — Who We Are.
+ *
+ * The five focus areas live in the sibling FocusAreas component (icon cards
+ * over a fixed background) rather than here — this section is just the
+ * introduction statement and portrait.
+ */
+---
+
+<section class="who surface-paper section" id="who-we-are" aria-labelledby="who-heading">
+  <div class="wrap">
+    <SectionLabel index="01" label="Who We Are" meta="Development · Humanitarian" />
+
+    <div class="who__grid">
+      <div class="who__lead">
+        <DisplayHeading
+          as="h2"
+          size="h1"
+          lines={['Development that begins', 'with communities.']}
+          class="who__heading"
+          id="who-heading"
+        />
+
+        <p class="t-lead who__body" data-reveal>
+          MMT Impact is a development and humanitarian organisation focused on creating practical,
+          sustainable solutions for communities and vulnerable populations.
+        </p>
+
+        <p class="t-body who__body" data-reveal>
+          We work where the need is highest and the systems are thinnest — building programmes with
+          the people who will run them, and reporting on what changed rather than what was
+          delivered.
+        </p>
+
+        <a class="link-rule who__cta" href="/who-we-are" data-reveal>
+          Learn about us
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="who__media">
+        <Plate
+          seed="who-we-are-01"
+          src="/images/index/what-we-do-section/who-are-we.jpg"
+          variant="horizon"
+          tone="navy"
+          ratio="fill"
+          caption="Community consultation, South Sudan"
+          alt="Community consultation for MMT Impact programme design, South Sudan"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .who__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    /* Stretch (grid's default) so the image column matches the text
+       column's height exactly — top flush with the heading, bottom flush
+       with the "Learn about us" link — rather than sitting at its own
+       aspect ratio with an offset. */
+    align-items: stretch;
+  }
+
+  @media (min-width: 64rem) {
+    .who__grid {
+      grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr);
+    }
+  }
+
+  .who__media {
+    min-height: 20rem;
+  }
+
+  /* The figure needs to be told 100% too, not just the frame inside it —
+     otherwise the frame's height:100% has nothing definite to resolve
+     against. Flex-column so the caption's own height is subtracted from
+     the frame's share rather than added on top of a full-height frame,
+     which is what pushed the caption below the "Learn about us" line. */
+  .who__media :global(.plate) {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .who__media :global(.frame) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .who__heading {
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .who__body {
+    max-width: 46ch;
+  }
+
+  .who__body + .who__body {
+    margin-top: 1.25rem;
+  }
+
+  .who__cta {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  }
+</style>

@@ -1,0 +1,400 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import { capacityPillars, capacityDisclaimer, groupEntities } from '@data/group';
+import { policies, governanceBodies } from '@data/organisation';
+import { contact } from '@data/site';
+
+const crumbs = [{ label: 'Institutional Capacity', href: '/institutional-capacity' }];
+
+const pillars = capacityPillars.map((p) => ({
+  number: p.number,
+  title: p.title,
+  meta: p.owner,
+  body: p.body,
+}));
+
+const systems = [
+  {
+    number: '01',
+    title: 'Financial management',
+    body: 'Delegated authority schedule, segregation of duties, documented banking and cash controls, grant-specific accounting, and an audit trail retained to institutional donor standards.',
+  },
+  {
+    number: '02',
+    title: 'Procurement',
+    body: 'Competitive thresholds, published opportunities, panel evaluation against pre-published criteria, supplier due diligence and conflict-of-interest exclusion.',
+  },
+  {
+    number: '03',
+    title: 'Safeguarding & PSEA',
+    body: 'Policy suite applied to all personnel, partners and contractors, with a reporting line from the Safeguarding Focal Point direct to the Board, independent of executive management.',
+  },
+  {
+    number: '04',
+    title: 'Monitoring, evaluation & learning',
+    body: 'Indicator definitions set before delivery, disaggregation by sex, age and vulnerability, data quality assurance, and published methodology for every figure on this site.',
+  },
+  {
+    number: '05',
+    title: 'Risk management',
+    body: 'Organisational risk register reviewed by the Finance, Audit & Risk Committee, covering fiduciary, security, safeguarding, reputational and operational risk.',
+  },
+  {
+    number: '06',
+    title: 'Duty of care',
+    body: 'Security risk management, travel and incident procedures, and staff welfare arrangements appropriate to the operating environment.',
+  },
+];
+---
+
+<PageLayout
+  title="Institutional Capacity"
+  description="What stands behind MMT Impact delivery: local presence, governance and control systems, and clearly-bounded access to expertise across the wider MMT Group."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Institutional Capacity',
+    lines: ['Strengthened by a', 'wider ecosystem', 'of expertise.'],
+    lede: 'MMT Impact combines local knowledge and community presence with access to wider expertise across the MMT Group in care and support services, procurement, supply chain, consultancy, finance, governance and operational management.',
+    seed: 'capacity-hero',
+    variant: 'network',
+    facts: [
+      { label: 'Governance bodies', value: String(governanceBodies.length) },
+      { label: 'Policies', value: String(policies.length) },
+      { label: 'Group organisations', value: '3, separately constituted' },
+      { label: 'Country presence', value: 'South Sudan' },
+    ],
+  }}
+  ctaProps={{
+    eyebrow: 'Due diligence',
+    lines: ['Assess us', 'properly.'],
+    body: 'Registration documents, the governance framework, signed policies and the organisational profile are available to institutional partners on request. We would rather be assessed thoroughly than taken on trust.',
+    primary: { label: 'Request due diligence pack', href: '/contact' },
+    secondary: { label: 'Organisational profile', href: '/resources/organisational-profile' },
+    seed: 'capacity-cta',
+  }}
+>
+  <!-- The honest framing, first. -->
+  <EditorialSplit
+    index="01"
+    label="The honest position"
+    heading={'A young organisation\nwith unusually\nmature systems.'}
+    ratio="lead"
+    surface="paper"
+    id="position"
+  >
+    <div class="prose-editorial">
+      <p>
+        The question an institutional funder asks about a new organisation is not whether it is
+        well-intentioned. It is whether it can absorb funding, control it, deliver against a
+        results framework, and survive an audit.
+      </p>
+      <p>
+        MMT Impact is new. We are not going to present a fifteen-year delivery history, and any
+        organisation that does present one it does not have will be found out at the second stage
+        of due diligence.
+      </p>
+      <p>
+        What we do have is unusual for an organisation at this stage: a governance framework, a
+        policy suite, financial controls and a monitoring function that were adopted <em>before</em>
+        delivery began rather than assembled after a donor asked for them. That is the case we
+        make, and it is a case that can be verified.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Pillars -->
+  <section class="pill surface-dark section" aria-labelledby="pill-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Four pillars" meta="Each attributed to its source" />
+      <h2 class="t-h2 pill__heading" id="pill-h" data-reveal>What stands behind delivery.</h2>
+      <p class="t-lead pill__note" data-reveal>
+        Each pillar below is labelled with where the capability actually sits. Two are MMT Impact’s
+        own. Two are accessed through the wider Group, and are described as access to expertise —
+        not as our own track record.
+      </p>
+      <NumberedGrid items={pillars} columns={2} style="panel" class="pill__grid" />
+    </div>
+  </section>
+
+  <!-- The boundary -->
+  <section class="bound surface-sand section" aria-labelledby="bound-h">
+    <div class="wrap">
+      <SectionLabel index="03" label="The boundary" meta="Legally load-bearing" />
+      <h2 class="t-h2 bound__heading" id="bound-h" data-reveal>
+        Where the claim stops.
+      </h2>
+
+      <div class="bound__statement" data-reveal>
+        <p class="t-serif-lead">{capacityDisclaimer}</p>
+      </div>
+
+      <div class="bound__table">
+        <div class="brow brow--head" aria-hidden="true">
+          <span class="t-meta">Organisation</span>
+          <span class="t-meta">What it is</span>
+          <span class="t-meta">Attributable to MMT Impact</span>
+        </div>
+        {
+          groupEntities.map((e) => (
+            <div class="brow" data-reveal data-reveal-group="bound">
+              <span class="brow__name">
+                {e.name}
+                <span class="t-meta brow__geo">{e.geography}</span>
+              </span>
+              <span class="brow__what">{e.summary}</span>
+              <span class="brow__attr">
+                {e.id === 'impact' ? (
+                  <span class="brow__yes">Everything on this site</span>
+                ) : (
+                  <span class="brow__no">
+                    Access to expertise only. No turnover, headcount, contracts, certifications or
+                    delivery history.
+                  </span>
+                )}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Systems -->
+  <section class="sys surface-light section" aria-labelledby="sys-h">
+    <div class="wrap">
+      <SectionLabel index="04" label="Systems and controls" meta="MMT Impact’s own" />
+      <h2 class="t-h2 sys__heading" id="sys-h" data-reveal>
+        The systems a funder will ask about.
+      </h2>
+      <NumberedGrid items={systems} columns={3} style="rule" />
+    </div>
+  </section>
+
+  <!-- Why the group relationship matters operationally -->
+  <EditorialSplit
+    index="05"
+    label="Why it matters here"
+    heading={'In South Sudan the\nbinding constraint is\nrarely the funding.'}
+    ratio="lead"
+    surface="paper"
+    id="why-here"
+  >
+    <div class="prose-editorial">
+      <p>
+        Programmes in South Sudan fail on logistics far more often than they fail on design. Roads
+        close seasonally. Supply routes are long and contested. Procurement in-country is thin, and
+        importing carries customs, clearance and currency exposure that a programme budget rarely
+        anticipates properly.
+      </p>
+      <p>
+        This is the point at which access to established international procurement and supply chain
+        expertise stops being a line in a capability statement and becomes the difference between a
+        programme delivering in the dry season or not at all.
+      </p>
+      <p>
+        MMT Impact can draw on that expertise through the wider MMT Group. Where a specific
+        engagement relies on it, the arrangement is stated in the proposal: which entity provides
+        what, on what contractual basis, and who carries the risk. It is not implied and it is not
+        assumed.
+      </p>
+    </div>
+  </EditorialSplit>
+
+  <!-- Due diligence pack -->
+  <section class="dd surface-dark section" aria-labelledby="dd-h">
+    <div class="wrap">
+      <SectionLabel index="06" label="Due diligence" />
+      <div class="dd__grid">
+        <div>
+          <h2 class="t-h2 dd__heading" id="dd-h" data-reveal>What we can provide.</h2>
+          <p class="t-lead dd__note" data-reveal>
+            Institutional partners conducting due diligence can request the following. We aim to
+            respond within five working days.
+          </p>
+        </div>
+        <ul class="dd__list" data-reveal>
+          <li>Certificate of registration and constitutional documents</li>
+          <li>Governance and accountability framework</li>
+          <li>Signed policy suite, including safeguarding, PSEA and anti-fraud</li>
+          <li>Organisational structure and named post-holders</li>
+          <li>Financial procedures manual and delegated authority schedule</li>
+          <li>Audited financial statements, as each reporting cycle completes</li>
+          <li>Monitoring, evaluation and learning framework</li>
+          <li>Insurance and duty-of-care arrangements</li>
+          <li>Organisational profile and capability statement</li>
+          <li>Bank details, confirmed through an independently verified channel</li>
+        </ul>
+      </div>
+
+      <div class="dd__actions" data-reveal>
+        <a class="btn btn--accent" href={`mailto:${contact.partnerships}`}>
+          Request the pack
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="link-rule dd__link" href="/resources/organisational-profile">
+          Read the organisational profile
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .pill__heading {
+    color: #fff;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .pill__note {
+    max-width: 64ch;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- boundary ---- */
+  .bound__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .bound__statement {
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border-left: 3px solid var(--accent);
+    background: var(--surface-raised);
+    max-width: 80ch;
+  }
+
+  .bound__table {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .brow {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1.1fr);
+    gap: 0.75rem clamp(1rem, 2.5vw, 2.5rem);
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  @media (max-width: 64rem) {
+    .brow {
+      grid-template-columns: 1fr;
+    }
+    .brow--head {
+      display: none;
+    }
+  }
+
+  .brow--head {
+    padding-block: 0.75rem;
+  }
+
+  .brow--head span {
+    color: var(--ink-faint);
+  }
+
+  .brow__name {
+    display: grid;
+    gap: 0.3rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .brow__geo {
+    color: var(--accent-ink);
+  }
+
+  .brow__what,
+  .brow__attr {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  .brow__yes {
+    color: var(--color-green-700);
+    font-weight: 500;
+  }
+
+  .brow__no {
+    color: var(--ink-muted);
+  }
+
+  /* ---- systems ---- */
+  .sys__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ---- due diligence ---- */
+  .dd__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .dd__grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+  }
+
+  .dd__heading {
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+
+  .dd__note {
+    max-width: 46ch;
+  }
+
+  .dd__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+  }
+
+  .dd__list li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .dd__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.66em;
+    width: 0.75rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .dd__actions {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .dd__link {
+    color: #fff;
+  }
+</style>

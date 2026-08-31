@@ -1,0 +1,123 @@
+---
+/**
+ * The single media component for the whole site.
+ *
+ * Pass `src` and it renders an optimised <img> with reserved dimensions.
+ * Omit `src` and it renders a deterministic brand plate at the same ratio.
+ * Either way the caption, credit and frame are identical, so replacing a
+ * plate with real photography is a one-line frontmatter change and never a
+ * layout change.
+ */
+import { renderPlate, type PlateVariant, type PlateTone } from '@lib/plates';
+
+interface Props {
+  /** Path under /public/images. When absent, a generated plate is drawn. */
+  src?: string;
+  alt?: string;
+  caption?: string;
+  credit?: string;
+  /** Plate appearance. Ignored when `src` is set. */
+  variant?: PlateVariant;
+  tone?: PlateTone;
+  /** Stable identity for the generated plate. Same seed, same artwork. */
+  seed: string;
+  /** Small mono label burned into the plate — typically a coordinate. */
+  marker?: string;
+  ratio?: 'hero' | 'wide' | 'square' | 'portrait' | 'tall' | 'band' | 'fill';
+  /** LCP media: eager-load and fetch with high priority. */
+  priority?: boolean;
+  sizes?: string;
+  class?: string;
+  /** Adds a subtle scroll-linked drift. Value is the travel in percent. */
+  parallax?: number;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  credit,
+  variant,
+  tone = 'navy',
+  seed,
+  marker,
+  ratio = 'wide',
+  priority = false,
+  sizes = '(min-width: 64rem) 50vw, 100vw',
+  class: className = '',
+  parallax,
+} = Astro.props;
+
+const ratioClass = ratio === 'fill' ? '' : `ratio-${ratio}`;
+const plateSvg = src ? '' : renderPlate({ variant, tone, seed, marker });
+
+// A plate is decorative; a photograph is not. Alt text follows that distinction.
+const imgAlt = alt ?? caption ?? '';
+---
+
+<figure class={`plate ${className}`}>
+  <div class={`frame grain ${ratioClass}`}>
+    {
+      src ? (
+        <img
+          src={src}
+          alt={imgAlt}
+          sizes={sizes}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          data-parallax={parallax ?? undefined}
+          class="plate-img"
+        />
+      ) : (
+        <div class="plate-art" data-parallax={parallax ?? undefined} set:html={plateSvg} />
+      )
+    }
+  </div>
+
+  {
+    (caption || credit) && (
+      <figcaption class="frame-caption">
+        <span>
+          {caption}
+          {credit && <span class="plate-credit"> · {credit}</span>}
+        </span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .plate {
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* .plate-img is already position:absolute;inset:0 via the shared
+     .frame > img rule in utilities.css. .plate-art is a plain div (the
+     svg inside it isn't a direct .frame child), so it needs the same
+     out-of-flow treatment here. */
+  .plate-art {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  /* Parallax needs headroom so the drift never exposes an edge. */
+  .plate-img[data-parallax],
+  .plate-art[data-parallax] {
+    top: -12%;
+    bottom: auto;
+    height: 124%;
+  }
+
+  .plate-art :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .plate-credit {
+    opacity: 0.65;
+  }
+</style>

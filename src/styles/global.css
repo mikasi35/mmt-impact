@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@import "./tokens.css";
+@import "./typography.css";
+@import "./utilities.css";
+@import "./print.css";
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* NOT scroll-behavior: smooth — it fights GSAP ScrollTrigger's scrubbed
+       pin on the "How We Work" timeline (competing scroll-position writers
+       make the pin feel locked and stop reversing cleanly). Anchor links get
+       an equivalent smooth scroll from JS instead — see lib/animations/anchors.ts. */
+    scroll-padding-top: 6rem;
+    background-color: var(--color-off-white);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink);
+    background-color: var(--surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis-weight: none;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-ochre-400);
+    color: var(--color-navy-950);
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  /* Sensible default heading resets — semantics carry, classes style. */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  /* Astro view-transition continuity */
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+/* ==========================================================================
+   VIEW TRANSITIONS
+   Subtle institutional cross-fade. Never a page-wide slide.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: mmt-fade-out 220ms var(--ease-institutional) both;
+  }
+  ::view-transition-new(root) {
+    animation: mmt-fade-in 360ms var(--ease-institutional) both;
+  }
+}
+
+@keyframes mmt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes mmt-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   SCROLLBAR (desktop only, restrained)
+   ========================================================================== */
+
+@media (pointer: fine) {
+  .rail::-webkit-scrollbar { height: 3px; }
+  .rail::-webkit-scrollbar-track { background: var(--rule); }
+  .rail::-webkit-scrollbar-thumb { background: var(--accent); }
+}

@@ -1,0 +1,264 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import { groupEntities, groupIntro } from '@data/group';
+
+interface Props {
+  /** `home` shows the compact register; `full` adds capabilities per entity. */
+  detail?: 'home' | 'full';
+  index?: string;
+}
+
+const { detail = 'home', index = '04' } = Astro.props;
+
+/**
+ * The MMT Group relationship.
+ *
+ * Drawn as three parallel columns descending from a single rule — NOT as a
+ * hierarchy with MMT Impact at the top or the bottom. The visual grammar is
+ * doing legal work here: siblings under a shared name, not a parent and its
+ * subsidiaries. The per-entity attribution line ships with every rendering.
+ */
+---
+
+<section class="group surface-sand section" aria-labelledby="group-heading">
+  <div class="wrap">
+    <SectionLabel index={index} label="The MMT Group" meta="Three organisations" />
+
+    <div class="group__head">
+      <h2 class="t-h1 group__heading" id="group-heading" data-reveal>
+        Part of the wider<br />MMT Group.
+      </h2>
+      <p class="t-lead group__intro" data-reveal>{groupIntro}</p>
+    </div>
+
+    <!-- The connector: one name, three separate organisations. -->
+    <div class="group__diagram" aria-hidden="true">
+      <span class="group__diagram-name">MMT Group</span>
+      <span class="group__diagram-stem"></span>
+      <span class="group__diagram-bar"></span>
+      <span class="group__diagram-drops">
+        <span></span><span></span><span></span>
+      </span>
+    </div>
+
+    <ul class="group__list">
+      {
+        groupEntities.map((e) => (
+          <li class={`gcard gcard--${e.accent} ${e.id === 'impact' ? 'is-self' : ''}`} data-reveal data-reveal-group="group">
+            {e.id === 'impact' && <span class="t-meta gcard__self">This organisation</span>}
+
+            <p class="gcard__name">{e.name}</p>
+            <p class="t-meta gcard__geo">{e.geography}</p>
+            <p class="t-small gcard__descriptor">{e.descriptor}</p>
+
+            <p class="t-small gcard__summary">{e.summary}</p>
+
+            {detail === 'full' && (
+              <ul class="gcard__caps">
+                {e.capabilities.map((c) => (
+                  <li>{c}</li>
+                ))}
+              </ul>
+            )}
+
+            <p class="gcard__attribution">{e.attribution}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a class="link-rule group__cta" href="/who-we-are/mmt-group" data-reveal>
+      About the MMT Group
+      <span class="btn-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .group__head {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 64rem) {
+    .group__head {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      align-items: end;
+    }
+  }
+
+  .group__intro {
+    max-width: 54ch;
+  }
+
+  /* ---- connector diagram ---- */
+  .group__diagram {
+    display: none;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    text-align: center;
+  }
+
+  @media (min-width: 48rem) {
+    .group__diagram {
+      display: block;
+    }
+  }
+
+  .group__diagram-name {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-strong);
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--rule-strong);
+  }
+
+  .group__diagram-stem {
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 0 auto;
+    background: var(--rule-strong);
+  }
+
+  .group__diagram-bar {
+    display: block;
+    height: 1px;
+    width: 66.66%;
+    margin: 0 auto;
+    background: var(--rule-strong);
+  }
+
+  .group__diagram-drops {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .group__diagram-drops span {
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 0 auto;
+    background: var(--rule-strong);
+  }
+
+  /* ---- entities ---- */
+  .group__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--rule-strong);
+    border: 1px solid var(--rule-strong);
+  }
+
+  @media (max-width: 47.999rem) {
+    .group__list {
+      margin-top: clamp(2.5rem, 5vw, 4rem);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .group__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gcard {
+    background: var(--surface-raised);
+    padding: clamp(1.5rem, 2.5vw, 2.25rem);
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .gcard::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--color-navy-800);
+  }
+
+  .gcard--ochre::before {
+    background: var(--color-ochre-600);
+  }
+  .gcard--green::before {
+    background: var(--color-green-700);
+  }
+
+  .gcard.is-self {
+    background: var(--color-white);
+  }
+
+  .gcard__self {
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+
+  .gcard__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .gcard__geo {
+    color: var(--accent-ink);
+  }
+
+  .gcard__descriptor {
+    color: var(--ink-strong);
+    font-weight: 500;
+  }
+
+  .gcard__summary {
+    color: var(--ink-muted);
+    margin-top: 0.5rem;
+  }
+
+  .gcard__caps {
+    list-style: none;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .gcard__caps li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+
+  .gcard__caps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.55rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* The legal distinction travels with the card, always. */
+  .gcard__attribution {
+    margin-top: 1.15rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--ink-faint);
+  }
+
+  .group__cta {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+</style>

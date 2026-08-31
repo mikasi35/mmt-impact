@@ -1,0 +1,345 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { headquarters, contact, contactDirectory, activeSocials } from '@data/site';
+
+const crumbs = [{ label: 'Contact', href: '/contact' }];
+---
+
+<PageLayout
+  title="Contact"
+  description="Contact MMT Impact — South Sudan country office in Juba. Direct contact points for partnerships, programmes, procurement, careers, finance and media."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Contact',
+    lines: ['Talk to the right', 'person first time.'],
+    lede: 'Eight direct contact points rather than one general inbox, so an enquiry reaches the team that can actually answer it.',
+    seed: 'contact-hero',
+    variant: 'graticule',
+    size: 'compact',
+    facts: [
+      { label: 'Country office', value: `${headquarters.city}, ${headquarters.country}` },
+      { label: 'Position', value: headquarters.coordinateLabel },
+      { label: 'General enquiries', value: contact.general },
+      { label: 'Response time', value: 'Five working days' },
+    ],
+  }}
+  cta={false}
+>
+  <!-- Office -->
+  <section class="office surface-dark section" aria-labelledby="office-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Country office" meta={headquarters.coordinateLabel} />
+      <div class="office__grid">
+        <div class="office__marker" data-reveal>
+          <p class="office__city">{headquarters.city}</p>
+          <p class="t-meta office__coord">{headquarters.coordinateLabel}</p>
+        </div>
+
+        <div class="office__body" data-reveal>
+          <h2 class="t-h2 office__heading" id="office-h">{headquarters.label}</h2>
+          <address class="office__address">
+            {headquarters.street && <>{headquarters.street}<br /></>}
+            {headquarters.city}<br />
+            {headquarters.country}
+          </address>
+          {
+            !headquarters.street && (
+              <p class="t-small office__note">
+                Our street address is confirmed directly with partners and visitors ahead of a
+                meeting. Please arrange visits in advance through{' '}
+                <a href={`mailto:${contact.southSudan}`}>{contact.southSudan}</a>.
+              </p>
+            )
+          }
+          {
+            contact.phone && (
+              <p class="office__phone">
+                <span class="t-meta">Telephone</span>
+                <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Directory -->
+  <section class="dir surface-paper section" aria-labelledby="dir-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="Contact directory" meta={`${contactDirectory.length} contact points`} />
+      <h2 class="t-h2 dir__heading" id="dir-h" data-reveal>Who to write to.</h2>
+
+      <ul class="dir__list">
+        {
+          contactDirectory.map((c, i) => (
+            <li class="drow" data-reveal data-reveal-group="dir">
+              <span class="t-meta drow__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="drow__label">{c.label}</span>
+              <a class="drow__email" href={`mailto:${c.email}`}>
+                {c.email}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        activeSocials.length > 0 && (
+          <div class="dir__social" data-reveal>
+            <p class="t-meta dir__social-label">Follow</p>
+            <ul>
+              {activeSocials.map((s) => (
+                <li>
+                  <a class="link-rule" href={s.url} target="_blank" rel="noopener noreferrer">
+                    {s.label}
+                    <span class="btn-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Form -->
+  <section class="cform surface-light section" id="enquiry" aria-labelledby="cf-h">
+    <div class="wrap cform__wrap">
+      <div class="cform__lead">
+        <SectionLabel index="03" label="Send a message" />
+        <h2 class="t-h2 cform__heading" id="cf-h" data-reveal>General enquiries.</h2>
+        <p class="t-lead cform__body" data-reveal>
+          If you are not sure who to write to, use this form and select a topic. It will be routed
+          to the right team.
+        </p>
+
+        <div class="cform__urgent" data-reveal id="media">
+          <p class="t-meta cform__urgent-label">Safeguarding or fraud concerns</p>
+          <p class="t-small">
+            Do not use this form. Concerns about conduct, safeguarding, exploitation, fraud or
+            corruption should go through our
+            <a href="/transparency#whistleblowing">confidential reporting channel</a>, which accepts
+            anonymous reports and does not route through line management.
+          </p>
+        </div>
+      </div>
+
+      <div class="cform__form" data-reveal>
+        <EnquiryForm variant="contact" />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  /* ---- office ---- */
+  .office__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .office__grid {
+      grid-template-columns: minmax(0, 0.5fr) minmax(0, 1.5fr);
+    }
+  }
+
+  .office__marker {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .office__marker::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .office__city {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    color: #fff;
+  }
+
+  .office__coord {
+    margin-top: 0.9rem;
+    color: var(--ink-faint);
+  }
+
+  .office__heading {
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+
+  .office__address {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+    font-style: normal;
+    line-height: 1.25;
+    color: #dde5ea;
+  }
+
+  .office__note {
+    margin-top: 1.25rem;
+    max-width: 56ch;
+    color: var(--ink-muted);
+  }
+
+  .office__note a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--accent);
+  }
+
+  .office__phone {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .office__phone .t-meta {
+    color: var(--ink-faint);
+  }
+
+  .office__phone a {
+    font-size: 1.125rem;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+    justify-self: start;
+  }
+
+  /* ---- directory ---- */
+  .dir__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .dir__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .drow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  @media (max-width: 40rem) {
+    .drow {
+      grid-template-columns: auto 1fr;
+    }
+    .drow__email {
+      grid-column: 2;
+    }
+  }
+
+  .drow__num {
+    color: var(--accent);
+  }
+
+  .drow__label {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+
+  .drow__email {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 200ms, border-color 200ms;
+  }
+
+  .drow__email:hover {
+    color: var(--accent-ink);
+    border-bottom-color: var(--accent);
+  }
+
+  .dir__social {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .dir__social-label {
+    color: var(--ink-faint);
+    margin-bottom: 1rem;
+  }
+
+  .dir__social ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+  }
+
+  /* ---- form ---- */
+  .cform__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .cform__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .cform__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .cform__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .cform__body {
+    max-width: 44ch;
+  }
+
+  .cform__urgent {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+  }
+
+  .cform__urgent-label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .cform__urgent a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

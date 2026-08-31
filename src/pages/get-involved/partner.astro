@@ -1,0 +1,153 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import { partnerCategories } from '@data/partnerships';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Get Involved', href: '/get-involved' },
+  { label: 'Partner With Us', href: '/get-involved/partner' },
+];
+
+const categories = partnerCategories.map((c) => ({
+  number: c.number,
+  title: c.title,
+  body: c.body,
+}));
+---
+
+<PageLayout
+  title="Partner With Us"
+  description="Start a partnership conversation with MMT Impact — implementation partnerships, funding, consortia and service contracts in South Sudan."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Get Involved / Partner',
+    lines: ['Tell us what', 'you are trying', 'to achieve.'],
+    lede: 'We will tell you honestly whether we are the right partner for it — including when the answer is no, and who might be better placed.',
+    seed: 'partner-hero',
+    variant: 'network',
+    actions: [{ label: 'Go to the form', href: '#enquiry', style: 'accent' }],
+    facts: [
+      { label: 'Response time', value: 'Five working days' },
+      { label: 'Routed to', value: contact.partnerships },
+      { label: 'Registration fee', value: 'None, ever' },
+      { label: 'Partner types', value: 'Six categories' },
+    ],
+  }}
+  cta={false}
+>
+  <section class="who surface-paper section" aria-labelledby="who-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="Who we partner with" />
+      <h2 class="t-h2 who__heading" id="who-h" data-reveal>Six kinds of partner.</h2>
+      <NumberedGrid items={categories} columns={3} style="rule" />
+    </div>
+  </section>
+
+  <section class="expect surface-dark section" aria-labelledby="expect-h">
+    <div class="wrap">
+      <SectionLabel index="02" label="What happens next" />
+      <h2 class="t-h2 expect__heading" id="expect-h" data-reveal>After you send the form.</h2>
+      <NumberedGrid
+        columns={2}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Acknowledgement',
+            body: 'We confirm receipt and tell you who is handling it. Enquiries are logged organisationally, not held in an individual inbox.',
+          },
+          {
+            number: '02',
+            title: 'An honest first response',
+            body: 'Within five working days you will hear whether this is something we can genuinely deliver, what we would need, and where the gaps are.',
+          },
+          {
+            number: '03',
+            title: 'Due diligence, both ways',
+            body: 'We provide registration documents, governance framework, policies and financial information. We ask the equivalent of you.',
+          },
+          {
+            number: '04',
+            title: 'Design before commitment',
+            body: 'If it proceeds, we scope it properly — objectives, indicators, budget, risks and exit plan — before either side signs anything.',
+          },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="enq surface-light section" id="enquiry" aria-labelledby="enq-h">
+    <div class="wrap enq__wrap">
+      <div class="enq__lead">
+        <SectionLabel index="03" label="Partnership enquiry" />
+        <h2 class="t-h2 enq__heading" id="enq-h" data-reveal>Start the conversation.</h2>
+        <p class="t-lead enq__body" data-reveal>
+          The more specific you can be about the objective, the geography and the timeframe, the
+          more useful our first reply will be.
+        </p>
+        <div class="enq__alt" data-reveal>
+          <p class="t-meta enq__alt-label">Prefer email?</p>
+          <a class="link-rule" href={`mailto:${contact.partnerships}`}>
+            {contact.partnerships}
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="enq__form" data-reveal>
+        <EnquiryForm variant="partnership" />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .who__heading,
+  .expect__heading {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .expect__heading {
+    color: #fff;
+  }
+
+  .enq__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .enq__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .enq__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .enq__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .enq__body {
+    max-width: 44ch;
+  }
+
+  .enq__alt {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .enq__alt-label {
+    color: var(--ink-faint);
+    margin-bottom: 0.85rem;
+  }
+</style>

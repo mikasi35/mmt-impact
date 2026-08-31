@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#0e2b3f"/>
+      <stop offset="100%" stop-color="#071827"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.2" cy="0.15" r="0.9">
+      <stop offset="0%" stop-color="#c99a45" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#c99a45" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.55"><line x1="75" y1="0" x2="75" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="150" y1="0" x2="150" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="225" y1="0" x2="225" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="300" y1="0" x2="300" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="375" y1="0" x2="375" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="450" y1="0" x2="450" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="525" y1="0" x2="525" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="600" y1="0" x2="600" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="675" y1="0" x2="675" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="750" y1="0" x2="750" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="825" y1="0" x2="825" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="900" y1="0" x2="900" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="975" y1="0" x2="975" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="1050" y1="0" x2="1050" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="1125" y1="0" x2="1125" y2="630" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="75" x2="1200" y2="75" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="150" x2="1200" y2="150" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="225" x2="1200" y2="225" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="300" x2="1200" y2="300" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="375" x2="1200" y2="375" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="450" x2="1200" y2="450" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="525" x2="1200" y2="525" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/><line x1="0" y1="600" x2="1200" y2="600" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/></g>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- contour band -->
+  <g opacity="0.5" fill="none" stroke="#c99a45" stroke-width="1.2">
+    <path d="M-20 470 Q 200 420 420 462 T 860 448 T 1220 480"/>
+    <path d="M-20 512 Q 220 458 440 505 T 880 490 T 1220 522" stroke-opacity="0.6"/>
+    <path d="M-20 556 Q 240 498 460 549 T 900 534 T 1220 566" stroke-opacity="0.35"/>
+  </g>
+
+  <!-- mark composited in after render, see below — this leaves the space for it -->
+
+  <text x="176" y="112" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="2.4" fill="#f5f4f0">MMT</text>
+  <text x="278" y="112" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="34" font-weight="300" letter-spacing="7.5" fill="#f5f4f0">IMPACT</text>
+
+  <line x1="84" y1="190" x2="150" y2="190" stroke="#c99a45" stroke-width="3"/>
+  <text x="84" y="168" font-family="IBM Plex Mono, monospace" font-size="17" letter-spacing="4.2" fill="#c99a45">SOUTH SUDAN / DEVELOPMENT / HUMANITARIAN ACTION</text>
+
+  <text x="84" y="300" font-family="Georgia, Times New Roman, serif" font-size="88" fill="#f5f4f0">Building</text>
+  <text x="84" y="382" font-family="Georgia, Times New Roman, serif" font-size="88" fill="#f5f4f0">Stronger</text>
+  <text x="84" y="464" font-family="Georgia, Times New Roman, serif" font-size="88" fill="#c99a45">Communities.</text>
+
+  <text x="84" y="562" font-family="IBM Plex Mono, monospace" font-size="16" letter-spacing="3.4" fill="#f5f4f0" fill-opacity="0.55">JUBA  04°51′N 31°36′E</text>
+  <text x="1116" y="562" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="16" letter-spacing="3.4" fill="#f5f4f0" fill-opacity="0.55">MMTIMPACT.ORG</text>
+</svg>

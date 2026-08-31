@@ -1,0 +1,156 @@
+---
+import Plate from '@components/media/Plate.astro';
+import { formatDateShort } from '@lib/utils';
+
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  date: Date;
+  category: string;
+  location?: string;
+  seed: string;
+  variant?: 'terrain' | 'graticule' | 'cohort' | 'horizon' | 'network' | 'strata';
+  tone?: 'navy' | 'ochre' | 'green' | 'sand';
+  /** The lead item in an editorial row gets a wider media crop. */
+  feature?: boolean;
+  /** Real photograph, when one exists for this article. */
+  src?: string;
+}
+
+const {
+  href,
+  title,
+  summary,
+  date,
+  category,
+  location,
+  seed,
+  variant,
+  tone = 'navy',
+  feature = false,
+  src,
+} = Astro.props;
+---
+
+<article class={`scard ${feature ? 'scard--feature' : ''}`} data-reveal data-reveal-group="stories">
+  <a class="scard__link" href={href}>
+    <div class="scard__media">
+      <Plate
+        seed={seed}
+        src={src}
+        variant={variant}
+        tone={tone}
+        ratio={feature ? 'wide' : 'square'}
+        alt={src ? title : ''}
+      />
+    </div>
+
+    <div class="scard__body">
+      <p class="scard__meta">
+        <span class="t-meta scard__category">{category}</span>
+        <span class="t-meta scard__date">
+          <time datetime={date.toISOString().slice(0, 10)}>{formatDateShort(date)}</time>
+        </span>
+        {location && <span class="t-meta scard__location">{location}</span>}
+      </p>
+
+      <h3 class="scard__title">{title}</h3>
+      <p class="t-small scard__summary">{summary}</p>
+
+      <span class="scard__more">
+        Read
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .scard {
+    min-width: 0;
+  }
+
+  .scard__link {
+    display: grid;
+    gap: 1.15rem;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    align-content: start;
+  }
+
+  .scard__media {
+    overflow: hidden;
+  }
+
+  .scard__media :global(.frame) {
+    transition: transform 900ms var(--ease-out-expo);
+  }
+
+  .scard__link:hover .scard__media :global(.frame) {
+    transform: scale(1.03);
+  }
+
+  .scard__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .scard__category {
+    color: var(--accent);
+  }
+
+  .scard__date,
+  .scard__location {
+    color: var(--ink-faint);
+  }
+
+  .scard__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    margin-bottom: 0.6rem;
+    transition: color 220ms var(--ease-institutional);
+  }
+
+  .scard--feature .scard__title {
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+  }
+
+  .scard__link:hover .scard__title {
+    color: var(--accent-ink);
+  }
+
+  .scard__summary {
+    color: var(--ink-muted);
+    max-width: 48ch;
+  }
+
+  .scard__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+
+  .scard__more .btn-arrow {
+    transition: transform 380ms var(--ease-out-expo);
+  }
+
+  .scard__link:hover .scard__more .btn-arrow {
+    transform: translateX(5px);
+  }
+</style>

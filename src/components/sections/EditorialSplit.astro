@@ -1,0 +1,119 @@
+---
+import SectionLabel from '@components/typography/SectionLabel.astro';
+
+interface Props {
+  index?: string;
+  label?: string;
+  meta?: string;
+  heading?: string;
+  /** Ratio of the heading column to the body column. */
+  ratio?: 'even' | 'lead' | 'body';
+  surface?: 'light' | 'paper' | 'sand' | 'dark' | 'forest';
+  size?: 'default' | 'sm';
+  id?: string;
+  class?: string;
+  /** Column gap. `tight` brings the two sides noticeably closer together. */
+  gap?: 'default' | 'tight';
+  /**
+   * Pins the lead column (heading + anything in the `lead` slot, e.g. an
+   * image) in place on desktop while the body column scrolls past it — for
+   * a long-form answer under a short question. Falls back to normal stacked
+   * flow below the 64rem breakpoint; nothing pins on a phone or tablet.
+   */
+  sticky?: boolean;
+}
+
+const {
+  index,
+  label,
+  meta,
+  heading,
+  ratio = 'even',
+  surface = 'light',
+  size = 'default',
+  id,
+  class: className = '',
+  gap = 'default',
+  sticky = false,
+} = Astro.props;
+---
+
+<section
+  class={`esplit surface-${surface} ${size === 'sm' ? 'section-sm' : 'section'} ${className}`}
+  id={id}
+  aria-labelledby={heading && id ? `${id}-h` : undefined}
+>
+  <div class="wrap">
+    {label && <SectionLabel index={index} label={label} meta={meta} />}
+
+    <div class={`esplit__grid esplit__grid--${ratio} esplit__grid--gap-${gap}`}>
+      <div class={`esplit__lead ${sticky ? 'esplit__lead--sticky' : ''}`}>
+        {
+          heading && (
+            <h2 class="t-h2 esplit__heading" id={id ? `${id}-h` : undefined} data-reveal>
+              <Fragment set:html={heading.replace(/\n/g, '<br />')} />
+            </h2>
+          )
+        }
+        <slot name="lead" />
+      </div>
+
+      <div class="esplit__body">
+        <slot />
+      </div>
+    </div>
+
+    <slot name="after" />
+  </div>
+</section>
+
+<style>
+  .esplit__grid {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 4rem);
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  .esplit__grid--gap-tight {
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+  }
+
+  @media (min-width: 64rem) {
+    .esplit__grid--even {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .esplit__grid--lead {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    }
+    .esplit__grid--body {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+  }
+
+  .esplit__heading {
+    max-width: 20ch;
+  }
+
+  .esplit__lead {
+    display: grid;
+    gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  /* Media dropped into the `lead` slot (an image under the heading) —
+     scoped here once rather than re-declared on every page that uses it. */
+  .esplit__lead > :global(.plate) {
+    margin-top: 0.25rem;
+  }
+
+  /* Pinned only on desktop, and only while the body column beside it is
+     actually taller than the viewport allows it to scroll past — a short
+     answer never gets stuck pinned above empty space. */
+  @media (min-width: 64rem) {
+    .esplit__lead--sticky {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2.5rem);
+      align-self: start;
+    }
+  }
+</style>

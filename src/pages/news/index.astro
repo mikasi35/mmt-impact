@@ -1,0 +1,289 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import StoryCard from '@components/sections/StoryCard.astro';
+import EmptyState from '@components/ui/EmptyState.astro';
+import { byDateDesc } from '@lib/utils';
+import { NEWS_IMAGE } from '@lib/media-overrides';
+
+const news = (await getCollection('news', ({ data }) => !data.draft)).sort(byDateDesc);
+const stories = await getCollection('stories', ({ data }) => !data.draft);
+
+const CATEGORY_LABEL: Record<string, string> = {
+  news: 'News',
+  'field-story': 'Field Story',
+  event: 'Event',
+};
+
+const categories = [
+  { id: 'all', label: 'All' },
+  ...Object.entries(CATEGORY_LABEL)
+    .map(([id, label]) => ({ id, label, count: news.filter((n) => n.data.category === id).length }))
+    .filter((c) => c.count > 0),
+];
+
+const crumbs = [{ label: 'News & Stories', href: '/news' }];
+---
+
+<PageLayout
+  title="News & Stories"
+  description="Announcements, field reporting and documented outcomes from MMT Impact in South Sudan."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'News & Stories',
+    lines: ['From the organisation', 'and from the field.'],
+    lede: 'Announcements about how MMT Impact is set up and governed, reporting from the communities we work in, and outcomes we can evidence.',
+    seed: 'news-hero',
+    variant: 'strata',
+    size: 'compact',
+    facts: [
+      { label: 'Articles', value: String(news.length) },
+      { label: 'Impact stories', value: String(stories.length) },
+      { label: 'Feed', value: 'RSS available' },
+      { label: 'Categories', value: 'News · Field · Events' },
+    ],
+  }}
+>
+  <section class="nlist surface-paper section" aria-labelledby="nl-h" data-news-index>
+    <div class="wrap">
+      <SectionLabel index="01" label="Newsroom" meta={`${news.length} published`} />
+
+      <div class="nlist__head">
+        <h2 class="t-h2" id="nl-h" data-reveal>Latest.</h2>
+        <a class="link-rule" href="/rss.xml" data-reveal>
+          RSS feed
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      {
+        news.length > 0 && categories.length > 2 && (
+          <div class="nfilters" data-reveal>
+            <fieldset class="nfilters__set">
+              <legend class="t-meta nfilters__legend">Category</legend>
+              <div class="nfilters__row">
+                {categories.map((c, i) => (
+                  <button
+                    type="button"
+                    class={`fchip ${i === 0 ? 'is-on' : ''}`}
+                    data-news-filter={c.id}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+        )
+      }
+
+      {
+        news.length > 0 ? (
+          <div class="nlist__grid" data-news-grid>
+            {news.map((n, i) => (
+              <div data-news-item data-category={n.data.category}>
+                <StoryCard
+                  href={`/news/${n.id}`}
+                  title={n.data.title}
+                  summary={n.data.summary}
+                  date={n.data.date}
+                  category={CATEGORY_LABEL[n.data.category] ?? n.data.category}
+                  location={n.data.location}
+                  seed={`news-${n.id}`}
+                  src={NEWS_IMAGE[n.id]}
+                  variant={n.data.media?.variant}
+                  tone={n.data.media?.tone ?? 'navy'}
+                  feature={i === 0}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="nlist__empty">
+            <EmptyState
+              eyebrow="Newsroom"
+              title="Our first stories are being written."
+              body="MMT Impact publishes news, field reporting and documented outcomes as programmes move into delivery. Nothing is published here before it has happened."
+              action={{ label: 'Our programmes', href: '/what-we-do' }}
+            />
+          </div>
+        )
+      }
+
+      <div class="nlist__none" data-news-empty hidden>
+        <EmptyState
+          eyebrow="No match"
+          title="Nothing in this category yet."
+          body="Try another category, or view all news and stories."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="nstories surface-sand section-sm">
+    <div class="wrap nstories__inner">
+      <div>
+        <p class="t-meta nstories__label">Impact stories</p>
+        <p class="t-h3 nstories__text">
+          Outcomes we can evidence are published separately, with a recorded consent status.
+        </p>
+      </div>
+      <a class="btn btn--ghost" href="/impact/stories">
+        Impact stories
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .nlist__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .nfilters {
+    padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-block: 1px solid var(--rule);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .nfilters__set {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .nfilters__legend {
+    color: var(--ink-faint);
+    padding: 0;
+  }
+
+  .nfilters__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fchip {
+    padding: 0.55rem 0.95rem;
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: border-color 200ms, color 200ms, background 200ms;
+  }
+
+  .fchip:hover {
+    border-color: var(--accent);
+    color: var(--ink-strong);
+  }
+
+  .fchip.is-on {
+    background: var(--ink-strong);
+    border-color: var(--ink-strong);
+    color: var(--surface);
+  }
+
+  .nlist__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .nlist__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .nlist__grid > :global(div:first-child) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .nlist__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .nlist__grid > :global(div:first-child) {
+      grid-column: span 2;
+    }
+  }
+
+  [data-news-item][hidden] {
+    display: none;
+  }
+
+  .nlist__none[hidden] {
+    display: none;
+  }
+
+  .nlist__none {
+    margin-top: 1rem;
+  }
+
+  .nstories__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+  }
+
+  .nstories__label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .nstories__text {
+    max-width: 44ch;
+  }
+</style>
+
+<script>
+  function initNewsFilters() {
+    const root = document.querySelector<HTMLElement>('[data-news-index]');
+    if (!root) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — this guard stops a second invocation from attaching a
+    // second click listener to every filter chip.
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-news-filter]'));
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[data-news-item]'));
+    const empty = root.querySelector<HTMLElement>('[data-news-empty]');
+    if (!chips.length) return;
+
+    // Deep links from the mega navigation: /news?category=field-story
+    const initial = new URLSearchParams(window.location.search).get('category') ?? 'all';
+
+    const apply = (value: string) => {
+      let visible = 0;
+      items.forEach((item) => {
+        const show = value === 'all' || item.dataset.category === value;
+        item.hidden = !show;
+        if (show) visible++;
+      });
+      chips.forEach((c) => c.classList.toggle('is-on', c.dataset.newsFilter === value));
+      if (empty) empty.hidden = visible > 0;
+    };
+
+    chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.newsFilter!)));
+
+    if (chips.some((c) => c.dataset.newsFilter === initial)) apply(initial);
+  }
+
+  initNewsFilters();
+  document.addEventListener('astro:page-load', initNewsFilters);
+</script>

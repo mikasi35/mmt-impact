@@ -1,0 +1,177 @@
+---
+import PageLayout from '@layouts/PageLayout.astro';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import EnquiryForm from '@components/forms/EnquiryForm.astro';
+import NumberedGrid from '@components/sections/NumberedGrid.astro';
+import { contact } from '@data/site';
+
+const crumbs = [
+  { label: 'Partners & Opportunities', href: '/partnerships' },
+  { label: 'Supplier Registration', href: '/partnerships/supplier-registration' },
+];
+---
+
+<PageLayout
+  title="Supplier Registration"
+  description="Register as a supplier to MMT Impact in South Sudan. Registration is free, places your organisation on our roster, and notifies you when a relevant opportunity opens."
+  crumbs={crumbs}
+  hero={{
+    eyebrow: 'Partners & Opportunities / Suppliers',
+    lines: ['Supplier', 'registration.'],
+    lede: 'Registration places your organisation on the MMT Impact supplier roster and ensures you are notified when an opportunity matching your category opens. There is no fee, and registration is not a commitment to award.',
+    seed: 'supplier-hero',
+    variant: 'strata',
+    size: 'compact',
+  }}
+  cta={false}
+>
+  <section class="how surface-paper section-sm" aria-labelledby="how-h">
+    <div class="wrap">
+      <SectionLabel index="01" label="How procurement works here" />
+      <h2 class="t-h2 how__heading" id="how-h" data-reveal>What registration does.</h2>
+      <NumberedGrid
+        columns={3}
+        style="rule"
+        items={[
+          {
+            number: '01',
+            title: 'Register',
+            body: 'You provide your organisation details, supply category and, if you have one, a capability statement. There is no cost, at any stage.',
+          },
+          {
+            number: '02',
+            title: 'We notify',
+            body: 'When an opportunity opens in your category we notify registered suppliers directly. Opportunities are also published openly on this site.',
+          },
+          {
+            number: '03',
+            title: 'You compete',
+            body: 'Award follows the competitive process in our procurement policy: documented evaluation, segregation of duties, and due diligence on the successful supplier.',
+          },
+        ]}
+      />
+
+      <div class="how__warn" data-reveal>
+        <p class="t-meta how__warn-label">Important</p>
+        <p class="t-small">
+          MMT Impact never charges a fee to register as a supplier, to be included on a roster, or
+          to receive an invitation to bid. If anyone requests payment in connection with an MMT
+          Impact procurement, do not pay it — report it to
+          <a href={`mailto:${contact.procurement}`}>{contact.procurement}</a> or through our
+          <a href="/transparency#whistleblowing">confidential reporting channel</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sform surface-light section" aria-labelledby="sf-h">
+    <div class="wrap sform__wrap">
+      <div class="sform__lead">
+        <SectionLabel index="02" label="Register" />
+        <h2 class="t-h2 sform__heading" id="sf-h" data-reveal>Supplier details.</h2>
+        <p class="t-lead sform__body" data-reveal>
+          Complete the form and attach a capability statement if you have one. We will confirm
+          receipt and add your organisation to the roster.
+        </p>
+        <dl class="sform__facts" data-reveal>
+          <div>
+            <dt class="t-meta">Routed to</dt>
+            <dd>{contact.procurement}</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Fee</dt>
+            <dd>None</dd>
+          </div>
+          <div>
+            <dt class="t-meta">Data handling</dt>
+            <dd>Under our <a href="/legal/privacy">privacy notice</a>. Never published.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="sform__form" data-reveal>
+        <EnquiryForm variant="supplier" />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .how__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .how__warn {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-sunken);
+    max-width: 76ch;
+  }
+
+  .how__warn-label {
+    color: var(--accent-ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .how__warn a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .sform__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 72rem) {
+    .sform__wrap {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    }
+    .sform__lead {
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .sform__heading {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .sform__body {
+    max-width: 44ch;
+  }
+
+  .sform__facts {
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .sform__facts > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .sform__facts dt {
+    color: var(--ink-faint);
+  }
+
+  .sform__facts dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-strong);
+  }
+
+  .sform__facts a {
+    color: var(--ink-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

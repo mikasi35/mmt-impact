@@ -1,0 +1,276 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import SectionLabel from '@components/typography/SectionLabel.astro';
+import Plate from '@components/media/Plate.astro';
+import { PROGRAMME_IMAGE } from '@lib/media-overrides';
+
+interface Props {
+  programmes: CollectionEntry<'programmes'>[];
+}
+
+const { programmes } = Astro.props;
+
+/**
+ * Homepage 04 — Focus areas.
+ *
+ * A numbered index rather than six identical cards. On a pointer device,
+ * hovering or focusing an entry changes the plate alongside it and reveals the
+ * statement. Without JavaScript every entry is still a working link and the
+ * first plate is shown — the interaction is enhancement, never the only route
+ * to the content.
+ */
+---
+
+<section class="pindex surface-light section" aria-labelledby="pindex-heading" data-programme-index>
+  <div class="wrap">
+    <SectionLabel index="03" label="What We Do" meta="Six programme areas" />
+
+    <div class="pindex__head">
+      <h2 class="t-h1 pindex__heading" id="pindex-heading" data-reveal>
+        Six programmes.<br />One method.
+      </h2>
+      <p class="t-lead pindex__intro" data-reveal>
+        Each programme answers a specific constraint on how a community can educate, earn, recover
+        and decide. They are designed to run together, and they are reported on separately.
+      </p>
+    </div>
+
+    <div class="pindex__grid">
+      <ol class="pindex__list">
+        {
+          programmes.map((p, i) => (
+            <li class="pentry" data-entry={i}>
+              <a class="pentry__link" href={`/what-we-do/${p.id}`} data-entry-trigger={i}>
+                <span class="t-meta pentry__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="pentry__main">
+                  <span class="pentry__title">{p.data.shortTitle}</span>
+                  <span class="t-small pentry__statement">{p.data.statement}</span>
+                </span>
+                <span class="pentry__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="pindex__media" aria-hidden="true">
+        {
+          programmes.map((p, i) => (
+            <div class={`pindex__panel ${i === 0 ? 'is-active' : ''}`} data-entry-panel={i}>
+              <Plate
+                seed={`programme-${p.id}`}
+                src={PROGRAMME_IMAGE[p.data.sector]}
+                variant={p.data.media?.variant}
+                tone={p.data.media?.tone ?? 'navy'}
+                ratio="tall"
+                alt={p.data.title}
+              />
+              <p class="t-meta pindex__panel-label">{p.data.title}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <a class="link-rule pindex__all" href="/what-we-do" data-reveal>
+      All programmes
+      <span class="btn-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .pindex__head {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .pindex__head {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: end;
+    }
+  }
+
+  .pindex__intro {
+    max-width: 46ch;
+  }
+
+  .pindex__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+
+  @media (min-width: 64rem) {
+    .pindex__grid {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr);
+      align-items: start;
+    }
+  }
+
+  /* ---- list ---- */
+  .pindex__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .pentry {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pentry__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2rem);
+    padding: clamp(1.1rem, 2.2vw, 1.85rem) 0;
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 420ms var(--ease-out-expo);
+  }
+
+  .pentry__num {
+    color: var(--ink-faint);
+    transition: color 260ms var(--ease-institutional);
+  }
+
+  .pentry__main {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .pentry__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.4vw, 2.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--ink-strong);
+  }
+
+  .pentry__statement {
+    color: var(--ink-muted);
+    max-width: 46ch;
+  }
+
+  .pentry__arrow {
+    color: var(--ink-faint);
+    font-size: 1.1rem;
+    transform: translateX(-6px);
+    opacity: 0;
+    transition: transform 380ms var(--ease-out-expo), opacity 260ms;
+  }
+
+  .pentry.is-active .pentry__link,
+  .pentry__link:hover,
+  .pentry__link:focus-visible {
+    padding-left: clamp(0.5rem, 1.5vw, 1.25rem);
+  }
+
+  .pentry.is-active .pentry__num,
+  .pentry__link:hover .pentry__num {
+    color: var(--accent);
+  }
+
+  .pentry.is-active .pentry__arrow,
+  .pentry__link:hover .pentry__arrow,
+  .pentry__link:focus-visible .pentry__arrow {
+    transform: translateX(0);
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  /* ---- media stack ---- */
+  .pindex__media {
+    display: none;
+    position: relative;
+  }
+
+  @media (min-width: 64rem) {
+    .pindex__media {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-height, 104px) + 2rem);
+    }
+  }
+
+  .pindex__panel {
+    position: absolute;
+    inset: 0 0 auto;
+    opacity: 0;
+    transform: scale(1.02);
+    transition: opacity 620ms var(--ease-institutional), transform 900ms var(--ease-out-expo);
+    pointer-events: none;
+  }
+
+  .pindex__panel:first-child {
+    position: relative;
+  }
+
+  .pindex__panel.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .pindex__panel-label {
+    margin-top: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .pindex__all {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pindex__panel {
+      transition: opacity 1ms;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  function initProgrammeIndex() {
+    const root = document.querySelector<HTMLElement>('[data-programme-index]');
+    if (!root) return;
+    // `astro:page-load` fires once on initial load AND again from the direct
+    // call below — this guard makes a second invocation a no-op instead of
+    // attaching duplicate hover/focus listeners to every trigger.
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const entries = Array.from(root.querySelectorAll<HTMLElement>('[data-entry]'));
+    const triggers = Array.from(root.querySelectorAll<HTMLElement>('[data-entry-trigger]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-entry-panel]'));
+    if (!triggers.length || !panels.length) return;
+
+    // The interaction only makes sense where a pointer can hover a tall
+    // sticky panel. On touch and narrow viewports the list stands alone.
+    const supported = window.matchMedia('(min-width: 64rem) and (pointer: fine)');
+
+    let active = 0;
+    const setActive = (index: number) => {
+      if (index === active) return;
+      active = index;
+      entries.forEach((e, i) => e.classList.toggle('is-active', i === index));
+      panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
+    };
+
+    const attach = () => {
+      triggers.forEach((t, i) => {
+        t.addEventListener('mouseenter', () => supported.matches && setActive(i));
+        t.addEventListener('focus', () => supported.matches && setActive(i));
+      });
+    };
+
+    attach();
+    entries[0]?.classList.add('is-active');
+  }
+
+  initProgrammeIndex();
+  document.addEventListener('astro:page-load', initProgrammeIndex);
+</script>
