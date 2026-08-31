@@ -22,7 +22,15 @@ const imagesDir = join(root, 'public/images');
 // else is a portrait, square or band crop shown smaller — give it a lower
 // ceiling since it never needs to fill a viewport width.
 const HERO_MAX = 2400;
-const STANDARD_MAX = 1800;
+// Lowered from 1800: at the widest a non-hero crop is ever shown (a grid
+// column inside the 1440px .wrap ceiling), 1200 already covers 2x retina —
+// Lighthouse flagged the who-are-we.jpg crop as 3.2x its displayed size.
+const STANDARD_MAX = 1200;
+// A second, small tier for mobile — the largest either a hero or a standard
+// crop is ever shown on a phone viewport (~430px) at 2x retina. Written as
+// `name-sm.jpg` alongside the existing `name.jpg`; Plate.astro references
+// both via srcset so mobile never downloads the desktop-sized original.
+const SMALL_MAX = 800;
 const QUALITY = 80;
 
 async function* walk(dir) {
@@ -34,12 +42,18 @@ async function* walk(dir) {
 }
 
 // Only the page/section subfolders — NOT loose files sitting directly in
-// public/images (mmt-impact-logo.png, favicon.jpg, symbol.jpg). Those are
-// brand assets of undetermined purpose, at least one with alpha transparency
-// a JPEG re-encode would destroy, and nobody has said to wire them in yet.
+// public/images (mmt-impact-logo.png, favicon.jpg, symbol.jpg), and NOT
+// logo/. Those are brand marks with alpha transparency a JPEG re-encode
+// would destroy (flattened to an opaque background, breaking the footer's
+// colour-invert filter and any other non-white placement) — resize those by
+// hand, keeping the PNG format, instead of running them through this script.
+const EXCLUDED_SUBFOLDERS = new Set(['logo']);
+
 async function* pageSubfolders(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
-    if (entry.isDirectory()) yield* walk(join(dir, entry.name));
+    if (entry.isDirectory() && !EXCLUDED_SUBFOLDERS.has(entry.name)) {
+      yield* walk(join(dir, entry.name));
+    }
   }
 }
 
@@ -73,13 +87,26 @@ for await (const file of pageSubfolders(imagesDir)) {
   if (outPath !== file) await unlink(file);
   await rename(tmpPath, outPath);
 
+  // Small tier, downsampled from the buffer above rather than re-reading the
+  // original — it's already been through rotate/strip, and this is strictly
+  // a further downscale so there's no quality reason to start over.
+  const smallPath = outPath.replace(/\.jpg$/i, '-sm.jpg');
+  const smallBuffer = await sharp(buffer)
+    .resize({ width: SMALL_MAX, height: SMALL_MAX, fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: QUALITY, mozjpeg: true })
+    .toBuffer();
+  await sharp(smallBuffer).toFile(smallPath + '.tmp');
+  await rename(smallPath + '.tmp', smallPath);
+
   const after = (await stat(outPath)).size;
+  const afterSmall = (await stat(smallPath)).size;
   beforeTotal += before;
-  afterTotal += after;
+  afterTotal += after + afterSmall;
   processed++;
 
+  const rel = outPath.replace(root + '\\', '').replace(root + '/', '');
   console.log(
-    `${(before / 1024).toFixed(0).padStart(6)} KB -> ${(after / 1024).toFixed(0).padStart(5)} KB  ${outPath.replace(root + '\\', '').replace(root + '/', '')}`
+    `${(before / 1024).toFixed(0).padStart(6)} KB -> ${(after / 1024).toFixed(0).padStart(5)} KB  ${rel}  (+${(afterSmall / 1024).toFixed(0)} KB small tier)`
   );
 }
 

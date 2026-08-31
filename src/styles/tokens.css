@@ -100,7 +100,10 @@
   --ink: var(--color-navy-950);
   --ink-strong: var(--color-navy-950);
   --ink-muted: var(--color-grey-700);
-  --ink-faint: var(--color-grey-500);
+  /* Darkened from --color-grey-500 (2.87:1 on this surface) to clear WCAG
+     AA's 4.5:1 for the small mono text (.t-meta, captions) that reads this
+     token directly, not just decoratively. */
+  --ink-faint: #697073;
   --surface: var(--color-off-white);
   --surface-raised: var(--color-white);
   --surface-sunken: var(--color-sand);
@@ -115,7 +118,7 @@
   --ink: var(--color-navy-950);
   --ink-strong: var(--color-navy-950);
   --ink-muted: var(--color-grey-700);
-  --ink-faint: var(--color-grey-500);
+  --ink-faint: #697073;
   --surface: var(--color-white);
   --surface-raised: var(--color-off-white);
   --surface-sunken: var(--color-grey-100);
@@ -130,7 +133,7 @@
   --ink: var(--color-navy-950);
   --ink-strong: var(--color-navy-950);
   --ink-muted: #5c5849;
-  --ink-faint: #8a8574;
+  --ink-faint: #696558;
   --surface: var(--color-sand);
   --surface-raised: var(--color-off-white);
   --surface-sunken: var(--color-sand-deep);
@@ -145,7 +148,7 @@
   --ink: #eef1f3;
   --ink-strong: var(--color-white);
   --ink-muted: #9fb0bc;
-  --ink-faint: #6b8090;
+  --ink-faint: #6f8494;
   --surface: var(--color-navy-950);
   --surface-raised: var(--color-navy-900);
   --surface-sunken: #04101b;
@@ -160,7 +163,7 @@
   --ink: #e8efe9;
   --ink-strong: var(--color-white);
   --ink-muted: #a9bfae;
-  --ink-faint: #7e9784;
+  --ink-faint: #96aa9b;
   --surface: var(--color-green-800);
   --surface-raised: var(--color-green-700);
   --surface-sunken: #1a3023;

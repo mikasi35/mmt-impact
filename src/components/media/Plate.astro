@@ -53,6 +53,15 @@ const plateSvg = src ? '' : renderPlate({ variant, tone, seed, marker });
 
 // A plate is decorative; a photograph is not. Alt text follows that distinction.
 const imgAlt = alt ?? caption ?? '';
+
+// Every photo under public/images/<page>/ ships two tiers via
+// scripts/optimize-images.mjs: the original path at its normal ceiling, and
+// a `-sm` companion capped at 800px — small enough that a phone viewport
+// never downloads the desktop-sized file. The width descriptors mirror that
+// script's HERO_MAX/STANDARD_MAX/SMALL_MAX constants.
+const largeWidth = src && /hero/i.test(src) ? 2400 : 1200;
+const smallSrc = src?.replace(/\.(jpg|jpeg|png)$/i, '-sm.jpg');
+const srcset = src ? `${smallSrc} 800w, ${src} ${largeWidth}w` : undefined;
 ---
 
 <figure class={`plate ${className}`}>
@@ -61,6 +70,7 @@ const imgAlt = alt ?? caption ?? '';
       src ? (
         <img
           src={src}
+          srcset={srcset}
           alt={imgAlt}
           sizes={sizes}
           loading={priority ? 'eager' : 'lazy'}

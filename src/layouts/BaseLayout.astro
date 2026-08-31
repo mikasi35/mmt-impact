@@ -77,13 +77,30 @@ const graph = [organisationSchema(), websiteSchema(), ...schema];
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Typography: Instrument Serif (display), Plus Jakarta Sans (text), IBM Plex Mono (meta). -->
+    <!-- Typography: Instrument Serif (display), Plus Jakarta Sans (text), IBM Plex Mono (meta).
+         Loaded non-render-blocking: preload the stylesheet, then swap its media
+         to `all` once fetched, so the browser doesn't stall first paint on a
+         third-party round trip. The <noscript> fallback covers no-JS/no-onload
+         cases so fonts still load (just render-blocking) rather than never. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      />
+    </noscript>
 
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title="MMT Impact — News & Stories" href="/rss.xml" />
