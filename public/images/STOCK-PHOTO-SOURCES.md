@@ -41,6 +41,17 @@ ratio handling via `Plate.astro`).
 | `impact-page/stories-hero.jpg` | [photo 9090746](https://www.pexels.com/photo/9090746/) | Impact Stories — hero |
 | `careers-page/hero.jpg` | [photo 7654401](https://www.pexels.com/photo/7654401/) | Careers — hero (index and every job listing) |
 | `what-we-do-page/index-hero.jpg` | [photo 30689321](https://www.pexels.com/photo/30689321/) | What We Do — hero |
+| `what-we-do-page/education-secondary.jpg` | [photo 12448839](https://www.pexels.com/photo/12448839/) | Education programme page — "in depth" body image |
+| `what-we-do-page/community-support-secondary.jpg` | [photo 30582345](https://www.pexels.com/photo/30582345/) | Community Support programme page — body image |
+| `what-we-do-page/women-youth-secondary.jpg` | [photo 31528146](https://www.pexels.com/photo/31528146/) | Women & Youth programme page — body image |
+| `what-we-do-page/livelihoods-secondary.jpg` | [photo 29634314](https://www.pexels.com/photo/29634314/) | Livelihoods programme page — body image |
+| `what-we-do-page/humanitarian-secondary.jpg` | [photo 33749790](https://www.pexels.com/photo/33749790/) | Humanitarian & Resilience programme page — body image |
+| `what-we-do-page/consultancy-secondary.jpg` | [photo 9301155](https://www.pexels.com/photo/9301155/) | Consultancy programme page — body image |
+| `impact-page/project-community-resilience.jpg` | [photo 33749791](https://www.pexels.com/photo/33749791/) | "Community Support & Resilience — Juba County" project card/hero |
+| `impact-page/project-education-skills.jpg` | [photo 36467885](https://www.pexels.com/photo/36467885/) | "Education & Skills Programme — Juba" project card/hero |
+| `impact-page/project-institutional-strengthening.jpg` | [photo 7054757](https://www.pexels.com/photo/7054757/) | "Local Organisation Strengthening Facility" project card/hero |
+| `impact-page/project-livelihoods-market.jpg` | [photo 36827827](https://www.pexels.com/photo/36827827/) | Livelihoods market-linkage project card/hero |
+| `impact-page/project-womens-enterprise.jpg` | [photo 3894376](https://www.pexels.com/photo/3894376/) | Women's enterprise project card/hero |
 
 ## Deliberately left as the generated plate, not given a stock photo
 
@@ -56,7 +67,11 @@ stock photo would misrepresent:
 
 ## Reused existing real photography, not new stock
 
-Programme pages (`what-we-do/[slug].astro`), the project detail hero, and every
-project card (`ProjectCard.astro`) reuse the **real** MMT Impact photography
-already sourced for the six programme areas (`PROGRAMME_IMAGE` in
-`src/lib/media-overrides.ts`) — not stock. No new sourcing needed there.
+Every programme page's **hero**, and the What We Do index grid, reuse the
+**real** MMT Impact photography already sourced for the six programme areas
+(`PROGRAMME_IMAGE` in `src/lib/media-overrides.ts`) — not stock.
+
+Each programme page's **body/"in depth" image** (`PROGRAMME_IMAGE_SECONDARY`)
+and each **project's** card/hero image (`PROJECT_IMAGE`) are new stock photos
+(listed above) — kept deliberately distinct from the page's own hero and from
+each other, so scrolling through one page never repeats the same photo.

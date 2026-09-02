@@ -4,6 +4,7 @@ import PageLayout from '@layouts/PageLayout.astro';
 import SectionLabel from '@components/typography/SectionLabel.astro';
 import Plate from '@components/media/Plate.astro';
 import EditorialSplit from '@components/sections/EditorialSplit.astro';
+import { PROGRAMME_IMAGE } from '@lib/media-overrides';
 
 const programmes = (await getCollection('programmes', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order
@@ -40,6 +41,7 @@ const crumbs = [{ label: 'What We Do', href: '/what-we-do' }];
             <div class="pband__media">
               <Plate
                 seed={`wwd-${p.id}`}
+                src={PROGRAMME_IMAGE[p.data.sector]}
                 variant={p.data.media?.variant}
                 tone={p.data.media?.tone ?? 'navy'}
                 ratio="wide"

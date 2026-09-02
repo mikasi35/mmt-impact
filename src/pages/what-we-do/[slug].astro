@@ -8,7 +8,7 @@ import Plate from '@components/media/Plate.astro';
 import EmptyState from '@components/ui/EmptyState.astro';
 import { impactBySector, impactBasis } from '@data/impact';
 import { contact } from '@data/site';
-import { PROGRAMME_IMAGE } from '@lib/media-overrides';
+import { PROGRAMME_IMAGE, PROGRAMME_IMAGE_SECONDARY } from '@lib/media-overrides';
 
 export async function getStaticPaths() {
   const programmes = await getCollection('programmes', ({ data }) => !data.draft);
@@ -136,7 +136,7 @@ const crumbs = [
         <div class="body__media">
           <Plate
             seed={`programme-body-${programme.id}`}
-            src={PROGRAMME_IMAGE[d.sector]}
+            src={PROGRAMME_IMAGE_SECONDARY[d.sector]}
             variant={d.media?.variant}
             tone={d.media?.tone ?? 'navy'}
             ratio="portrait"
