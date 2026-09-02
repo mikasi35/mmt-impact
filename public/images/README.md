@@ -7,6 +7,18 @@ aspect ratio, with exactly the same caption treatment.
 
 **Swapping in a real photograph is a one-line change, never a layout change.**
 
+> **Interim state, 2026-09:** the client authorised royalty-free stock photography
+> (Pexels licence — free for commercial use, no attribution required) as a stand-in
+> ahead of an urgent meeting, for a company too newly formed to have its own field
+> photography yet. This is a deliberate, time-boxed exception to the "no generic
+> stock" standard below — see `STOCK-PHOTO-SOURCES.md` in this folder for exactly
+> which slots use a stock photo and where each came from. Replace each with real,
+> consented MMT Impact photography as it becomes available; nothing about the
+> layout changes when you do (see "How to add a photograph" below). Slots carrying
+> a specific, named claim — an individual project's location caption, an identified
+> impact story — were deliberately left as the generated plate rather than given a
+> stock photo, since a generic photo would misrepresent whose story it is.
+
 ---
 
 ## How to add a photograph

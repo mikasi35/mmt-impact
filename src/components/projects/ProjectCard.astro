@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Plate from '@components/media/Plate.astro';
+import { PROGRAMME_IMAGE } from '@lib/media-overrides';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -30,6 +31,7 @@ const period = [
     <div class="pcard__media">
       <Plate
         seed={`project-${project.id}`}
+        src={PROGRAMME_IMAGE[d.sector]}
         variant={d.media?.variant}
         tone={d.media?.tone ?? 'navy'}
         ratio={size === 'compact' ? 'wide' : 'hero'}

@@ -64,6 +64,10 @@ let afterTotal = 0;
 for await (const file of pageSubfolders(imagesDir)) {
   const ext = extname(file).toLowerCase();
   if (!['.jpg', '.jpeg', '.png'].includes(ext)) continue;
+  // A `-sm.jpg` is this script's own small-tier OUTPUT, not a source photo —
+  // without this guard, re-running the script treats every previous small
+  // tier as a new source and generates a `-sm-sm.jpg` on top of it.
+  if (/-sm\.jpe?g$/i.test(file)) continue;
 
   const before = (await stat(file)).size;
   const maxEdge = /hero/i.test(file) ? HERO_MAX : STANDARD_MAX;

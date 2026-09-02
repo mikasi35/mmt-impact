@@ -8,6 +8,7 @@ import Plate from '@components/media/Plate.astro';
 import EmptyState from '@components/ui/EmptyState.astro';
 import { impactBySector, impactBasis } from '@data/impact';
 import { contact } from '@data/site';
+import { PROGRAMME_IMAGE } from '@lib/media-overrides';
 
 export async function getStaticPaths() {
   const programmes = await getCollection('programmes', ({ data }) => !data.draft);
@@ -48,6 +49,7 @@ const crumbs = [
     lines: d.title.split(' & ').length > 1 ? d.title.split(' & ').map((s, i, a) => (i < a.length - 1 ? `${s} &` : s)) : [d.title],
     lede: d.summary,
     seed: `programme-hero-${programme.id}`,
+    src: PROGRAMME_IMAGE[d.sector],
     variant: d.media?.variant,
     tone: d.media?.tone,
     surface: d.sector === 'livelihoods' ? 'forest' : 'dark',
@@ -134,6 +136,7 @@ const crumbs = [
         <div class="body__media">
           <Plate
             seed={`programme-body-${programme.id}`}
+            src={PROGRAMME_IMAGE[d.sector]}
             variant={d.media?.variant}
             tone={d.media?.tone ?? 'navy'}
             ratio="portrait"

@@ -6,6 +6,7 @@ import Plate from '@components/media/Plate.astro';
 import ProjectCard from '@components/projects/ProjectCard.astro';
 import { formatDate } from '@lib/utils';
 import { contact } from '@data/site';
+import { PROGRAMME_IMAGE } from '@lib/media-overrides';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => !data.draft);
@@ -74,6 +75,7 @@ const period = [d.startDate?.getFullYear(), d.endDate?.getFullYear()].filter(Boo
     lines: [d.title],
     lede: d.summary,
     seed: `project-hero-${project.id}`,
+    src: PROGRAMME_IMAGE[d.sector],
     variant: d.media?.variant,
     tone: d.media?.tone,
     facts: [
